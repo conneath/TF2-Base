@@ -58,4 +58,14 @@ config.cfg
 # shader files
 *.tmp
 
-game/tf_mod
+# game folder
+game/tf_mod/tf2_playerstats.dmx
+game/tf_mod/stats.txt
+game/tf_mod/voice_ban.dt
+game/tf_mod/GameState.txt
+**/sound.cache
+game/tf_mod/cfg/config.cfg
+game/tf_mod/cfg/settings.scr
+game/tf_mod/cfg/server_blacklist.txt
+game/tf_mod/download/*
+game/tf_mod/downloadlists/*

@@ -6,41 +6,59 @@
 	nomodels 1
 	nohimodel 1
 	nocrosshair 0
-	nodegraph	0
 	hidden_maps
 	{
 		"test_speakers"		1
 		"test_hardware"		1
 	}
-	supportsvr	1
+	nodegraph 0
+
+
 	FileSystem
 	{
-		SteamAppId		243750	// Source SDK Base 2013 Multiplayer
+		SteamAppId				243750 // Source SDK Base 2013 Multiplayer
 
+		//
+		// Setup engine search paths.
+		//
+		// If a search path contains "_english", and the current language is not english, then
+		// another search path will be inserted above the english one by replacing "_english" with
+		// the appropriate language.
+		//
+		// To debug how the engine has parsed this file, type "path" at the console.
+		//
+		// Search paths are relative to the base directory, which is where hl2.exe is found.
+		//
+		// |gameinfo_path| points at the directory where gameinfo.txt is.
+		// |all_source_engine_paths| points at the directory cintaining HL2 shared content.
+		//
 		SearchPaths
 		{
 			// Firstly, mount all user customizations.  This will search for VPKs and subfolders
 			// and mount them in alphabetical order.  The easiest way to distribute a mod is to
 			// pack up the custom content into a VPK.  To "install" a mod, just drop it in this
 			// folder.
+			//
 			// Note that this folder is scanned only when the game is booted.
 			game+mod			|gameinfo_path|custom/*
 
-			// Search game's files after any user customizations. This is also where any writes should go.
-			game+game_write+mod+mod_write+default_write_path		|gameinfo_path|.
+			// Now search loose files.  We'll set the directory containing the gameinfo.txt file
+			// as the first "mod" search path (after any user customizations).
+			// This is also where any writes should go.
+			game+game_write+mod+mod_write+default_write_path	|gameinfo_path|.
 
 			// Where the game's binaries are.
 			gamebin				|gameinfo_path|bin
 
 			// Search shared VPK files.
-			game_lv				hl2/hl2_lv.vpk
 			game				|all_source_engine_paths|hl2/hl2_textures.vpk
 			game				|all_source_engine_paths|hl2/hl2_sound_vo_english.vpk
 			game				|all_source_engine_paths|hl2/hl2_sound_misc.vpk
 			game				|all_source_engine_paths|hl2/hl2_misc.vpk
+
 			platform			|all_source_engine_paths|platform/platform_misc.vpk
 
-			// Mount in shared loose files.
+			// Lastly, mount in shared loose files.
 			game				|all_source_engine_paths|hl2
 			platform			|all_source_engine_paths|platform
 
@@ -55,7 +73,7 @@
 			// packed up in the .bsp file so that it will be mounted as a map search pack.
 			// The map search pack is mounted at the top of the search path list,
 			// but only while you are connected that server and on that map.
-			game+download			|gameinfo_path|download
+			game+download		|gameinfo_path|download
 		}
 	}
 }

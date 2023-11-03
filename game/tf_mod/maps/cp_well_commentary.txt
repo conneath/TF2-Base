@@ -1,0 +1,394 @@
+"Entities"
+{
+	"trackinfo"
+	{
+		"track0"
+		{
+			"map"		"cp_well"
+			"printname"	"Well Commentary"
+			"description"	"Commentary on the Well map."
+		}	
+	}
+	"entity"
+	{
+		"classname" "commentary_auto"
+		"targetname" ""
+		"origin" "0 0 0"
+		"angles" "0 0 0"
+		"connections"
+		{
+			"OnCommentaryNewGame" "comm_cmd,Command,sv_cheats 1,10.0,1"
+			"OnCommentaryNewGame" "comm_cmd,Command,mp_teams_unbalance_limit 0,10.5,1"
+			"OnCommentaryNewGame" "comm_cmd,Command,bot -team blue -class medic -name Medic2,11.0,1"			
+			"OnCommentaryNewGame" "comm_cmd,Command,bot -team blue -class sniper -name Sniper2,11.0,1"			
+			"OnCommentaryNewGame" "comm_cmd,Command,bot -team red -class heavyweapons -name RedHeavy,11.0,1"
+			"OnCommentaryNewGame" "comm_cmd,Command,bot -team blue -class medic -name Medic,11.0,1"
+			"OnCommentaryNewGame" "comm_cmd,Command,bot -team blue -class heavyweapons -name Heavy,11.0,1"
+			"OnCommentaryNewGame" "comm_cmd,Command,bot -team blue -class demoman -name Demoman,11.0,1"
+			"OnCommentaryNewGame" "comm_cmd,Command,bot -team blue -class sniper -name Sniper,11.0,1"
+			"OnCommentaryNewGame" "comm_cmd,Command,bot -team blue -class scout -name Scout,11.0,1"
+			"OnCommentaryNewGame" "comm_cmd,Command,bot -team blue -class soldier -name Soldier,11.0,1"
+			"OnCommentaryNewGame" "comm_cmd,Command,bot -team blue -class pyro -name Pyro,11.0,1"
+			"OnCommentaryNewGame" "comm_cmd,Command,bot -team blue -class spy -name Spy,11.0,1"
+			"OnCommentaryNewGame" "comm_cmd,Command,bot -team blue -class engineer -name Engineer,11.0,1"
+			"OnCommentaryNewGame" "comm_midgamerelay,trigger,,13.0,-1"
+
+			"OnCommentaryMultiplayerSpawn" "relay_middle_open,trigger,,1.0,1"
+
+			"OnCommentaryMidGame" "comm_midgamerelay,trigger,,0,-1"
+
+			"OnCommentaryMultiplayerSpawn" "CommentaryIntro,StartCommentary,,1.0,1"
+		}
+	}
+	"entity"
+	{
+		"classname" "logic_relay"
+		"targetname" "comm_midgamerelay"
+		"origin" "0 0 0"
+		"angles" "0 0 0"
+		"connections"
+		{
+			"OnTrigger" "comm_cmd,Command,bot_teleport RedHeavy -1104.437500 3638.656250 -300.020569 10.552028 105.696144 0,0.1,1"
+			"OnTrigger" "comm_cmd,Command,bot_teleport Medic2 -1532.626953 1730.099121 -497.030334 5.808002 88.104012 0,0.1,1"
+			"OnTrigger" "comm_cmd,Command,bot_teleport Sniper2 -1789.935059 -333.908020 -297.030334 8.250000 -68.963966 0,0.1,1"
+			"OnTrigger" "comm_cmd,Command,bot_teleport Medic -1250.277466 5011.351074 -497.030334 0 90 0,0.1,1"
+			"OnTrigger" "comm_cmd,Command,bot_teleport Heavy -1325.277466 5011.351074 -497.030334 0 90 0,0.1,1"
+			"OnTrigger" "comm_cmd,Command,bot_teleport Demoman -1400.277466 5011.351074 -497.030334 0 90 0,0.1,1"
+			"OnTrigger" "comm_cmd,Command,bot_teleport Sniper -1475.277466 5011.351074 -497.030334 0 90 0,0.1,1"
+			"OnTrigger" "comm_cmd,Command,bot_teleport Scout -1550.277466 5011.351074 -497.030334 0 90 0,0.1,1"
+			"OnTrigger" "comm_cmd,Command,bot_teleport Soldier -1625.277466 5011.351074 -497.030334 0 90 0,0.1,1"
+			"OnTrigger" "comm_cmd,Command,bot_teleport Pyro -1700.277466 5011.351074 -497.030334 0 90 0,0.1,1"
+			"OnTrigger" "comm_cmd,Command,bot_teleport Spy -1775.277466 5011.351074 -497.030334 0 90 0,0.1,1"
+			"OnTrigger" "comm_cmd,Command,bot_teleport Engineer -1850.277466 5011.351074 -497.030334 0 90 0,0.1,1"
+		}
+	}
+	"entity"
+	{
+		"classname" "point_clientcommand"
+		"targetname" "comm_cmd"
+		"origin" "0 0 0"
+		"angles" "0 0 0"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "CommentaryIntro"
+		"origin" "-1544.481812 -5480.315430 -381.030334"
+		"angles" "0 200 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment000.wav"
+		"printname" "Welcome to Team Fortress 2"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Gabe Newell"
+		"synopsis" ""
+		"teleport_origin" "-1544.354858 -5629.431152 -351"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "Moving Spawn Rooms"
+		"origin" "-892.0599975586 -2919.8601074219 -457.549987793"
+		"angles" "0 90 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment007.wav"
+		"printname" "Moving Spawn Rooms"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Andrea Wicklund"
+		"synopsis" ""
+		"teleport_origin" "-915.0413208008 -2778.8232421875 -447.0303344727"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "HUD Element Shaders"
+		"origin" "-912.5 -1318.1400146484 -433.3699951172"
+		"angles" "0 90 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment042.wav"
+		"printname" "HUD Element Shaders"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Alden Kroll"
+		"synopsis" ""
+		"teleport_origin" "-865.8458862305 -1418.4547119141 -423.0303344727"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "Control Points"
+		"origin" "-1642.1800537109 389.5599975586 -270"
+		"angles" "0 90 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment003.wav"
+		"printname" "Control Points"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Ariel Diaz"
+		"synopsis" ""
+		"teleport_origin" "-1625.7043457031 647.1812744141 -247.0303344727"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "One Way Exits"
+		"origin" "-1534 2906.0900878906 -395.4200134277"
+		"angles" "0 90 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment009.wav"
+		"printname" "One Way Exits"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Bay Raitt"
+		"synopsis" ""
+		"teleport_origin" "-1523.4965820313 2697.1474609375 -415.0303344727"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "Sniper Map Design"
+		"origin" "-1697.7114257813 -345.3564453125 -267.0700073242"
+		"angles" "0 0 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment008.wav"
+		"printname" "Sniper Map Design"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Dave Riller"
+		"synopsis" ""
+		"teleport_origin" "-1632.8968505859 -244.7838134766 -247.0303344727"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "Moving Trains"
+		"origin" "-375.4800109863 -24.8199996948 -457.1700134277"
+		"angles" "0 45 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment006.wav"
+		"printname" "Moving Trains"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Iikka Keranen"
+		"synopsis" ""
+		"teleport_origin" "-515.7416381836 -132.6522064209 -447.0303344727"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "Middle Door Timers"
+		"origin" "-2453.4499511719 563.6099853516 -457.9299926758"
+		"angles" "0 90 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment010.wav"
+		"printname" "Middle Door Timers"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Jamaal Bradley"
+		"synopsis" ""
+		"teleport_origin" "-2643.1037597656 551.6882324219 -447.0303344727"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "Control Point Evolution"
+		"origin" "-1425.2099609375 350.8599853516 -270"
+		"angles" "0 90 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment004.wav"
+		"printname" "Control Point Evolution"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Jeff Lane"
+		"synopsis" ""
+		"teleport_origin" "-1434.5201416016 173.9023895264 -247.0303344727"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "Water Routes"
+		"origin" "-1707.0899658203 -300.2600097656 -457.8699951172"
+		"angles" "0 90 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment005.wav"
+		"printname" "Water Routes"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Jim Hughes"
+		"synopsis" ""
+		"teleport_origin" "-1786.146484375 -375.96875 -447.0303344727"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "Personalized Stats"
+		"origin" "-1525.7600097656 3838.169921875 -457"
+		"angles" "0 -92.5500030518 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment028.wav"
+		"printname" "Personalized Stats"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Kerry Davis"
+		"synopsis" ""
+		"teleport_origin" "-1529.2332763672 3989.8142089844 -447.0303344727"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "The Medigun"
+		"origin" "-1452.3712158203 1721.2200927734 -457"
+		"angles" "0 90 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment025.wav"
+		"printname" "The Medigun"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Aaron Halifax"
+		"synopsis" ""
+		"teleport_origin" "-1542.3956298828 1863.3724365234 -447.0303344727"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "Functional Character Design"
+		"origin" "-1194.3829345703 5022.0209960938 -467.0303344727"
+		"angles" "0 90 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment031.wav"
+		"printname" "Functional Character Design"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Ariel Diaz"
+		"synopsis" ""
+		"teleport_origin" "-1090.4105224609 5215.0415039063 -457.0303344727"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "Weapon Design"
+		"origin" "-1125.3829345703 5022.0209960938 -467.0303344727"
+		"angles" "0 90 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment044.wav"
+		"printname" "Weapon Design"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Eric Kirchmer"
+		"synopsis" ""
+		"teleport_origin" "-1125.4105224609 5215.0415039063 -457.0303344727"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "Player Classes"
+		"origin" "-1913.0513916016 5022.1142578125 -467.0303344727"
+		"angles" "0 90 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment032.wav"
+		"printname" "Player Classes"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Charlie Brown"
+		"synopsis" ""
+		"teleport_origin" "-2009.466796875 5224.7290039063 -457.0303344727"
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "Taunts"
+		"origin" "-1980.0513916016 5022.1142578125 -467.0303344727"
+		"angles" "0 90 0"
+		"precommands" ""
+		"postcommands" ""
+		"commentaryfile" "#commentary\tf2-comment036.wav"
+		"printname" "Taunts"
+		"viewtarget" ""
+		"viewposition" ""
+		"prevent_movement" 0
+		"speakers" "Hamish McKenzie"
+		"synopsis" ""
+		"teleport_origin" "-2079.466796875 5224.7290039063 -457.0303344727"
+		"connections"
+		{
+			"OnCommentaryStarted" "comm_cmd,Command,bot_command Engineer taunt,4,-1"
+			"OnCommentaryStarted" "comm_cmd,Command,bot_command Spy taunt,8,-1"
+			"OnCommentaryStarted" "comm_cmd,Command,bot_command Pyro taunt,12,-1"
+			"OnCommentaryStarted" "comm_cmd,Command,bot_command Soldier taunt,16,-1"
+			"OnCommentaryStarted" "comm_cmd,Command,bot_command Scout taunt,20,-1"
+			"OnCommentaryStarted" "comm_cmd,Command,bot_command Sniper taunt,24,-1"
+			"OnCommentaryStarted" "comm_cmd,Command,bot_command Demoman taunt,28,-1"
+			"OnCommentaryStarted" "comm_cmd,Command,bot_command Heavy taunt,32,-1"
+			"OnCommentaryStarted" "comm_cmd,Command,bot_command Medic taunt,36,-1"
+		}
+	}
+	"entity"
+	{
+		"classname" "point_commentary_node"
+		"targetname" "Lightwarp and Rimlight"
+		"origin" "-1067.721680 3804.350830 -285.030334"
+		"angles" "0 -156.9799957275 0"
+		"precommands" ""
+		"postcommands" "r_lightwarpidentity 0;r_rimlight 1"
+		"commentaryfile" "#commentary\tf2-comment041.wav"
+		"printname" "Lightwarp and Rimlight"
+		"viewtarget" "comm_view_tgt_1"
+		"viewposition" "comm_view_pos_1"
+		"prevent_movement" 0
+		"speakers" "Jason Mitchell"
+		"synopsis" ""
+		"teleport_origin" "-1073.739258 3923.454834 -255.030334"
+		"connections"
+		{
+			"OnCommentaryStarted" "comm_cmd,Command,r_lightwarpidentity 1,23,-1"
+			"OnCommentaryStarted" "comm_cmd,Command,r_lightwarpidentity 0,30,-1"
+			"OnCommentaryStarted" "comm_cmd,Command,r_rimlight 0,45,-1"
+			"OnCommentaryStarted" "comm_cmd,Command,r_rimlight 1,49,-1"
+		}
+	}
+	"entity"
+	{
+		"classname" "info_target"
+		"targetname" "comm_view_pos_1"
+		"origin" "-1027.288208 3667.340088 -247.030334"
+		"angles" "0.786013 22.049805 0"
+	}
+	"entity"
+	{
+		"classname" "info_target"
+		"targetname" "comm_view_tgt_1"
+		"origin" "-1104.437500 3638.656250 -265.020569"
+		"angles" "0 -160.1499938965 0"
+	}
+}
