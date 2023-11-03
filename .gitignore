@@ -57,3 +57,5 @@ config.cfg
 
 # shader files
 *.tmp
+
+game/tf_mod
