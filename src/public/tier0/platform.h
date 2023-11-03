@@ -41,6 +41,9 @@
 #include "wchartypes.h"
 #include "basetypes.h"
 #include "tier0/valve_off.h"
+#if _MSC_VER >= 1900
+	#include <cmath>
+#endif
 
 #ifdef _DEBUG
 #if !defined( PLAT_COMPILE_TIME_ASSERT )

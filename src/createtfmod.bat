@@ -1,1 +1,1 @@
-devtools\bin\vpc.exe /tf_mod +game /mksln games.sln
+devtools\bin\vpc.exe /2015 /tf_mod +game /mksln games.sln
