@@ -138,6 +138,27 @@ void CTFPipebombLauncher::WeaponReset( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
+void CTFPipebombLauncher::ItemPostFrame( void )
+{
+	BaseClass::ItemPostFrame();
+
+	if (m_flChargeBeginTime > 0)
+	{
+		CTFPlayer* pPlayer = ToTFPlayer( GetPlayerOwner() );
+		if (!pPlayer)
+			return;
+
+		// If we're not holding down the attack button, launch our grenade
+		if (m_iClip1 > 0 && !(pPlayer->m_nButtons & IN_ATTACK) && (pPlayer->m_afButtonReleased & IN_ATTACK))
+		{
+			LaunchGrenade();
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
 void CTFPipebombLauncher::PrimaryAttack( void )
 {
 	// Check for ammunition.

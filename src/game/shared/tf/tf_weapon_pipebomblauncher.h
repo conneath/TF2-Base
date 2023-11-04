@@ -46,6 +46,7 @@ public:
 	virtual int		GetWeaponID( void ) const			{ return TF_WEAPON_PIPEBOMBLAUNCHER; }
 	virtual CBaseEntity *FireProjectile( CTFPlayer *pPlayer );
 	virtual void	ItemBusyFrame( void );
+	virtual void	ItemPostFrame( void );
 	virtual void	SecondaryAttack();
 
 	virtual bool	Holster( CBaseCombatWeapon *pSwitchingTo );
