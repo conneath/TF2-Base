@@ -878,24 +878,20 @@ void CTFWeaponBase::ItemBusyFrame( void )
 		m_bInAttack2 = false;
 	}
 
-	// Interrupt a reload on reload singly weapons.
-	if ( m_bReloadsSingly )
+	// Interrupt a reload.
+	CTFPlayer* pPlayer = GetTFPlayerOwner();
+	if (pPlayer)
 	{
-		CTFPlayer *pPlayer = GetTFPlayerOwner();
-		if ( pPlayer )
+		if (pPlayer->m_nButtons & IN_ATTACK)
 		{
-			if ( pPlayer->m_nButtons & IN_ATTACK )
+			if (((ReloadsSingly() && m_iReloadMode != TF_RELOAD_START) || m_bInReload) && Clip1() > 0)
 			{
-				if ( ( m_iReloadMode != TF_RELOAD_START ) && Clip1() > 0 )
-				{
-					m_iReloadMode.Set( TF_RELOAD_START );
-					m_bInReload = false;
+				AbortReload();
 
-					pPlayer->m_flNextAttack = gpGlobals->curtime;
-					m_flNextPrimaryAttack = gpGlobals->curtime;
+				pPlayer->m_flNextAttack = gpGlobals->curtime;
+				m_flNextPrimaryAttack = gpGlobals->curtime;
 
-					SetWeaponIdleTime( gpGlobals->curtime + m_pWeaponInfo->GetWeaponData( m_iWeaponMode ).m_flTimeIdle );
-				}
+				SetWeaponIdleTime( gpGlobals->curtime + m_pWeaponInfo->GetWeaponData( m_iWeaponMode ).m_flTimeIdle );
 			}
 		}
 	}
@@ -910,6 +906,11 @@ void CTFWeaponBase::ItemPostFrame( void )
 	if ( !pOwner )
 	{
 		return;
+	}
+
+	if (!AutoFiresFullClip() && pOwner->ShouldAutoReload() && UsesClipsForAmmo1() && (m_iClip1 < GetMaxClip1()) && !(pOwner->m_nButtons & (IN_ATTACK | IN_ATTACK2)))
+	{
+		pOwner->m_nButtons |= IN_RELOAD;
 	}
 
 	// debounce InAttack flags

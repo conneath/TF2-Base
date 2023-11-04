@@ -69,3 +69,4 @@ game/tf_mod/cfg/settings.scr
 game/tf_mod/cfg/server_blacklist.txt
 game/tf_mod/download/*
 game/tf_mod/downloadlists/*
+game/tf_mod/media/viewed.res
