@@ -124,12 +124,7 @@
 
 	"rndwave"
 	{
-		"wave"		"player/pl_fleshbreak1.wav"
-		"wave"		"player/pl_fleshbreak2.wav"
-		"wave"		"player/pl_fleshbreak3.wav"
-		"wave"		"player/pl_fleshbreak4.wav"
-		"wave"		"player/pl_fleshbreak5.wav"
-		"wave"		"player/pl_fleshbreak8.wav"
+		"wave"		"player/pl_fleshbreak.wav"
 	}
 }
 
@@ -142,17 +137,7 @@
 
 	"rndwave"
 	{
-		"wave"		"player/pl_fallpain3.wav"
-		"wave"		"player/pl_fallpain4.wav"
-		"wave"		"player/pl_fallpain5.wav"
-		"wave"		"player/pl_fallpain6.wav"
-		"wave"		"player/pl_fallpain7.wav"
-		"wave"		"player/pl_fallpain8.wav"
-		"wave"		"player/pl_fallpain9.wav"
-		"wave"		"player/pl_fallpain10.wav"
-		"wave"		"player/pl_fallpain11.wav"
-		"wave"		"player/pl_fallpain12.wav"
-		"wave"		"player/pl_fallpain13.wav"
+		"wave"		"player/pl_fallpain.wav"
 	}
 }
 
