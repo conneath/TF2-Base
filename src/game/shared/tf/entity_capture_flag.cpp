@@ -106,6 +106,8 @@ END_DATADESC();
 
 LINK_ENTITY_TO_CLASS( item_teamflag, CCaptureFlag );
 
+IMPLEMENT_AUTO_LIST( ICaptureFlagAutoList );
+
 //=============================================================================
 //
 // CTF Flag functions.
@@ -1074,8 +1076,38 @@ int CCaptureFlag::UpdateTransmitState()
 	// ALWAYS transmit to all clients.
 	return SetTransmitState( FL_EDICT_ALWAYS );
 }
+/*
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CCaptureFlag::AddFollower( CTFBot* pBot )
+{
+	//if (!m_followers.HasElement( pBot ))
+	//{
+	//	m_followers.AddToTail( pBot );
+	//	for (int i = 0; i < m_tags.Count(); ++i)
+	//	{
+	//		pBot->AddTag( m_tags[i] );
+	//	}
+	//}
+}
 
-
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CCaptureFlag::RemoveFollower( CTFBot* pBot )
+{
+	//int index = m_followers.Find( pBot );
+	//if (index != m_followers.InvalidIndex())
+	//{
+	//	m_followers.Remove( index );
+	//	for (int i = 0; i < m_tags.Count(); ++i)
+	//	{
+	//		pBot->RemoveTag( m_tags[i] );
+	//	}
+	//}
+}
+*/
 #else
 
 float CCaptureFlag::GetReturnProgress()

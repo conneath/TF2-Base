@@ -129,6 +129,8 @@ CObjectSentrygun::CObjectSentrygun()
 	SetMaxHealth( SENTRYGUN_MAX_HEALTH );
 	m_iHealth = SENTRYGUN_MAX_HEALTH;
 	SetType( OBJ_SENTRYGUN );
+
+	m_flSentryRange = SENTRY_MAX_RANGE;
 }
 
 //-----------------------------------------------------------------------------
@@ -187,6 +189,9 @@ void CObjectSentrygun::Spawn()
 
 void CObjectSentrygun::SentryThink( void )
 {
+	// verify: is this actually necessary?
+	m_flSentryRange = SENTRY_MAX_RANGE;
+
 	switch( m_iState )
 	{
 	case SENTRY_STATE_INACTIVE:
@@ -614,7 +619,7 @@ int CObjectSentrygun::Range( CBaseEntity *pTarget )
 		return RANGE_MELEE;
 	if (iDist < 550)
 		return RANGE_NEAR;
-	if (iDist < 1100)
+	if (iDist < m_flSentryRange)
 		return RANGE_MID;
 	return RANGE_FAR;
 }
@@ -635,7 +640,7 @@ bool CObjectSentrygun::FindTarget()
 	if ( IsDisabled() )
 		return false;
 
-	// Loop through players within 1100 units (sentry range).
+	// Loop through players within SENTRY_MAX_RANGE units (sentry range).
 	Vector vecSentryOrigin = EyePosition();
 
 	// Find the opposing team list.
@@ -650,7 +655,7 @@ bool CObjectSentrygun::FindTarget()
 	// If we have an enemy get his minimum distance to check against.
 	Vector vecSegment;
 	Vector vecTargetCenter;
-	float flMinDist2 = 1100.0f * 1100.0f;
+	float flMinDist2 = m_flSentryRange * m_flSentryRange;
 	CBaseEntity *pTargetCurrent = NULL;
 	CBaseEntity *pTargetOld = m_hEnemy.Get();
 	float flOldTargetDist2 = FLT_MAX;
@@ -1073,6 +1078,8 @@ bool CObjectSentrygun::Fire()
 		EmitSound( "Building_Sentrygun.Empty" );
 		m_flNextAttack = gpGlobals->curtime + 0.2;
 	}
+
+	m_timeSinceLastFired.Start();
 
 	return true;
 }

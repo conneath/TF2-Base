@@ -18,6 +18,10 @@
 #define CTFPipebombLauncher C_TFPipebombLauncher
 #endif
 
+// hard code these eventually
+#define TF_PIPEBOMB_MIN_CHARGE_VEL 900
+#define TF_PIPEBOMB_MAX_CHARGE_VEL 2400
+#define TF_PIPEBOMB_MAX_CHARGE_TIME 4.0f
 //=============================================================================
 //
 // TF Weapon Pipebomb Launcher.
@@ -62,6 +66,7 @@ public:
 	virtual float GetChargeBeginTime( void ) { return m_flChargeBeginTime; }
 	virtual float GetChargeMaxTime( void );
 	int	GetPipeBombCount( void ) { return m_iPipebombCount; }
+	const CUtlVector< CHandle< CTFGrenadePipebombProjectile > >& GetPipeBombVector( void ) const;
 
 	void LaunchGrenade( void );
 	bool DetonateRemotePipebombs( bool bFizzle );
@@ -94,5 +99,10 @@ private:
 
 	CTFPipebombLauncher( const CTFPipebombLauncher & ) {}
 };
+
+inline const CUtlVector< CHandle< CTFGrenadePipebombProjectile > >& CTFPipebombLauncher::GetPipeBombVector( void ) const
+{
+	return m_Pipebombs;
+}
 
 #endif // TF_WEAPON_PIPEBOMBLAUNCHER_H

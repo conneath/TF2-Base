@@ -42,10 +42,12 @@ protected:
 	CHandle<CFuncRespawnRoom>	m_hRespawnRoom;
 };
 
+IMPLEMENT_AUTO_LIST( IFuncRespawnRoomAutoList );
+
 LINK_ENTITY_TO_CLASS( func_respawnroom, CFuncRespawnRoom);
 
 BEGIN_DATADESC( CFuncRespawnRoom )
-	DEFINE_FUNCTION( RespawnRoomTouch ),
+	DEFINE_FUNCTION( CFuncRespawnRoomShim::Touch ),
 	// inputs
 	DEFINE_INPUTFUNC( FIELD_VOID, "SetActive", InputSetActive ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "SetInactive", InputSetInactive ),

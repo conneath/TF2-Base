@@ -1262,6 +1262,22 @@ float CTFPlayerShared::GetPercentInvisible( void )
 }
 
 //-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+bool CTFPlayerShared::IsInvulnerable( void )
+{
+	return InCond( TF_COND_INVULNERABLE );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+bool CTFPlayerShared::IsStealthed( void )
+{
+	return InCond( TF_COND_STEALTHED );
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: Start the process of disguising
 //-----------------------------------------------------------------------------
 void CTFPlayerShared::Disguise( int nTeam, int nClass )
@@ -1644,6 +1660,33 @@ EHANDLE CTFPlayerShared::GetFirstHealer()
 
 	return NULL;
 }
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+CBaseEntity* CTFPlayerShared::GetHealerByIndex( int index )
+{
+	int iNumHealers = m_aHealers.Count();
+
+	if (index < 0 || index >= iNumHealers)
+		return NULL;
+	// in live pPlayer was apparently changed to pHealer
+	return m_aHealers[index].pPlayer;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+bool CTFPlayerShared::HealerIsDispenser( int index )
+{
+	int iNumHealers = m_aHealers.Count();
+
+	if (index < 0 || index >= iNumHealers)
+		return false;
+
+	return m_aHealers[index].bDispenserHeal;
+}
+
 #endif
 
 //-----------------------------------------------------------------------------

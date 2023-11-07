@@ -163,6 +163,15 @@ public:
 
 	bool			ShouldScorePerRound( void );
 
+	// populate vector with set of control points the player needs to capture
+	virtual void CollectCapturePoints( CBasePlayer* player, CUtlVector< CTeamControlPoint* >* captureVector ) const;
+
+	// populate vector with set of control points the player needs to defend from capture
+	virtual void CollectDefendPoints( CBasePlayer* player, CUtlVector< CTeamControlPoint* >* defendVector ) const;
+
+	const CUtlVector< CHandle< CBaseEntity > >& GetHealthEntityVector( void );		// return vector of health entities 
+	const CUtlVector< CHandle< CBaseEntity > >& GetAmmoEntityVector( void );		// return vector of ammo entities 
+
 protected:
 	virtual void	InitTeams( void );
 
@@ -281,7 +290,8 @@ public:
 
 	void	SendHudNotification( IRecipientFilter &filter, HudNotification_t iType );
 	void	SendHudNotification( IRecipientFilter &filter, const char *pszText, const char *pszIcon, int iTeam = TEAM_UNASSIGNED );
-
+	// placeholder
+	bool	IsMannVsMachineMode(){ return false; }
 private:
 
 	int DefaultFOV( void ) { return 75; }
@@ -305,6 +315,14 @@ private:
 	int m_iCurrentRoundState;
 	int m_iCurrentMiniRoundMask;
 	float m_flTimerMayExpireAt;
+
+	void ComputeHealthAndAmmoVectors( void );		// compute internal vectors of health and ammo locations
+	bool m_areHealthAndAmmoVectorsReady;
+	CUtlVector< CHandle< CBaseEntity > > m_ammoVector;			// vector of active ammo entities
+	bool m_isAmmoVectorReady;									// for lazy evaluation
+
+	CUtlVector< CHandle< CBaseEntity > > m_healthVector;		// vector of active health entities
+	bool m_isHealthVectorReady;									// for lazy evaluation
 
 #endif
 

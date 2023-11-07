@@ -12,6 +12,7 @@
 #include "tf_player_shared.h"
 #include "tf_playerclass.h"
 #include "entity_tfstart.h"
+#include "tf_weaponbase_gun.h"
 
 class CTFPlayer;
 class CTFTeam;
@@ -22,6 +23,7 @@ class CTFWeaponBuilder;
 class CBaseObject;
 class CTFWeaponBase;
 class CIntroViewpoint;
+class CTriggerAreaCapture;
 
 //=============================================================================
 //
@@ -172,6 +174,7 @@ public:
 	void				UpdateSkin( int iTeam );
 
 	virtual int			GiveAmmo( int iCount, int iAmmoIndex, bool bSuppressSound = false );
+	int					GetMaxAmmo( int iAmmoindex );
 
 	bool				CanAttack( void );
 
@@ -232,6 +235,8 @@ public:
 	int CanBuild( int iObjectType );
 
 	CBaseObject	*GetObject( int index );
+	// TODO: originally, this function had an iObjectMode parameter too, for the teleporter entrance/exit, but we don't have modes implemented yet and the teleporter is actually 2 seperate buildings rn
+	CBaseObject* GetObjectOfType( int iObjectType );
 	int	GetObjectCount( void );
 	int GetNumObjects( int iObjectType );
 	void RemoveAllObjects( void );
@@ -245,6 +250,9 @@ public:
 	bool PlayerOwnsObject( CBaseObject *pObject );
 	void DetonateOwnedObjectsOfType( int iType );
 	void StartBuildingObjectOfType( int iType );
+
+	void OnSapperPlaced( CBaseEntity* sappedObject );			// invoked when we place a sapper on an enemy building
+	bool IsPlacingSapper( void ) const;							// return true if we are a spy who placed a sapper on a building in the last few moments
 
 	CTFTeam *GetTFTeam( void );
 	CTFTeam *GetOpposingTFTeam( void );
@@ -285,6 +293,10 @@ public:
 
 	bool GetMedigunAutoHeal( void ){ return m_bMedigunAutoHeal; }
 	void SetMedigunAutoHeal( bool bMedigunAutoHeal ){ m_bMedigunAutoHeal = bMedigunAutoHeal; }
+	CBaseEntity* MedicGetHealTarget( void );
+	float MedicGetChargeLevel( CTFWeaponBase** pRetMedigun = NULL );
+	bool IsCallingForMedic( void ) const;			// return true if this player has called for a Medic in the last few seconds
+	float GetTimeSinceCalledForMedic( void ) const;
 
 	bool ShouldAutoRezoom( void ) { return m_bAutoRezoom; }
 	void SetAutoRezoom( bool bAutoRezoom ) { m_bAutoRezoom = bAutoRezoom; }
@@ -318,6 +330,17 @@ public:
 
 	bool ShouldAnnouceAchievement( void );
 
+	CTriggerAreaCapture* GetControlPointStandingOn( void );
+
+	CTeamControlPoint* SelectClosestControlPointByTravelDistance( CUtlVector< CTeamControlPoint* >* pointVector ) const;
+
+	bool				IsAnyEnemySentryAbleToAttackMe( void );		// return true if any enemy sentry has LOS and is facing me and is in range to attack
+
+	Vector EstimateProjectileImpactPosition( CTFWeaponBaseGun* weapon );				// estimate where a projectile fired from the given weapon will initially hit (it may bounce on from there)
+	Vector EstimateProjectileImpactPosition( float pitch, float yaw, float initVel );	// estimate where a projectile fired will initially hit (it may bounce on from there)
+	Vector EstimateStickybombProjectileImpactPosition( float pitch, float yaw, float charge );	// Estimate where a stickybomb projectile will hit, using given pitch, yaw, and weapon charge (0-1)
+
+
 public:
 
 	CTFPlayerShared m_Shared;
@@ -345,6 +368,9 @@ public:
 	int		no_exit_teleporter_message;
 
 	float	m_flNextNameChangeTime;
+
+	CNetworkVar( bool, m_bIsABot );
+	CNetworkVar( int, m_nBotSkill );
 
 	int					StateGet( void ) const;
 
@@ -384,12 +410,26 @@ public:
 	CTFWeaponBase		*Weapon_OwnsThisID( int iWeaponID );
 	CTFWeaponBase		*Weapon_GetWeaponByType( int iType );
 
-private:
+	bool				IsCapturingPoint( void );
+
+	// Client commands.
+	void				HandleCommand_JoinTeam( const char* pTeamName );
+	void				HandleCommand_JoinClass( const char* pClassName );
+	void				HandleCommand_JoinTeam_NoMenus( const char* pTeamName );
 
 	int					GetAutoTeam( void );
 
+	bool IsThreatAimingTowardMe( CBaseEntity* threat, float cosTolerance = 0.8f ) const;	// return true if the given threat is aiming in our direction
+	bool IsThreatFiringAtMe( CBaseEntity* threat ) const;		// return true if the given threat is aiming in our direction and firing its weapon
+	bool IsInCombat( void ) const;								// return true if we are engaged in active combat
+
+protected:
+	// protected because CTFBot uses these originally private functions
 	// Creation/Destruction.
 	void				InitClass( void );
+	int					GetMaxSpeedHack();
+
+private:
 	void				GiveDefaultItems();
 	bool				SelectSpawnSpot( const char *pEntClassName, CBaseEntity* &pSpot );
 	void				PrecachePlayerModels( void );
@@ -403,11 +443,6 @@ private:
 	// Taunt.
 	EHANDLE				m_hTauntScene;
 	bool				m_bInitTaunt;
-
-	// Client commands.
-	void				HandleCommand_JoinTeam( const char *pTeamName );
-	void				HandleCommand_JoinClass( const char *pClassName );
-	void				HandleCommand_JoinTeam_NoMenus( const char *pTeamName );
 
 	// Bots.
 	friend void			Bot_Think( CTFPlayer *pBot );
@@ -520,6 +555,9 @@ private:
 	bool				m_bAutoRezoom;	// does the player want to re-zoom after each shot for sniper rifles
 	bool				m_bAutoReload;
 
+	IntervalTimer		m_calledForMedicTimer;
+	CountdownTimer		m_placedSapperTimer;
+
 public:
 	bool				SetPowerplayEnabled( bool bOn );
 	bool				PlayerHasPowerplay( void );
@@ -540,11 +578,34 @@ inline CTFPlayer *ToTFPlayer( CBaseEntity *pEntity )
 	return static_cast< CTFPlayer* >( pEntity );
 }
 
+inline void CTFPlayer::OnSapperPlaced( CBaseEntity* sappedObject )
+{
+	m_placedSapperTimer.Start( 3.0f );
+}
+
+inline bool CTFPlayer::IsPlacingSapper( void ) const
+{
+	return !m_placedSapperTimer.IsElapsed();
+}
+
 inline int CTFPlayer::StateGet( void ) const
 {
 	return m_Shared.m_nPlayerState;
 }
 
+inline bool CTFPlayer::IsInCombat( void ) const
+{
+	// the simplest condition is whether we've been firing our weapon very recently
+	return GetTimeSinceWeaponFired() < 2.0f;
+}
 
+inline bool CTFPlayer::IsCallingForMedic( void ) const
+{
+	return m_calledForMedicTimer.HasStarted() && m_calledForMedicTimer.IsLessThen( 5.0f );
+}
 
+inline float CTFPlayer::GetTimeSinceCalledForMedic() const
+{
+	return m_calledForMedicTimer.GetElapsedTime();
+}
 #endif	// TF_PLAYER_H

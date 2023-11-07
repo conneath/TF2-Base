@@ -75,6 +75,8 @@ ConVar  object_deterioration_time( "object_deterioration_time", "30", 0, "Time i
 
 #define OBJ_BASE_THINK_CONTEXT				"BaseObjectThink"
 
+IMPLEMENT_AUTO_LIST( IBaseObjectAutoList );
+
 BEGIN_DATADESC( CBaseObject )
 	// keys 
 	DEFINE_KEYFIELD_NOT_SAVED( m_SolidToPlayers,		FIELD_INTEGER, "SolidToPlayer" ),

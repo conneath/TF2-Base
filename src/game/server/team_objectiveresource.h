@@ -60,6 +60,9 @@ public:
 	void SetCapLayoutInHUD( const char *pszLayout ) { Q_strncpy(m_pszCapLayoutInHUD.GetForModify(), pszLayout, MAX_CAPLAYOUT_LENGTH ); }
 	void SetWarnOnCap( int index, bool bWarn );
 	void SetWarnSound( int index, string_t iszSound );
+	void SetCPLocked( int index, bool bLocked );
+	void SetCPUnlockTime( int index, float flTime );
+	void SetCPTimerTime( int index, float flTime );
 
 	// State functions, called many times
 	void SetNumPlayers( int index, int team, int iNumPlayers );
@@ -127,6 +130,9 @@ private:
 	CNetworkArray(	bool,		m_bInMiniRound,		MAX_CONTROL_POINTS );
 	CNetworkArray(	bool,		m_bWarnOnCap,		MAX_CONTROL_POINTS );
 	CNetworkArray(	string_t,	m_iszWarnSound,		MAX_CONTROL_POINTS );
+	CNetworkArray(  bool,       m_bCPLocked,        MAX_CONTROL_POINTS );
+	CNetworkArray( float, m_flUnlockTimes, MAX_CONTROL_POINTS );
+	CNetworkArray( float, m_flCPTimerTimes, MAX_CONTROL_POINTS );
 
 	// change when players enter/exit an area
 	CNetworkArray(  int,	m_iNumTeamMembers,	MAX_CONTROL_POINTS * MAX_CONTROL_POINT_TEAMS );

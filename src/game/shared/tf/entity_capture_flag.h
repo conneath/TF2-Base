@@ -123,7 +123,8 @@ public:
 //
 // CTF Flag class.
 //
-class CCaptureFlag : public CTFItem
+DECLARE_AUTO_LIST( ICaptureFlagAutoList );
+class CCaptureFlag : public CTFItem, public ICaptureFlagAutoList
 {
 public:
 

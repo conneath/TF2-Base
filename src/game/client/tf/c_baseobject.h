@@ -27,10 +27,12 @@ class C_TFPlayer;
 
 extern mstudioevent_t *GetEventIndexForSequence( mstudioseqdesc_t &seqdesc );
 
+DECLARE_AUTO_LIST( IBaseObjectAutoList );
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-class C_BaseObject : public C_BaseCombatCharacter, public IHasBuildPoints, public ITargetIDProvidesHint
+class C_BaseObject : public C_BaseCombatCharacter, public IHasBuildPoints, public ITargetIDProvidesHint, public IBaseObjectAutoList
 {
 	DECLARE_CLASS( C_BaseObject, C_BaseCombatCharacter );
 public:

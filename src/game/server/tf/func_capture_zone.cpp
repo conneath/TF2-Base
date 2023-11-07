@@ -22,7 +22,7 @@ BEGIN_DATADESC( CCaptureZone )
 DEFINE_KEYFIELD( m_nCapturePoint, FIELD_INTEGER, "CapturePoint" ),
 
 // Functions.
-DEFINE_FUNCTION( Touch ),
+DEFINE_FUNCTION( CCaptureZoneShim::Touch ),
 
 // Inputs.
 DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable ),
@@ -38,6 +38,8 @@ LINK_ENTITY_TO_CLASS( func_capturezone, CCaptureZone );
 
 IMPLEMENT_SERVERCLASS_ST( CCaptureZone, DT_CaptureZone )
 END_SEND_TABLE()
+
+IMPLEMENT_AUTO_LIST( ICaptureZoneAutoList );
 
 //=============================================================================
 //
@@ -63,7 +65,7 @@ void CCaptureZone::Spawn()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void CCaptureZone::Touch( CBaseEntity *pOther )
+void CCaptureZone::ShimTouch( CBaseEntity *pOther )
 {
 	// Is the zone enabled?
 	if ( IsDisabled() )

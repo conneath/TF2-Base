@@ -8,6 +8,7 @@ $Macro SRCDIR		"..\.."
 $Macro GAMENAME 	"tf_mod"
 
 $Include "$SRCDIR\game\server\server_base.vpc"
+$Include "$SRCDIR\game\server\nav_mesh.vpc"
 
 $Linux
 {
@@ -19,7 +20,7 @@ $Configuration
 	$Compiler
 	{
 		$AdditionalIncludeDirectories	"$BASE;$SRCDIR\game\shared\hl2;.\tf;.\tf\vgui;$SRCDIR\game\shared\Multiplayer;$SRCDIR\game\shared\tf"
-		$PreprocessorDefinitions		"$BASE;TF_MOD"
+		$PreprocessorDefinitions		"$BASE;TF_MOD;NEXT_BOT"
 	}
 }
 
@@ -240,8 +241,300 @@ $Project "Server (TF)"
 				$File	"$SRCDIR\game\shared\tf\tf_weaponbase_rocket.cpp"
 				$File	"$SRCDIR\game\shared\tf\tf_weaponbase_rocket.h"
 			}
+			$Folder	"Bot"
+			{
+				$Folder	"Behavior"
+				{
+					$File	"tf\bot\behavior\tf_bot_behavior.cpp"
+					$File	"tf\bot\behavior\tf_bot_behavior.h"
+					$File	"tf\bot\behavior\tf_bot_tactical_monitor.cpp"
+					$File	"tf\bot\behavior\tf_bot_tactical_monitor.h"
+					$File	"tf\bot\behavior\tf_bot_scenario_monitor.cpp"
+					$File	"tf\bot\behavior\tf_bot_scenario_monitor.h"
+					$File	"tf\bot\behavior\tf_bot_attack.cpp"
+					$File	"tf\bot\behavior\tf_bot_attack.h"
+					$File	"tf\bot\behavior\tf_bot_seek_and_destroy.cpp"
+					$File	"tf\bot\behavior\tf_bot_seek_and_destroy.h"
+					$File	"tf\bot\behavior\tf_bot_retreat_to_cover.cpp"
+					$File	"tf\bot\behavior\tf_bot_retreat_to_cover.h"
+					$File	"tf\bot\behavior\tf_bot_melee_attack.cpp"
+					$File	"tf\bot\behavior\tf_bot_melee_attack.h"
+					$File	"tf\bot\behavior\tf_bot_approach_object.cpp"
+					$File	"tf\bot\behavior\tf_bot_approach_object.h"
+					$File	"tf\bot\behavior\tf_bot_get_health.cpp"
+					$File	"tf\bot\behavior\tf_bot_get_health.h"
+					$File	"tf\bot\behavior\tf_bot_get_ammo.cpp"
+					$File	"tf\bot\behavior\tf_bot_get_ammo.h"
+					$File	"tf\bot\behavior\tf_bot_dead.cpp"
+					$File	"tf\bot\behavior\tf_bot_dead.h"
+					$File	"tf\bot\behavior\tf_bot_move_to_vantage_point.cpp"
+					$File	"tf\bot\behavior\tf_bot_move_to_vantage_point.h"
+					$File	"tf\bot\behavior\tf_bot_taunt.cpp"
+					$File	"tf\bot\behavior\tf_bot_taunt.h"
+					$File	"tf\bot\behavior\tf_bot_use_teleporter.cpp"
+					$File	"tf\bot\behavior\tf_bot_use_teleporter.h"
+					$File	"tf\bot\behavior\tf_bot_destroy_enemy_sentry.cpp"
+					$File	"tf\bot\behavior\tf_bot_destroy_enemy_sentry.h"
+					$File	"tf\bot\behavior\tf_bot_escort.cpp"
+					$File	"tf\bot\behavior\tf_bot_escort.h"
+					$File	"tf\bot\behavior\tf_bot_use_item.cpp"
+					$File	"tf\bot\behavior\tf_bot_use_item.h"						
+					
+					$Folder	"Scenario"
+					{
+						$Folder	"CapturePoint"
+						{
+							$File	"tf\bot\behavior\scenario\capture_point\tf_bot_capture_point.cpp"
+							$File	"tf\bot\behavior\scenario\capture_point\tf_bot_capture_point.h"
+							$File	"tf\bot\behavior\scenario\capture_point\tf_bot_defend_point.cpp"
+							$File	"tf\bot\behavior\scenario\capture_point\tf_bot_defend_point.h"
+							$File	"tf\bot\behavior\scenario\capture_point\tf_bot_defend_point_block_capture.cpp"
+							$File	"tf\bot\behavior\scenario\capture_point\tf_bot_defend_point_block_capture.h"
+						}
+
+						$Folder	"Payload"
+						{
+							$File	"tf\bot\behavior\scenario\payload\tf_bot_payload_push.cpp"
+							$File	"tf\bot\behavior\scenario\payload\tf_bot_payload_push.h"
+							$File	"tf\bot\behavior\scenario\payload\tf_bot_payload_block.cpp"
+							$File	"tf\bot\behavior\scenario\payload\tf_bot_payload_block.h"
+							$File	"tf\bot\behavior\scenario\payload\tf_bot_payload_guard.cpp"
+							$File	"tf\bot\behavior\scenario\payload\tf_bot_payload_guard.h"
+						}
+
+						$Folder	"CreepWave"
+						{
+							$File	"tf\bot\behavior\scenario\creep_wave\tf_bot_creep_wave.cpp"
+							$File	"tf\bot\behavior\scenario\creep_wave\tf_bot_creep_wave.h"
+						}
+
+						$Folder	"CaptureTheFlag"
+						{
+							$File	"tf\bot\behavior\scenario\capture_the_flag\tf_bot_fetch_flag.cpp"
+							$File	"tf\bot\behavior\scenario\capture_the_flag\tf_bot_fetch_flag.h"
+							$File	"tf\bot\behavior\scenario\capture_the_flag\tf_bot_deliver_flag.cpp"
+							$File	"tf\bot\behavior\scenario\capture_the_flag\tf_bot_deliver_flag.h"
+							$File	"tf\bot\behavior\scenario\capture_the_flag\tf_bot_escort_flag_carrier.cpp"
+							$File	"tf\bot\behavior\scenario\capture_the_flag\tf_bot_escort_flag_carrier.h"
+							$File	"tf\bot\behavior\scenario\capture_the_flag\tf_bot_attack_flag_defenders.cpp"
+							$File	"tf\bot\behavior\scenario\capture_the_flag\tf_bot_attack_flag_defenders.h"
+						}
+					}
+					
+					$Folder	"Engineer"
+					{
+
+						$File	"tf\bot\behavior\engineer\tf_bot_engineer_build.cpp"
+						$File	"tf\bot\behavior\engineer\tf_bot_engineer_build.h"
+						$File	"tf\bot\behavior\engineer\tf_bot_engineer_move_to_build.cpp"
+						$File	"tf\bot\behavior\engineer\tf_bot_engineer_move_to_build.h"
+						$File	"tf\bot\behavior\engineer\tf_bot_engineer_build_teleport_entrance.cpp"
+						$File	"tf\bot\behavior\engineer\tf_bot_engineer_build_teleport_entrance.h"
+						$File	"tf\bot\behavior\engineer\tf_bot_engineer_build_teleport_exit.cpp"
+						$File	"tf\bot\behavior\engineer\tf_bot_engineer_build_teleport_exit.h"
+						$File	"tf\bot\behavior\engineer\tf_bot_engineer_build_sentrygun.cpp"
+						$File	"tf\bot\behavior\engineer\tf_bot_engineer_build_sentrygun.h"
+						$File	"tf\bot\behavior\engineer\tf_bot_engineer_build_dispenser.cpp"
+						$File	"tf\bot\behavior\engineer\tf_bot_engineer_build_dispenser.h"
+						$File	"tf\bot\behavior\engineer\tf_bot_engineer_building.cpp"
+						$File	"tf\bot\behavior\engineer\tf_bot_engineer_building.h"
+					}
+
+					$Folder	"Medic"
+					{
+						$File	"tf\bot\behavior\medic\tf_bot_medic_heal.cpp"
+						$File	"tf\bot\behavior\medic\tf_bot_medic_heal.h"
+						$File	"tf\bot\behavior\medic\tf_bot_medic_retreat.cpp"
+						$File	"tf\bot\behavior\medic\tf_bot_medic_retreat.h"
+					}
+
+					$Folder	"Sniper"
+					{
+						$File	"tf\bot\behavior\sniper\tf_bot_sniper_attack.cpp"
+						$File	"tf\bot\behavior\sniper\tf_bot_sniper_attack.h"
+						$File	"tf\bot\behavior\sniper\tf_bot_sniper_lurk.cpp"
+						$File	"tf\bot\behavior\sniper\tf_bot_sniper_lurk.h"
+					}
+
+					$Folder	"Spy"
+					{
+						$File	"tf\bot\behavior\spy\tf_bot_spy_infiltrate.cpp"
+						$File	"tf\bot\behavior\spy\tf_bot_spy_infiltrate.h"
+						$File	"tf\bot\behavior\spy\tf_bot_spy_backstab.cpp"
+						$File	"tf\bot\behavior\spy\tf_bot_spy_backstab.h"
+						$File	"tf\bot\behavior\spy\tf_bot_spy_sap.cpp"
+						$File	"tf\bot\behavior\spy\tf_bot_spy_sap.h"
+						$File	"tf\bot\behavior\spy\tf_bot_spy_escape.cpp"
+						$File	"tf\bot\behavior\spy\tf_bot_spy_escape.h"
+						$File	"tf\bot\behavior\spy\tf_bot_spy_attack.cpp"
+						$File	"tf\bot\behavior\spy\tf_bot_spy_attack.h"
+						$File	"tf\bot\behavior\spy\tf_bot_spy_leave_spawn_room.cpp"
+						$File	"tf\bot\behavior\spy\tf_bot_spy_leave_spawn_room.h"
+						$File	"tf\bot\behavior\spy\tf_bot_spy_lurk.cpp"
+						$File	"tf\bot\behavior\spy\tf_bot_spy_lurk.h"
+						$File	"tf\bot\behavior\spy\tf_bot_spy_hide.cpp"
+						$File	"tf\bot\behavior\spy\tf_bot_spy_hide.h"
+					}
+
+					$Folder	"Demoman"
+					{
+						$File	"tf\bot\behavior\demoman\tf_bot_prepare_stickybomb_trap.cpp"
+						$File	"tf\bot\behavior\demoman\tf_bot_prepare_stickybomb_trap.h"
+						$File	"tf\bot\behavior\demoman\tf_bot_stickybomb_sentrygun.cpp"
+						$File	"tf\bot\behavior\demoman\tf_bot_stickybomb_sentrygun.h"
+					}
+					
+					$Folder	"NavEntities"
+					{
+						$File	"tf\bot\behavior\nav_entities\tf_bot_nav_ent_move_to.cpp"
+						$File	"tf\bot\behavior\nav_entities\tf_bot_nav_ent_move_to.h"
+						$File	"tf\bot\behavior\nav_entities\tf_bot_nav_ent_wait.cpp"
+						$File	"tf\bot\behavior\nav_entities\tf_bot_nav_ent_wait.h"
+						$File	"tf\bot\behavior\nav_entities\tf_bot_nav_ent_destroy_entity.cpp"
+						$File	"tf\bot\behavior\nav_entities\tf_bot_nav_ent_destroy_entity.h"
+					}
+					/*
+					$Folder "Training"
+					{
+						$File	"tf\bot\behavior\training\tf_bot_training.cpp"
+						$File	"tf\bot\behavior\training\tf_bot_training.h"
+					}
+					*/
+					$Folder "Missions"
+					{
+						$File	"tf\bot\behavior\missions\tf_bot_mission_destroy_sentries.cpp"
+						$File	"tf\bot\behavior\missions\tf_bot_mission_destroy_sentries.h"
+						$File	"tf\bot\behavior\missions\tf_bot_mission_reprogrammed.cpp"
+						$File	"tf\bot\behavior\missions\tf_bot_mission_reprogrammed.h"
+						$File	"tf\bot\behavior\missions\tf_bot_mission_suicide_bomber.cpp"
+						$File	"tf\bot\behavior\missions\tf_bot_mission_suicide_bomber.h"
+					}
+
+					$Folder "Squad"
+					{
+						$File	"tf\bot\behavior\squad\tf_bot_escort_squad_leader.cpp"
+						$File	"tf\bot\behavior\squad\tf_bot_escort_squad_leader.h"
+					}
+				}
+				
+				$Folder "MapEntities"
+				{
+						$File	"tf\bot\map_entities\tf_bot_generator.cpp"
+						$File	"tf\bot\map_entities\tf_bot_generator.h"
+						$File	"tf\bot\map_entities\tf_bot_proxy.cpp"
+						$File	"tf\bot\map_entities\tf_bot_proxy.h"
+						$File	"tf\bot\map_entities\tf_bot_hint_engineer_nest.cpp"
+						$File	"tf\bot\map_entities\tf_bot_hint_engineer_nest.h"
+						$File	"tf\bot\map_entities\tf_bot_hint_sentrygun.cpp"
+						$File	"tf\bot\map_entities\tf_bot_hint_sentrygun.h"
+						$File	"tf\bot\map_entities\tf_bot_hint_teleporter_exit.cpp"
+						$File	"tf\bot\map_entities\tf_bot_hint_teleporter_exit.h"
+						$File	"tf\bot\map_entities\tf_bot_hint_entity.cpp"
+						$File	"tf\bot\map_entities\tf_bot_hint_entity.h"
+						$File	"tf\bot\map_entities\tf_bot_roster.cpp"
+						$File	"tf\bot\map_entities\tf_bot_roster.h"
+						$File	"tf\bot\map_entities\tf_bot_hint.cpp"
+						$File	"tf\bot\map_entities\tf_bot_hint.h"						
+						$File	"tf\bot\map_entities\tf_spawner_boss.cpp"
+						$File	"tf\bot\map_entities\tf_spawner_boss.h"
+						$File	"tf\bot\map_entities\tf_spawner.cpp"
+						$File	"tf\bot\map_entities\tf_spawner.h"
+				}
+				
+				$File	"tf\bot\tf_bot.cpp"
+				$File	"tf\bot\tf_bot.h"
+				$File	"tf\bot\tf_bot_manager.cpp"
+				$File	"tf\bot\tf_bot_manager.h"
+				$File	"tf\bot\tf_bot_vision.cpp"
+				$File	"tf\bot\tf_bot_vision.h"
+				$File	"tf\bot\tf_bot_body.cpp"
+				$File	"tf\bot\tf_bot_body.h"
+				$File	"tf\bot\tf_bot_squad.cpp"
+				$File	"tf\bot\tf_bot_squad.h"
+				$File	"tf\bot\tf_bot_locomotion.cpp"
+				$File	"tf\bot\tf_bot_locomotion.h"
+			}
+			$Folder "NavMesh"
+			{
+				$File	"tf\nav_mesh\tf_nav_mesh.h"
+				$File	"tf\nav_mesh\tf_nav_mesh.cpp"
+				$File	"tf\nav_mesh\tf_nav_mesh_edit.h"
+				$File	"tf\nav_mesh\tf_nav_mesh_edit.cpp"
+				$File	"tf\nav_mesh\tf_nav_area.h"
+				$File	"tf\nav_mesh\tf_nav_area.cpp"
+				$File	"tf\nav_mesh\tf_path_follower.h"
+				$File	"tf\nav_mesh\tf_path_follower.cpp"
+				$File	"tf\nav_mesh\tf_nav_interface.cpp"
+			}
 		}
 		
+		$Folder "NextBot"
+		{
+			$File	"NextBot\NextBot.cpp"
+			$File	"NextBot\NextBot.h"
+			$File	"NextBot\NextBotBehavior.h"
+			$File	"NextBot\NextBotManager.cpp"
+			$File	"NextBot\NextBotManager.h"
+			$File	"NextBot\NextBotUtil.h"
+			$File	"NextBot\NextBotKnownEntity.h"
+			$File	"NextBot\NextBotGroundLocomotion.cpp"
+			$File	"NextBot\NextBotGroundLocomotion.h"
+			$File	"NextBot\simple_bot.cpp"
+			$File	"NextBot\simple_bot.h"
+
+			$Folder "NextBotInterfaces"
+			{
+				$File	"NextBot\NextBotBodyInterface.cpp"
+				$File	"NextBot\NextBotBodyInterface.h"
+				$File	"NextBot\NextBotComponentInterface.cpp"
+				$File	"NextBot\NextBotComponentInterface.h"
+				$File	"NextBot\NextBotEventResponderInterface.h"
+				$File	"NextBot\NextBotHearingInterface.h"
+				$File	"NextBot\NextBotIntentionInterface.cpp"
+				$File	"NextBot\NextBotIntentionInterface.h"
+				$File	"NextBot\NextBotInterface.cpp"
+				$File	"NextBot\NextBotInterface.h"
+				$File	"NextBot\NextBotLocomotionInterface.cpp"
+				$File	"NextBot\NextBotLocomotionInterface.h"
+				$File	"NextBot\NextBotVisionInterface.cpp"
+				$File	"NextBot\NextBotVisionInterface.h"
+				$File	"NextBot\NextBotContextualQueryInterface.h"
+			}
+
+			$Folder "NextBotPath"
+			{
+				$File	"NextBot\Path\NextBotChasePath.cpp"
+				$File	"NextBot\Path\NextBotChasePath.h"
+				$File	"NextBot\Path\NextBotRetreatPath.h"
+				$File	"NextBot\Path\NextBotPath.cpp"
+				$File	"NextBot\Path\NextBotPath.h"
+				$File	"NextBot\Path\NextBotPathFollow.cpp"
+				$File	"NextBot\Path\NextBotPathFollow.h"
+			}
+			
+			$Folder "NextBotPlayer"
+			{
+				$File	"NextBot\Player\NextBotPlayerBody.cpp"
+				$File	"NextBot\Player\NextBotPlayerBody.h"
+				$File	"NextBot\Player\NextBotPlayerLocomotion.cpp"
+				$File	"NextBot\Player\NextBotPlayerLocomotion.h"
+				$File	"NextBot\Player\NextBotPlayer.cpp"
+				$File	"NextBot\Player\NextBotPlayer.h"
+			}
+
+			$Folder "NextBotCommonBehaviors"
+			{
+				$File	"NextBot\Behavior\BehaviorBackUp.h"
+				$File	"NextBot\Behavior\BehaviorMoveTo.h"
+			}
+
+			$Folder "NextBotNavMeshEntities"
+			{
+				$File	"NextBot\NavMeshEntities\func_nav_prerequisite.cpp"
+				$File	"NextBot\NavMeshEntities\func_nav_prerequisite.h"
+			}
+		}
+
 		$Folder	"IFM"
 		{
 			$File	"$SRCDIR\game\shared\weapon_ifmbase.cpp"

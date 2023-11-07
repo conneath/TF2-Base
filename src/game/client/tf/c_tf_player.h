@@ -352,6 +352,9 @@ public:
 	bool			m_bUpdatePartyHat;
 	CHandle<C_PlayerAttachedModel>	m_hPartyHat;
 
+	bool			m_bIsABot;
+	int				m_nBotSkill;
+
 private:
 
 	float m_flWaterImpactTime;

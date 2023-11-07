@@ -58,6 +58,18 @@ public:
 		m_hTeleportingPlayer = pPlayer;
 	}
 
+	bool IsReady( void )
+	{
+		if (!IsMatchingTeleporterReady())
+			return false;
+
+		return GetState() != TELEPORTER_STATE_BUILDING && !IsUpgrading() && !IsDisabled();
+	}
+	bool IsSendingPlayer( CTFPlayer* pPlayer )
+	{
+		return (GetState() == TELEPORTER_STATE_SENDING && m_hTeleportingPlayer == pPlayer);
+	}
+
 protected:
 	CNetworkVar( int, m_iState );
 	CNetworkVar( float, m_flRechargeTime );

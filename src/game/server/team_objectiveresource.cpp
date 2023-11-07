@@ -316,6 +316,24 @@ float CBaseTeamObjectiveResource::GetCPCapPercentage( int index )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
+void CBaseTeamObjectiveResource::SetCPUnlockTime( int index, float flTime )
+{
+	AssertValidIndex( index );
+	m_flUnlockTimes.Set( index, flTime );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CBaseTeamObjectiveResource::SetCPTimerTime( int index, float flTime )
+{
+	AssertValidIndex( index );
+	m_flCPTimerTimes.Set( index, flTime );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
 void CBaseTeamObjectiveResource::SetTeamCanCap( int index, int iTeam, bool bCanCap )
 {
 	AssertValidIndex(index);
@@ -455,4 +473,12 @@ int CBaseTeamObjectiveResource::GetOwningTeam( int index )
 void CBaseTeamObjectiveResource::UpdateCapHudElement( void )
 {
 	m_iUpdateCapHudParity = (m_iUpdateCapHudParity + 1) & CAPHUD_PARITY_MASK;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CBaseTeamObjectiveResource::SetCPLocked( int index, bool bLocked )
+{
+	m_bCPLocked.Set( index, bLocked );
 }

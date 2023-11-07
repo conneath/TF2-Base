@@ -34,6 +34,8 @@ BEGIN_DATADESC( CTFTeamSpawn )
 
 END_DATADESC()
 
+IMPLEMENT_AUTO_LIST( ITFTeamSpawnAutoList );
+
 LINK_ENTITY_TO_CLASS( info_player_teamspawn, CTFTeamSpawn );
 
 //-----------------------------------------------------------------------------

@@ -45,10 +45,12 @@ if ( object_verbose.GetInt() )									\
 #define TRACE_OBJECT( string )
 #endif
 
+DECLARE_AUTO_LIST( IBaseObjectAutoList );
+
 // ------------------------------------------------------------------------ //
 // Resupply object that's built by the player
 // ------------------------------------------------------------------------ //
-class CBaseObject : public CBaseCombatCharacter, public IHasBuildPoints, public IScorer
+class CBaseObject : public CBaseCombatCharacter, public IHasBuildPoints, public IScorer, public IBaseObjectAutoList
 {
 	DECLARE_CLASS( CBaseObject, CBaseCombatCharacter );
 public:
@@ -106,6 +108,8 @@ public:
 	bool			IsBuilding( void ) { return m_bBuilding; };
 	bool			IsPlacing( void ) { return m_bPlacing; };
 	virtual bool	IsUpgrading( void ) const { return false; }
+	// placeholder
+	virtual bool	IsCarried( void ) const { return false; }
 	bool			MustBeBuiltOnAttachmentPoint( void ) const;
 
 	// Returns information about the various control panels
@@ -225,6 +229,7 @@ public:
 	virtual void		AddValidObjectToBuildPoint( int iPoint, int iObjectType );
 	virtual CBaseObject *GetBuildPointObject( int iPoint );
 	bool				IsBuiltOnAttachment( void ) { return (m_hBuiltOnEntity.Get() != NULL); }
+	CBaseEntity*        GetBuiltOnObject( void ) { return m_hBuiltOnEntity.Get(); }
 	void				AttachObjectToObject( CBaseEntity *pEntity, int iPoint, Vector &vecOrigin );
 	virtual void		DetachObjectFromObject( void );
 	CBaseObject			*GetParentObject( void );

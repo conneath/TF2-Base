@@ -2247,6 +2247,19 @@ string_t CTeamplayRoundBasedRules::GetLastPlayedRound( void )
 	return ( m_iszPreviousRounds.Count() ? m_iszPreviousRounds[0] : NULL_STRING );
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+CTeamRoundTimer* CTeamplayRoundBasedRules::GetActiveRoundTimer( void )
+{
+#ifdef TF_MOD
+	int iTimerEntIndex = ObjectiveResource()->GetTimerInHUD();
+	return (dynamic_cast<CTeamRoundTimer*>(UTIL_EntityByIndex( iTimerEntIndex )));
+#else
+	return NULL;
+#endif
+}
+
 #endif // GAME_DLL
 
 //-----------------------------------------------------------------------------

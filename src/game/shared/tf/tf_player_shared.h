@@ -118,6 +118,9 @@ public:
 	void	UpdateConditions( void );
 #endif
 
+	bool	IsInvulnerable( void );
+	bool	IsStealthed( void );
+
 	void	Disguise( int nTeam, int nClass );
 	void	CompleteDisguise( void );
 	void	RemoveDisguise( void );
@@ -153,6 +156,9 @@ public:
 	int		FindHealerIndex( CTFPlayer *pPlayer );
 	EHANDLE	GetFirstHealer();
 #endif
+
+	bool HealerIsDispenser( int index );
+	CBaseEntity* GetHealerByIndex( int index );
 	int		GetNumHealers( void ) { return m_nNumHealers; }
 
 	void	Burn( CTFPlayer *pPlayer );

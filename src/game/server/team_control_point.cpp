@@ -13,6 +13,9 @@
 #include "mp_shareddefs.h"
 #include "engine/IEngineSound.h"
 #include "soundenvelope.h"
+#include "teamplayroundbased_gamerules.h"
+
+#define CONTROL_POINT_UNLOCK_THINK			"UnlockThink"
 
 BEGIN_DATADESC(CTeamControlPoint)
 	DEFINE_KEYFIELD( m_iszPrintName,			FIELD_STRING,	"point_printname" ),
@@ -65,6 +68,10 @@ CTeamControlPoint::CTeamControlPoint()
 {
 	m_TeamData.SetSize( GetNumberOfTeams() );
 	m_pCaptureInProgressSound = NULL;
+
+	m_bLocked = false;
+	m_flUnlockTime = -1;
+	m_bBotsIgnore = false;
 
 #if defined( TF_DLL ) || defined( TF_MOD )
 	UseClientSideAnimation();
@@ -123,6 +130,8 @@ void CTeamControlPoint::Spawn( void )
 	{
 		AddEffects( EF_NOSHADOW );
 	}
+	
+	m_bBotsIgnore = FBitSet( m_spawnflags, SF_CAP_POINT_BOTS_IGNORE ) > 0;
 
 	m_flLastContestedAt = -1;
 
@@ -852,4 +861,107 @@ void CTeamControlPoint::InputRoundActivate( inputdata_t &inputdata )
 		m_OnRoundStartOwnedByTeam2.FireOutput( this, this );
 		break;
 	}
+
+	InternalSetLocked( m_bLocked );
+}
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTeamControlPoint::InputSetLocked( inputdata_t& inputdata )
+{
+	// never lock/unlock the point if we're in waiting for players
+	if (TeamplayRoundBasedRules() && TeamplayRoundBasedRules()->IsInWaitingForPlayers())
+		return;
+
+	bool bLocked = inputdata.value.Int() > 0;
+	InternalSetLocked( bLocked );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTeamControlPoint::InternalSetLocked( bool bLocked )
+{
+	if (!bLocked && m_bLocked)
+	{
+		// unlocked this point
+		IGameEvent* event = gameeventmanager->CreateEvent( "teamplay_point_unlocked" );
+		if (event)
+		{
+			event->SetInt( "cp", m_iPointIndex );
+			event->SetString( "cpname", STRING( m_iszPrintName ) );
+			event->SetInt( "team", m_iTeam );
+			gameeventmanager->FireEvent( event );
+		}
+	}
+	else if (bLocked && !m_bLocked)
+	{
+		// locked this point
+		IGameEvent* event = gameeventmanager->CreateEvent( "teamplay_point_locked" );
+		if (event)
+		{
+			event->SetInt( "cp", m_iPointIndex );
+			event->SetString( "cpname", STRING( m_iszPrintName ) );
+			event->SetInt( "team", m_iTeam );
+			gameeventmanager->FireEvent( event );
+		}
+	}
+
+	m_bLocked = bLocked;
+
+	if (ObjectiveResource() && GetPointIndex() < ObjectiveResource()->GetNumControlPoints())
+	{
+		ObjectiveResource()->SetCPLocked( GetPointIndex(), m_bLocked );
+		ObjectiveResource()->SetCPUnlockTime( GetPointIndex(), 0.0f );
+	}
+
+	if (!m_bLocked)
+	{
+		m_flUnlockTime = -1;
+		m_OnUnlocked.FireOutput( this, this );
+		SetContextThink( NULL, 0, CONTROL_POINT_UNLOCK_THINK );
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTeamControlPoint::InputSetUnlockTime( inputdata_t& inputdata )
+{
+	// never lock/unlock the point if we're in waiting for players
+	if (TeamplayRoundBasedRules() && TeamplayRoundBasedRules()->IsInWaitingForPlayers())
+		return;
+
+	int nTime = inputdata.value.Int();
+
+	if (nTime <= 0)
+	{
+		InternalSetLocked( false );
+		return;
+	}
+
+	m_flUnlockTime = gpGlobals->curtime + nTime;
+
+	if (ObjectiveResource())
+	{
+		ObjectiveResource()->SetCPUnlockTime( GetPointIndex(), m_flUnlockTime );
+	}
+
+	SetContextThink( &CTeamControlPoint::UnlockThink, gpGlobals->curtime + 0.1, CONTROL_POINT_UNLOCK_THINK );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTeamControlPoint::UnlockThink( void )
+{
+	if (m_flUnlockTime > 0 &&
+		m_flUnlockTime < gpGlobals->curtime &&
+		(TeamplayRoundBasedRules() && TeamplayRoundBasedRules()->State_Get() == GR_STATE_RND_RUNNING))
+	{
+		InternalSetLocked( false );
+		return;
+	}
+
+	SetContextThink( &CTeamControlPoint::UnlockThink, gpGlobals->curtime + 0.1, CONTROL_POINT_UNLOCK_THINK );
 }

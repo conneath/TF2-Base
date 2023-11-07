@@ -16,6 +16,8 @@
 #define SF_CAP_POINT_HIDEFLAG		(1<<0)
 #define SF_CAP_POINT_HIDE_MODEL		(1<<1)
 #define SF_CAP_POINT_HIDE_SHADOW	(1<<2)
+#define SF_CAP_POINT_NO_CAP_SOUNDS	(1<<3)
+#define SF_CAP_POINT_BOTS_IGNORE	(1<<4)
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -47,6 +49,8 @@ public:
 	void		InputShowModel( inputdata_t &input );
 	void		InputHideModel( inputdata_t &input );
 	void		InputRoundActivate( inputdata_t &inputdata );
+	void		InputSetLocked( inputdata_t& inputdata );
+	void		InputSetUnlockTime( inputdata_t& inputdata );
 
 	// Owner handling
 	void		ForceOwner( int iTeam ); // used when selecting a specific round to play
@@ -69,7 +73,7 @@ public:
 	bool		GetWarnOnCap( void ) { return m_bWarnOnCap; }
 	string_t	GetWarnSound( void ) { return m_iszWarnSound; }
 
-	int			GetTeamIcon( int iTeam );
+	// int			GetTeamIcon( int iTeam );
 
 	int			GetCurrentHudIconIndex( void );
 	int			GetHudIconIndexForTeam( int iGameTeam );
@@ -82,6 +86,7 @@ public:
 
 	int			PointValue( void );
 
+	bool        HasBeenContested( void ) const;                         // return true if this point has ever been contested, false if the enemy has never contested this point yet
 	float		LastContestedAt( void );
 	void		SetLastContestedAt( float flTime );
 
@@ -99,10 +104,16 @@ public:
 
 	virtual void StopLoopingSounds( void );
 
+	bool		IsLocked( void ) { return m_bLocked; }
+	bool		ShouldBotsIgnore( void ) { return m_bBotsIgnore; }
+	void EXPORT UnlockThink( void );
+
+	float		GetTeamCapPercentage( int iTeam );
+
 private:
 	void		SendCapString( int iCapTeam, int iNumCappers, int *pCappingPlayers );
 	void		InternalSetOwner( int iCapTeam, bool bMakeSound = true, int iNumCappers = 0, int *iCappingPlayers = NULL );
-	float		GetTeamCapPercentage( int iTeam );
+	void		InternalSetLocked( bool bLocked );
 
 	int			m_iTeam;			
 	int			m_iDefaultOwner;			// Team that initially owns the cap point
@@ -111,6 +122,8 @@ private:
 	string_t	m_iszPrintName;
 	string_t	m_iszWarnSound;				// Sound played if the team needs to be warned about this point being captured
 	bool		m_bRandomOwnerOnRestart;	// Do we want to randomize the owner after a restart?
+	bool		m_bLocked;
+	float		m_flUnlockTime;				// Time to unlock
 
 	// We store a copy of this data for each team, +1 for the un-owned state.
 	struct perteamdata_t
@@ -158,6 +171,8 @@ private:
 	COutputEvent	m_OnRoundStartOwnedByTeam1;
 	COutputEvent	m_OnRoundStartOwnedByTeam2;
 
+	COutputEvent	m_OnUnlocked;
+
 	int			m_bPointVisible;		//should this capture point be visible on the hud?
 	int			m_iPointIndex;			//the mapper set index value of this control point
 
@@ -175,6 +190,16 @@ private:
 	string_t	m_iszCaptureEndSound;
 	string_t	m_iszCaptureInProgress;
 	string_t	m_iszCaptureInterrupted;
+	bool		m_bBotsIgnore;
 };
+
+//-----------------------------------------------------------------------------
+// Purpose: Return true if this point has ever been contested, false if the enemy has never contested this point yet
+//-----------------------------------------------------------------------------
+inline bool CTeamControlPoint::HasBeenContested( void ) const
+{
+	return m_flLastContestedAt > 0.0f;
+}
+
 
 #endif // TEAM_CONTROL_POINT_H

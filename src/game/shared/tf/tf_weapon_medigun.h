@@ -74,7 +74,8 @@ public:
 
 #endif
 
-	float			GetChargeLevel( void ) { return m_flChargeLevel; }
+	float			GetChargeLevel( void ) const { return m_flChargeLevel; }
+	float			GetMinChargeAmount( void ) const { return 0.1f; };
 
 private:
 	bool					FindAndHealTargets( void );

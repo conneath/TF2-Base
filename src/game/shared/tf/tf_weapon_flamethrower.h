@@ -57,7 +57,11 @@ public:
 	virtual void	SecondaryAttack();
 	virtual bool	Lower( void );
 	virtual void	WeaponReset( void );
-
+	// TODO: airblast
+	bool			CanAirBlast( void )
+	{
+		return false;
+	}
 	virtual void	DestroySounds( void );
 
 	Vector GetVisualMuzzlePos();

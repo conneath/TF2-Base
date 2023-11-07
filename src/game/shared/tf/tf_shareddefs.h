@@ -49,6 +49,19 @@ enum
 	NUM_TEAM_ROLES,
 };
 
+// common utility
+inline int GetEnemyTeam( int team )
+{
+	if (team == TF_TEAM_RED)
+		return TF_TEAM_BLUE;
+
+	if (team == TF_TEAM_BLUE)
+		return TF_TEAM_RED;
+
+	// no enemy team
+	return team;
+}
+
 //-----------------------------------------------------------------------------
 // CVar replacements
 //-----------------------------------------------------------------------------
@@ -644,6 +657,7 @@ enum
 enum
 {
 	OBJ_DISPENSER=0,
+	// todo: collapse both teleporter entries into 1 single building
 	OBJ_TELEPORTER_ENTRANCE,
 	OBJ_TELEPORTER_EXIT,
 	OBJ_SENTRYGUN,

@@ -287,6 +287,12 @@ $Project "Client (TF)"
 				$File	"tf\vgui\vgui_rotation_slider.cpp"
 				$File	"tf\vgui\vgui_rotation_slider.h"
 			}
+
+			$Folder	"NextBot"
+			{
+				$File	"NextBot\C_NextBot.cpp"
+				$File	"NextBot\C_NextBot.h"
+			}
 		}
 
 		$Folder	"game_controls"

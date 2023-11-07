@@ -25,6 +25,9 @@ enum
 	SENTRY_LEVEL_3,
 };
 
+#define SENTRY_MAX_RANGE 1100.0f		// magic numbers are evil, people. adding this #define to demystify the value. (MSB 5/14/09)
+#define SENTRY_MAX_RANGE_SQRD 1210000.0f
+
 // ------------------------------------------------------------------------ //
 // Sentrygun object that's built by the player
 // ------------------------------------------------------------------------ //
@@ -63,6 +66,10 @@ public:
 
 	int				GetUpgradeLevel( void ) { return m_iUpgradeLevel; }
 
+	virtual float	GetTimeSinceLastFired( void ) const { return m_timeSinceLastFired.GetElapsedTime(); }
+
+	virtual const QAngle& GetTurretAngles( void ) const { return m_vecCurAngles; }
+
 private:
 
 	// Main think
@@ -100,6 +107,8 @@ private:
 	// Upgrade Level ( 1, 2, 3 )
 	CNetworkVar( int, m_iUpgradeLevel );
 
+	IntervalTimer m_timeSinceLastFired;
+
 	// Rotation
 	int m_iRightBound;
 	int m_iLeftBound;
@@ -129,6 +138,7 @@ private:
 
 	// Target player / object
 	CHandle<CBaseEntity> m_hEnemy;
+	float m_flSentryRange;
 
 	//cached attachment indeces
 	int m_iAttachments[4];

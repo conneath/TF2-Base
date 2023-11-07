@@ -41,6 +41,8 @@ public:
 	virtual int		DrawDebugTextOverlays(void) ;
 	virtual void	SetModel( const char *pModel );
 
+	virtual int		GetAvailableMetal( void ) const;
+
 	void RefillThink( void );
 	void DispenseThink( void );
 
@@ -80,5 +82,10 @@ private:
 
 	DECLARE_DATADESC();
 };
+
+inline int CObjectDispenser::GetAvailableMetal( void ) const
+{
+	return m_iAmmoMetal;
+}
 
 #endif // TF_OBJ_DISPENSER_H
