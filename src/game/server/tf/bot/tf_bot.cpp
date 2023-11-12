@@ -1037,7 +1037,7 @@ void CTFBot::PhysicsSimulate( void )
 	{
 		m_Shared.AddCond( TF_COND_CRITBOOSTED_USER_BUFF );
 	}
-	*/
+	
 	// force my speed to be recalculated to keep squad together and restore speed afterwards
 	TeamFortress_SetSpeed();
 
@@ -1049,7 +1049,7 @@ void CTFBot::PhysicsSimulate( void )
 			LeaveSquad();
 		}
 	}
-
+	*/
 
 	// If we're dead, choose a new class.
 	// We need to do this outside of the behavior system, since changing class can
