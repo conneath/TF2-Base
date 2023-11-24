@@ -2951,6 +2951,7 @@ int CTFPlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 	m_bitsDamageType |= info.GetDamageType();
 
 	bool bIgniting = false;
+	int iPrevHealth = m_iHealth;
 
 	if ( m_takedamage != DAMAGE_EVENTS_ONLY )
 	{
@@ -3024,6 +3025,8 @@ int CTFPlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 	{
 		event->SetInt( "userid", GetUserID() );
 		event->SetInt( "health", max( 0, m_iHealth ) );
+		int iDamageAmount = iPrevHealth - m_iHealth;
+		event->SetInt( "damageamount", iDamageAmount);
 
 		// HLTV event priority, not transmitted
 		event->SetInt( "priority", 5 );	

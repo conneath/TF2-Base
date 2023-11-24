@@ -368,5 +368,19 @@
 	"spec_target_updated"
 	{
 	}
+
+	"player_hurt"
+	{
+		"userid" "short"
+		"health" "short"
+		"attacker" "short"
+		"damageamount" "short"
+		//"custom"	"short"
+		//"crit" "bool"
+		//"minicrit" "bool"
+		//"allseecrit" "bool"
+		//"weaponid" "short"
+		//"bonuseffect" "byte"
+	}
 }
 

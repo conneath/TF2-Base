@@ -127,9 +127,9 @@
 		"NumberFont" "HudSelectionText"
 	}	
 	
-	HudAccount
+	CHudAccountPanel
 	{
-		"fieldName"				"HudAccount"
+		"fieldName"				"CHudAccountPanel"
 		"xpos"					"r162"	[$WIN32]
 		"ypos"					"r152"	[$WIN32]
 		"ypos_minmode"			"r134"	[$WIN32]
@@ -142,6 +142,32 @@
 		"PaintBackgroundType"	"2"
 	}
 	
+	CHealthAccountPanel
+	{
+		"fieldName"				"CHealthAccountPanel"
+		"xpos"					"76"
+		"xpos_minmode"			"61"
+		"ypos"					"r152"
+		"ypos_minmode"			"r134"
+		"wide"					"116"
+		"tall"  				"180"
+		"visible" 				"1"
+		"enabled" 				"1"
+		"PaintBackgroundType"	"2"
+	}
+	
+	CDamageAccountPanel
+	{
+		"fieldName"				"CDamageAccountPanel"
+		"xpos"					"0"
+		"ypos"					"0"
+		"wide"					"f0"
+		"tall"					"480"
+		"visible" 				"1"
+		"enabled" 				"1"
+		"PaintBackgroundType"	"2"
+	}
+
 	DisguiseStatus
 	{
 		"fieldName" "DisguiseStatus"
