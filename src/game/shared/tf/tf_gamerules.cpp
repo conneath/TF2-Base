@@ -1580,10 +1580,11 @@ VoiceCommandMenuItem_t *CTFGameRules::VoiceCommand( CBaseMultiplayerPlayer *pPla
 void CTFGameRules::ChangePlayerName( CTFPlayer *pPlayer, const char *pszNewName )
 {
 	const char *pszOldName = pPlayer->GetPlayerName();
-
-	CReliableBroadcastRecipientFilter filter;
-	UTIL_SayText2Filter( filter, pPlayer, false, "#TF_Name_Change", pszOldName, pszNewName );
-
+	if ( !pPlayer->IsBot() )
+	{
+		CReliableBroadcastRecipientFilter filter;
+		UTIL_SayText2Filter( filter, pPlayer, false, "#TF_Name_Change", pszOldName, pszNewName );
+	}
 	IGameEvent * event = gameeventmanager->CreateEvent( "player_changename" );
 	if ( event )
 	{
