@@ -23,17 +23,18 @@ ActionResult< CTFBot >	CTFBotTaunt::OnStart( CTFBot *me, Action< CTFBot > *prior
 //---------------------------------------------------------------------------------------------
 ActionResult< CTFBot > CTFBotTaunt::Update( CTFBot *me, float interval )
 {
-	/*
+	
 	if ( m_tauntTimer.IsElapsed() )
 	{
 		if ( m_didTaunt )
 		{
 			// Stop taunting after a while
+			/*
 			if ( m_tauntEndTimer.IsElapsed() && me->m_Shared.GetTauntIndex() == TAUNT_LONG )
 			{
 				me->EndLongTaunt();
 			}
-
+			*/
 			if ( me->m_Shared.InCond( TF_COND_TAUNTING ) == false )
 			{
 				return Done( "Taunt finished" );
@@ -41,14 +42,15 @@ ActionResult< CTFBot > CTFBotTaunt::Update( CTFBot *me, float interval )
 		}
 		else
 		{
-			me->HandleTauntCommand();
+			//me->HandleTauntCommand();
+			me->Taunt();
 			// Start a timer to end our taunt in case we're still going after awhile
 			m_tauntEndTimer.Start( RandomFloat( 3.f, 5.f ) );	
 			
 			m_didTaunt = true;
 		}
 	}
-	*/
+	
 	return Continue();
 }
 
