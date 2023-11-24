@@ -1,6 +1,6 @@
 "GameInfo"
 {
-	game	"Team Fortress 2 1.0.1.8 Port"
+	game	"Unnamed TF2 Mod"
 	gamelogo 1
 	type multiplayer_only
 	nomodels 1
