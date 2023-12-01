@@ -160,7 +160,7 @@ bool CTargetID::ShouldDraw( void )
 
 				bReturn = ( pLocalTFPlayer->GetTeamNumber() == TEAM_SPECTATOR || pLocalTFPlayer->IsPlayerClass( TF_CLASS_SPY ) || pLocalTFPlayer->InSameTeam( pEnt ) || bDisguisedEnemy );
 			}
-			else if ( pEnt->IsBaseObject() && pLocalTFPlayer->IsPlayerClass(TF_CLASS_SPY) || pLocalTFPlayer->InSameTeam( pEnt ) )
+			else if ( pEnt->IsBaseObject() && ( pLocalTFPlayer->IsPlayerClass(TF_CLASS_SPY) || pLocalTFPlayer->InSameTeam( pEnt ) ) )
 			{
 				bReturn = true;
 			}
