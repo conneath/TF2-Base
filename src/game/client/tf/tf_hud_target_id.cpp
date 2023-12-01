@@ -158,9 +158,9 @@ bool CTargetID::ShouldDraw( void )
 					bDisguisedEnemy = (ToTFPlayer( pPlayer->m_Shared.GetDisguiseTarget() ) != NULL);
 				}
 
-				bReturn = ( pLocalTFPlayer->GetTeamNumber() == TEAM_SPECTATOR || pLocalTFPlayer->InSameTeam( pEnt ) || bDisguisedEnemy );
+				bReturn = ( pLocalTFPlayer->GetTeamNumber() == TEAM_SPECTATOR || pLocalTFPlayer->IsPlayerClass( TF_CLASS_SPY ) || pLocalTFPlayer->InSameTeam( pEnt ) || bDisguisedEnemy );
 			}
-			else if ( pEnt->IsBaseObject() && pLocalTFPlayer->InSameTeam( pEnt ) )
+			else if ( pEnt->IsBaseObject() && pLocalTFPlayer->IsPlayerClass(TF_CLASS_SPY) || pLocalTFPlayer->InSameTeam( pEnt ) )
 			{
 				bReturn = true;
 			}
@@ -272,6 +272,7 @@ void CTargetID::UpdateID( void )
 		float flHealth = 0;
 		float flMaxHealth = 1;
 		int iMaxBuffedHealth = 0;
+		int iTargetTeam = pEnt->GetTeamNumber();
 
 		// Some entities we always want to check, cause the text may change
 		// even while we're looking at it
@@ -297,6 +298,11 @@ void CTargetID::UpdateID( void )
 			{
 				bDisguisedTarget = true;
 				pDisguiseTarget = ToTFPlayer( pPlayer->m_Shared.GetDisguiseTarget() );
+
+				if ( pLocalTFPlayer->InSameTeam( pEnt ) == false )
+				{
+					iTargetTeam = pPlayer->m_Shared.GetDisguiseTeam();
+				}
 			}
 
 			if ( bDisguisedTarget )
@@ -341,9 +347,9 @@ void CTargetID::UpdateID( void )
 				printFormatString = "#TF_playerid_sameteam";
 				bShowHealth = true;
 			}
-			else if ( pLocalTFPlayer->m_Shared.GetState() == TF_STATE_DYING )
+			else if ( pLocalTFPlayer->m_Shared.GetState() == TF_STATE_DYING || pLocalTFPlayer->IsPlayerClass( TF_CLASS_SPY ) )
 			{
-				// We're looking at an enemy who killed us.
+				// We're looking at an enemy.
 				printFormatString = "#TF_playerid_diffteam";
 				bShowHealth = true;
 			}			
@@ -441,6 +447,13 @@ void CTargetID::UpdateID( void )
 		int iPostNameW, iPostDataW;
 		m_pTargetNameLabel->GetContentSize( iPostNameW, iIgnored );
 		m_pTargetDataLabel->GetContentSize( iPostDataW, iIgnored );
+
+		if ( m_pBGPanel )
+		{
+			m_pBGPanel->SetBGTeam( iTargetTeam );
+			m_pBGPanel->UpdateBGImage();
+			//m_pBGPanel->SetAlpha( tf_hud_target_id_alpha.GetInt() );
+		}
 
 		if ( m_bLayoutOnUpdate || (iPostDataW != iDataW) || (iPostNameW != iNameW) )
 		{

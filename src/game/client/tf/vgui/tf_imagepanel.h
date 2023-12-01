@@ -27,6 +27,7 @@ public:
 
 	virtual void ApplySettings( KeyValues *inResourceData );
 	void UpdateBGImage( void );
+	void SetBGTeam( int iTeam ) { m_iBGTeam = iTeam; }
 
 	virtual Color GetDrawColor( void );
 
