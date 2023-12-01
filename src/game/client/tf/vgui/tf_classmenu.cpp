@@ -34,6 +34,7 @@ using namespace vgui;
 ConVar _cl_classmenuopen( "_cl_classmenuopen", "0", 0, "internal cvar used to tell server when class menu is open" );
 
 // menu buttons are not in the same order as the defines
+/*
 static int iRemapIndexToClass[TF_CLASS_MENU_BUTTONS] = 
 {
 	0,
@@ -50,7 +51,7 @@ static int iRemapIndexToClass[TF_CLASS_MENU_BUTTONS] =
 	0,
 	TF_CLASS_RANDOM
 };
-
+*/
 int GetIndexForClass( int iClass )
 {
 	int iIndex = 0;

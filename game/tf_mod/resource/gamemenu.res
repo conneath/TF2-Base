@@ -18,10 +18,17 @@
 		"command" "OpenPlayerListDialog"
 		"OnlyInGame" "1"
 	} 
+	
 	"4"
 	{
-		"label" "Character Info and Setup"
-		"command" "engine showstatsdlg"
+		"label" "------------------------"
+		"OnlyInGame" "1"
+	}
+	
+	"4"
+	{
+		"label" "#GameUI_GameMenu_CharacterSetup"
+		"command" "engine open_charinfo"
 	}
 	"5"
 	{
@@ -33,45 +40,40 @@
 		"label" "#GameUI_GameMenu_Options"
 		"command" "OpenOptionsDialog"
 	}
-	"7"
+	
+	"4"
 	{
 		"label" "------------------------"
-		"command" " "
 	}
-	"8"
+	
+	"7"
 	{
 		"label" "#GameUI_GameMenu_FindServers" 
 		"command" "OpenServerBrowser"
 	} 
-	"9"
+	"8"
 	{
 		"label" "#GameUI_GameMenu_CreateServer"
 		"command" "OpenCreateMultiplayerGameDialog"
 	}
-	"10"
+	"9"
 	{
 		"label"	"#GameUI_LoadCommentary"
 		"command" "OpenLoadSingleplayerCommentaryDialog"
 	}
 	"11"
 	{
-		"label" "------------------------"
-		"command" " "
-	}
-	"12"
-	{
-		"label" "#GameUI_ReportBug"
-		"command" "engine bug"
-	}
-
-	"13"
-	{
 		"label" "#GameUI_Controller"
 		"command" "OpenControllerDialog"
 		"ConsoleOnly" "1"
 	}
-
-	"14"
+	
+	"4"
+	{
+		"label" "------------------------"
+	}
+	
+	"12"
 	{
 		"label" "#GameUI_GameMenu_Quit"
 		"command" "Quit"

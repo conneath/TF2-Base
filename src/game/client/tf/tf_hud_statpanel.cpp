@@ -756,7 +756,7 @@ ClassStats_t &CTFStatPanel::GetClassStats( int iClass )
 //-----------------------------------------------------------------------------
 void CTFStatPanel::UpdateStatSummaryPanel()
 {
-	GStatsSummaryPanel()->SetStats( m_aClassStats );
+	UpdateStatSummaryPanels( m_aClassStats );
 }
 
 //-----------------------------------------------------------------------------

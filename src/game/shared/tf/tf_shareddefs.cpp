@@ -61,6 +61,39 @@ const char *g_aPlayerClassNames_NonLocalized[] =
 	"Engineer"
 };
 
+int iRemapIndexToClass[TF_CLASS_MENU_BUTTONS] =
+{
+	0,
+		TF_CLASS_SCOUT,
+		TF_CLASS_SOLDIER,
+		TF_CLASS_PYRO,
+		TF_CLASS_DEMOMAN,
+		TF_CLASS_HEAVYWEAPONS,
+		TF_CLASS_ENGINEER,
+		TF_CLASS_MEDIC,
+		TF_CLASS_SNIPER,
+		TF_CLASS_SPY,
+		0,
+		0,
+		TF_CLASS_RANDOM
+};
+
+int GetRemappedMenuIndexForClass( int iClass )
+{
+	int iIndex = 0;
+
+	for ( int i = 0; i < TF_CLASS_MENU_BUTTONS; i++ )
+	{
+		if ( iRemapIndexToClass[i] == iClass )
+		{
+			iIndex = i;
+			break;
+		}
+	}
+
+	return iIndex;
+}
+
 //-----------------------------------------------------------------------------
 // Gametypes.
 //-----------------------------------------------------------------------------

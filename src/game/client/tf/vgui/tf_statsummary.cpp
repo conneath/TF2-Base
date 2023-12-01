@@ -30,6 +30,19 @@ using namespace vgui;
 
 CTFStatsSummaryPanel *g_pTFStatsSummaryPanel = NULL;
 
+CUtlVector<CTFStatsSummaryPanel*> g_vecStatPanels;
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void UpdateStatSummaryPanels( CUtlVector<ClassStats_t>& vecClassStats )
+{
+	for ( int i = 0; i < g_vecStatPanels.Count(); i++ )
+	{
+		g_vecStatPanels[i]->SetStats( vecClassStats );
+	}
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: Returns the global stats summary panel
 //-----------------------------------------------------------------------------
@@ -62,6 +75,7 @@ CTFStatsSummaryPanel::CTFStatsSummaryPanel() : vgui::EditablePanel( NULL, "TFSta
 {
 	m_bControlsLoaded = false;
 	m_bInteractive = false;
+	m_bEmbedded = false;
 	m_xStartLHBar = 0;
 	m_xStartRHBar = 0;
 	m_iBarHeight = 1;
@@ -91,6 +105,16 @@ CTFStatsSummaryPanel::CTFStatsSummaryPanel() : vgui::EditablePanel( NULL, "TFSta
 	ListenForGameEvent( "server_spawn" );
 
 	Reset();
+
+	g_vecStatPanels.AddToTail( this );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+CTFStatsSummaryPanel::~CTFStatsSummaryPanel()
+{
+	g_vecStatPanels.FindAndRemove( this );
 }
 
 //-----------------------------------------------------------------------------
@@ -115,22 +139,34 @@ void CTFStatsSummaryPanel::ShowModal()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
+void CTFStatsSummaryPanel::SetupForEmbedded( void )
+{
+	m_bInteractive = true;
+	m_bEmbedded = true;
+
+	UpdateDialog();
+
+	InvalidateLayout( true, true );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
 void CTFStatsSummaryPanel::PerformLayout()
 {
 	BaseClass::PerformLayout();
 
 #ifndef _X360
+	/*
 	if ( m_pTipLabel && m_pTipText )
 	{
-		m_pTipLabel->SizeToContents();
-		int width = m_pTipLabel->GetWide();
-
-		int x, y, w, t;
-		m_pTipText->GetBounds( x, y, w, t );
-		m_pTipText->SetBounds( x + width, y, w - width, t );
-		m_pTipText->InvalidateLayout( false, true ); // have it re-layout the contents so it's wrapped correctly now that we've changed the size
+		int iX, iY;
+		m_pTipLabel->GetPos( iX, iY );
+		int iTX, iTY;
+		m_pTipText->GetPos( iTX, iTY );
+		m_pTipText->SetPos( iX + m_pTipLabel->GetWide() + XRES( 8 ), iTY );
 	}
-
+	*/
 	if ( m_pNextTipButton )
 	{
 		m_pNextTipButton->SizeToContents();
@@ -196,7 +232,15 @@ void CTFStatsSummaryPanel::ApplySchemeSettings(vgui::IScheme *pScheme)
 	BaseClass::ApplySchemeSettings( pScheme );
 
 	SetProportional( true );
-	LoadControlSettings( "Resource/UI/StatSummary.res" );
+
+	if ( m_bEmbedded )
+	{
+		LoadControlSettings( "Resource/UI/StatSummary_Embedded.res" );
+	}
+	else
+	{
+		LoadControlSettings( "Resource/UI/StatSummary.res" );
+	}
 	m_bControlsLoaded = true;
 
 	// set the background image
@@ -522,7 +566,7 @@ void CTFStatsSummaryPanel::UpdateControls()
 
 #ifndef _X360
 	m_pNextTipButton->SetVisible( m_bInteractive );
-	m_pCloseButton->SetVisible( m_bInteractive );
+	m_pCloseButton->SetVisible( m_bInteractive && !m_bEmbedded );
 #endif
 }
 

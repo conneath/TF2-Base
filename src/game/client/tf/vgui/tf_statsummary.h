@@ -21,6 +21,7 @@ private:
 
 public:
 	CTFStatsSummaryPanel();	 
+	~CTFStatsSummaryPanel();
 
 	virtual void ApplySchemeSettings(vgui::IScheme *pScheme);
 	virtual void OnCommand( const char *command );
@@ -28,6 +29,8 @@ public:
 	virtual void PerformLayout();
 	void SetStats( CUtlVector<ClassStats_t> &vecClassStats );
 	void ShowModal();
+
+	void SetupForEmbedded( void );
 
 	virtual void FireGameEvent( IGameEvent *event );
 private:
@@ -76,6 +79,7 @@ private:
 #endif
 
 	bool m_bInteractive;							// are we in interactive mode
+	bool m_bEmbedded;								// are we embedded in a property sheet?
 	bool m_bControlsLoaded;							// have we loaded controls yet
 	CUtlVector<ClassStats_t> m_aClassStats;			// stats data
 	int m_xStartLHBar;								// x min of bars in left hand bar chart
@@ -97,5 +101,7 @@ private:
 CTFStatsSummaryPanel *GStatsSummaryPanel();
 void DestroyStatsSummaryPanel();
 const char *FormatSeconds( int seconds );
+
+void UpdateStatSummaryPanels( CUtlVector<ClassStats_t>& vecClassStats );
 
 #endif // TF_STATSSUMMARY_H
