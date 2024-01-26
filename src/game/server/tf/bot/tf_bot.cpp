@@ -60,6 +60,7 @@ ConVar tf_bot_suspect_spy_touch_interval( "tf_bot_suspect_spy_touch_interval", "
 ConVar tf_bot_suspect_spy_forget_cooldown( "tf_bot_suspect_spy_forget_cooldown", "5", FCVAR_CHEAT, "How long to consider a suspicious spy as suspicious" );
 
 ConVar tf_bot_debug_tags( "tf_bot_debug_tags", "0", FCVAR_CHEAT, "ent_text will only show tags on bots" );
+ConVar tf_bot_ignore_class_rosters( "tf_bot_ignore_class_rosters", "0", FCVAR_GAMEDLL, "Randomly choose a class instead of situationally" );
 
 extern ConVar tf_bot_sniper_spot_max_count;
 extern ConVar tf_bot_fire_weapon_min_time;
@@ -671,6 +672,10 @@ public:
  */
 const char *CTFBot::GetNextSpawnClassname( void ) const
 {
+	// just choose it randomly
+	if ( tf_bot_ignore_class_rosters.GetBool() )
+		return "random";
+
 	struct ClassSelectionInfo
 	{
 		int m_class;
@@ -706,7 +711,7 @@ const char *CTFBot::GetNextSpawnClassname( void ) const
 		{ TF_CLASS_MEDIC,			4, 4, 1, { 1, 1, 2, 2 } },
 		{ TF_CLASS_SNIPER,			5, 0, 0, { 0, 1, 1, 1 } },
 		{ TF_CLASS_SPY,				5, 0, 0, { 0, 1, 2, 2 } },
-		{ TF_CLASS_ENGINEER,		5, 0, 0, { 1, 1, 1, 1 } },
+		{ TF_CLASS_ENGINEER,		5, 4, 1, { 1, 1, 1, 1 } },
 
 		{ TF_CLASS_UNDEFINED,		0, -1 },
 	};
@@ -780,7 +785,6 @@ const char *CTFBot::GetNextSpawnClassname( void ) const
 			desiredRoster = defenseRoster;
 		}
 	}
-	/*
 	else if ( TFGameRules()->GetGameType() == TF_GAMETYPE_ESCORT )
 	{
 		if ( GetTeamNumber() == TF_TEAM_RED )
@@ -788,7 +792,7 @@ const char *CTFBot::GetNextSpawnClassname( void ) const
 			desiredRoster = defenseRoster;
 		}
 	}
-	*/
+
 	// build vector of classes we can pick from
 	CUtlVector< int > desiredClassVector;
 	CUtlVector< int > allowedClassForBotRosterVector;
@@ -1909,7 +1913,7 @@ void CTFBot::SetupSniperSpotAccumulation( void )
 	VPROF_BUDGET( "CTFBot::SetupSniperSpotAccumulation", "NextBot" );
 
 	CBaseEntity *goalEntity = NULL;
-	/*
+
 	if ( TFGameRules()->GetGameType() == TF_GAMETYPE_ESCORT )
 	{
 		// try to find a payload cart to guard
@@ -1925,7 +1929,7 @@ void CTFBot::SetupSniperSpotAccumulation( void )
 			goalEntity = trainWatcher->GetTrainEntity();
 		}
 	}
-	else*/ if ( TFGameRules()->GetGameType() == TF_GAMETYPE_CP )
+	else if ( TFGameRules()->GetGameType() == TF_GAMETYPE_CP )
 	{
 		goalEntity = GetMyControlPoint();
 	}
@@ -1955,14 +1959,14 @@ void CTFBot::SetupSniperSpotAccumulation( void )
 
 	bool isDefendingPoint = false;
 	CTFNavArea *goalEntityArea = NULL;
-	/*
+
 	if ( TFGameRules()->GetGameType() == TF_GAMETYPE_ESCORT )
 	{
 		// the cart is owned by the invaders
 		isDefendingPoint = ( goalEntity->GetTeamNumber() != myTeam );
 		goalEntityArea = (CTFNavArea *)TheTFNavMesh()->GetNearestNavArea( goalEntity->WorldSpaceCenter(), GETNAVAREA_CHECK_GROUND, 500.0f );
 	}
-	else*/
+	else
 	{
 		isDefendingPoint = ( GetMyControlPoint()->GetOwner() == myTeam );
 		goalEntityArea = TheTFNavMesh()->GetControlPointCenterArea( GetMyControlPoint()->GetPointIndex() );

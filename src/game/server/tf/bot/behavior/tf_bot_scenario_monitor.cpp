@@ -208,7 +208,7 @@ Action< CTFBot > *CTFBotScenarioMonitor::DesiredScenarioAndClassAction( CTFBot *
 		// capture the flag
 		return new CTFBotFetchFlag;
 	}
-	/*
+	
 	else if ( TFGameRules()->GetGameType() == TF_GAMETYPE_ESCORT )
 	{
 		// push the cart
@@ -223,7 +223,7 @@ Action< CTFBot > *CTFBotScenarioMonitor::DesiredScenarioAndClassAction( CTFBot *
 			return new CTFBotPayloadGuard;
 		}
 	}
-	*/
+	
 	else if ( TFGameRules()->GetGameType() == TF_GAMETYPE_CP )
 	{
 		// if we have a point we can capture - do it

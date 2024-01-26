@@ -398,22 +398,48 @@ void CTeamControlPoint::SetOwner( int iCapTeam, bool bMakeSound, int iNumCappers
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CTeamControlPoint::CaptureStart( void )
+void CTeamControlPoint::CaptureStart( int iCapTeam, int iNumCappingPlayers, int* pCappingPlayers )
 {
-	IGameEvent *event = gameeventmanager->CreateEvent( "teamplay_point_startcapture" );
+	int iNumCappers = iNumCappingPlayers;
+
+	float flLastOwnershipChangeTime = -1.f;
+	CBaseEntity* pEnt = gEntList.FindEntityByClassname( NULL, GetControlPointMasterName() );
+	while ( pEnt )
+	{
+		CTeamControlPointMaster* pMaster = dynamic_cast<CTeamControlPointMaster*>(pEnt);
+		if ( pMaster && pMaster->IsActive() )
+		{
+			flLastOwnershipChangeTime = pMaster->GetLastOwnershipChangeTime();
+		}
+		pEnt = gEntList.FindEntityByClassname( pEnt, GetControlPointMasterName() );
+	}
+
+	IGameEvent* event = gameeventmanager->CreateEvent( "teamplay_point_startcapture" );
 	if ( event )
 	{
 		event->SetInt( "cp", m_iPointIndex );
-		event->SetString( "cpname", STRING(m_iszPrintName) );
+		event->SetString( "cpname", STRING( m_iszPrintName ) );
 		event->SetInt( "team", m_iTeam );
+		event->SetInt( "capteam", iCapTeam );
+		event->SetFloat( "captime", gpGlobals->curtime - flLastOwnershipChangeTime );
+
+		// safety check
+		if ( iNumCappers > 8 )
+		{
+			iNumCappers = 8;
+		}
+
+		char cappers[9];	// pCappingPlayers should be max length 8
+		int i;
+		for ( i = 0; i < iNumCappers; i++ )
+		{
+			cappers[i] = (char)pCappingPlayers[i];
+		}
+
+		cappers[i] = '\0';
 
 		// pCappingPlayers is a null terminated list of player indices
-
-		char capper[8];
-
-		Q_snprintf( capper, sizeof( capper ), "%d", entindex() );
-
-		event->SetString( "cappers", capper );
+		event->SetString( "cappers", cappers );
 		event->SetInt( "priority", 7 );
 
 		gameeventmanager->FireEvent( event );
@@ -592,6 +618,7 @@ void CTeamControlPoint::InternalSetOwner( int iCapTeam, bool bMakeSound, int iNu
 		if ( pMaster->IsActive() )
 		{
 			pMaster->CheckWinConditions();
+			pMaster->SetLastOwnershipChangeTime( gpGlobals->curtime );
 		}
 
 		pEnt = gEntList.FindEntityByClassname( pEnt, GetControlPointMasterName() );

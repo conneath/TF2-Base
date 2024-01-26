@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture"	"models\props_vehicles\proto_train001"
+	"$nocull" "1"
+
+}

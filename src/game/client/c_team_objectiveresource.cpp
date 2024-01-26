@@ -70,6 +70,7 @@ IMPLEMENT_CLIENTCLASS_DT_NOBASE(C_BaseTeamObjectiveResource, DT_BaseTeamObjectiv
 	RecvPropArray3( RECVINFO_ARRAY(m_bInMiniRound),		RecvPropBool( RECVINFO(m_bInMiniRound[0]) ) ),
 	RecvPropArray3( RECVINFO_ARRAY(m_bWarnOnCap),		RecvPropBool( RECVINFO(m_bWarnOnCap[0]) ) ),
 	RecvPropArray( RecvPropString( RECVINFO( m_iszWarnSound[0]) ), m_iszWarnSound ),
+	RecvPropArray3( RECVINFO_ARRAY( m_flPathDistance ), RecvPropFloat( RECVINFO( m_flPathDistance[0] ) ) ),
 
 	// state variables
 	RecvPropArray3( RECVINFO_ARRAY(m_iNumTeamMembers),	RecvPropInt( RECVINFO(m_iNumTeamMembers[0]) ) ),
@@ -77,6 +78,7 @@ IMPLEMENT_CLIENTCLASS_DT_NOBASE(C_BaseTeamObjectiveResource, DT_BaseTeamObjectiv
 	RecvPropArray3( RECVINFO_ARRAY(m_iTeamInZone),		RecvPropInt( RECVINFO(m_iTeamInZone[0]) ) ),
 	RecvPropArray3( RECVINFO_ARRAY(m_bBlocked),		RecvPropInt( RECVINFO(m_bBlocked[0]) ) ),
 	RecvPropArray3( RECVINFO_ARRAY(m_iOwner),			RecvPropInt( RECVINFO(m_iOwner[0]), 0, RecvProxy_Owner ) ),
+	RecvPropArray3( RECVINFO_ARRAY( m_bCPCapRateScalesWithPlayers ), RecvPropBool( RECVINFO( m_bCPCapRateScalesWithPlayers[0] ) ) ),
 	RecvPropString( RECVINFO(m_pszCapLayoutInHUD), 0, RecvProxy_CapLayout ),
 END_RECV_TABLE()
 

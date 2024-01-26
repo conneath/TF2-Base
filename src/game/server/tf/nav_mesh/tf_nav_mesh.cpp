@@ -490,13 +490,11 @@ void CTFNavMesh::Update( void )
 			RecomputeInternalData();
 		}
 
-		/* i assume Escort means Payload, which is unimplemented for now
 		if ( TFGameRules()->GetGameType() == TF_GAMETYPE_ESCORT && m_watchCartTimer.IsElapsed() )
 		{
 			// the cart may have moved, recompute new sniper spots
 			m_watchCartTimer.Start( 3.0f );
 		}
-		*/
 	}
 
 	m_priorBotCount = TheNextBots().GetNextBotCount();

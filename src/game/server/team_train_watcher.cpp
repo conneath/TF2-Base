@@ -18,7 +18,7 @@
 #include "props.h"
 #include "physconstraint.h"
 
-#ifdef TF_DLL
+#ifdef TF_MOD
 #include "tf_shareddefs.h"
 #endif
 
@@ -319,7 +319,7 @@ CTeamTrainWatcher::CTeamTrainWatcher()
 	m_hGlowEnt.Set( NULL );
 #endif // GLOWS_ENABLE
 
-#ifdef TF_DLL
+#ifdef TF_MOD
 	ChangeTeam( TF_TEAM_BLUE );
 #else
 	ChangeTeam( TEAM_UNASSIGNED );

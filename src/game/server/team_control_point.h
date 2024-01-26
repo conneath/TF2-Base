@@ -99,7 +99,7 @@ public:
 	virtual void PlayerBlocked( CBaseMultiplayerPlayer *pPlayer );
 
 	void		CaptureEnd( void );
-	void		CaptureStart( void );
+	void		CaptureStart( int iCapTeam, int iNumCappingPlayers, int* pCappingPlayers );
 	void		CaptureInterrupted( bool bBlocked );
 
 	virtual void StopLoopingSounds( void );

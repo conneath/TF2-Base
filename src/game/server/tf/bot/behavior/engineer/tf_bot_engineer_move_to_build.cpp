@@ -77,7 +77,6 @@ void CTFBotEngineerMoveToBuild::CollectBuildAreas( CTFBot *me )
 			pointEnemyIncursion += zoneArea->GetIncursionDistance( enemyTeam );
 		}
 	}
-	/*
 	else if ( TFGameRules()->GetGameType() == TF_GAMETYPE_ESCORT )
 	{
 		CTeamTrainWatcher *trainWatcher;
@@ -104,7 +103,6 @@ void CTFBotEngineerMoveToBuild::CollectBuildAreas( CTFBot *me )
 			}
 		}
 	}
-	*/
 	else
 	{
 		// collect all areas overlapping the point

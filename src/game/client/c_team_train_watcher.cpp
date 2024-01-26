@@ -9,7 +9,7 @@
 #include "igameevents.h"
 #include "c_team_objectiveresource.h"
 
-#ifdef TF_CLIENT_DLL
+#ifdef TF_MOD_CLIENT
 #include "tf_shareddefs.h"
 #include "teamplayroundbased_gamerules.h"
 #endif

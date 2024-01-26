@@ -33,6 +33,8 @@ class CTeamControlPointMaster : public CBaseEntity
 
 	// Derived, game-specific control point masters must override these functions
 public:
+	CTeamControlPointMaster();
+
 	// Used to find game specific entities
 	virtual const char *GetTriggerAreaCaptureName( void ) { return "trigger_capture_area"; }
 	virtual const char *GetControlPointName( void ) { return "team_control_point"; }
@@ -106,9 +108,14 @@ public:
 
 	bool ShouldScorePerCapture( void ){ return m_bScorePerCapture; }
 	bool ShouldPlayAllControlPointRounds( void ){ return m_bPlayAllRounds; }
-	bool FindControlPointRoundToPlay( void ); // checks to see if there are any more rounds to play (but doesn't actually "get" one to play)
+	int NumPlayableControlPointRounds( void ); // checks to see if there are any more rounds to play (but doesn't actually "get" one to play)
 	
 //	void ListRounds( void );
+
+	float GetPartialCapturePointRate( void );
+
+	void SetLastOwnershipChangeTime( float m_flTime ) { m_flLastOwnershipChangeTime = m_flTime; }
+	float GetLastOwnershipChangeTime( void ) { return m_flLastOwnershipChangeTime; }
 
 private:
 	void EXPORT CPMThink( void );
@@ -180,6 +187,9 @@ private:
 
 	COutputEvent m_OnWonByTeam1;
 	COutputEvent m_OnWonByTeam2;
+
+	float m_flPartialCapturePointsRate;
+	float m_flLastOwnershipChangeTime;
 };
 
 extern CUtlVector< CHandle<CTeamControlPointMaster> >		g_hControlPointMasters;

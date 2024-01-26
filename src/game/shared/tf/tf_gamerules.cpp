@@ -29,6 +29,7 @@
 	#include "tf_objective_resource.h"
 	#include "tf_player_resource.h"
 	#include "team_control_point_master.h"
+	#include "team_train_watcher.h"
 	#include "playerclass_info_parse.h"
 	#include "team_control_point_master.h"
 	#include "coordsize.h"
@@ -458,7 +459,7 @@ bool CTFGameRules::CanChangelevelBecauseOfTimeLimit( void )
 	// we're playing mini-rounds, and the master says we need to play all of them before changing (for maps like Dustbowl)
 	if ( !m_bForceMapReset && pMaster && pMaster->PlayingMiniRounds() && pMaster->ShouldPlayAllControlPointRounds() )
 	{
-		if ( pMaster->FindControlPointRoundToPlay() )
+		if ( pMaster->NumPlayableControlPointRounds() > 0 )
 		{
 			return false;
 		}
@@ -515,6 +516,7 @@ void CTFGameRules::Activate()
 
 	m_nGameType.Set( TF_GAMETYPE_UNDEFINED );
 
+	CTeamTrainWatcher* pTrainWatch = dynamic_cast<CTeamTrainWatcher*> (gEntList.FindEntityByClassname( NULL, "team_train_watcher" ));
 	CCaptureFlag *pFlag = dynamic_cast<CCaptureFlag*> ( gEntList.FindEntityByClassname( NULL, "item_teamflag" ) );
 	if ( pFlag )
 	{
@@ -524,6 +526,15 @@ void CTFGameRules::Activate()
 	if ( g_hControlPointMasters.Count() )
 	{
 		m_nGameType.Set( TF_GAMETYPE_CP );
+	}
+
+	if ( pTrainWatch )
+	{
+		m_nGameType.Set( TF_GAMETYPE_ESCORT );
+		//tf_gamemode_payload.SetValue( 1 );
+
+		//CMultipleEscort* pMultipleEscort = dynamic_cast<CMultipleEscort*> (gEntList.FindEntityByClassname( NULL, "tf_logic_multiple_escort" ));
+		//SetMultipleTrains( pMultipleEscort != NULL );
 	}
 }
 
@@ -3374,7 +3385,7 @@ void CTFGameRules::CollectCapturePoints( CBasePlayer* player, CUtlVector< CTeamC
 
 				if (ObjectiveResource()->TeamCanCapPoint( point->GetPointIndex(), player->GetTeamNumber() ))
 				{
-					if (TeamplayGameRules()->TeamMayCapturePoint( player->GetTeamNumber(), point->GetPointIndex() ))
+					if (TFGameRules()->TeamMayCapturePoint( player->GetTeamNumber(), point->GetPointIndex() ))
 					{
 						// unlocked point not on our team available to capture
 						captureVector->AddToTail( point );
@@ -3411,7 +3422,7 @@ void CTFGameRules::CollectDefendPoints( CBasePlayer* player, CUtlVector< CTeamCo
 
 				if (ObjectiveResource()->TeamCanCapPoint( point->GetPointIndex(), GetEnemyTeam( player->GetTeamNumber() ) ))
 				{
-					if (TeamplayGameRules()->TeamMayCapturePoint( GetEnemyTeam( player->GetTeamNumber() ), point->GetPointIndex() ))
+					if (TFGameRules()->TeamMayCapturePoint( GetEnemyTeam( player->GetTeamNumber() ), point->GetPointIndex() ))
 					{
 						// unlocked point on our team vulnerable to capture
 						defendVector->AddToTail( point );
@@ -3479,7 +3490,148 @@ const CUtlVector< CHandle< CBaseEntity > >& CTFGameRules::GetAmmoEntityVector( v
 	return m_ammoVector;
 }
 
-#endif
+//-----------------------------------------------------------------------------
+// Purpose: Return the Payload cart the given team needs to push to win, or NULL if none currently exists
+//-----------------------------------------------------------------------------
+CHandle< CTeamTrainWatcher > CTFGameRules::GetPayloadToPush( int pushingTeam ) const
+{
+	if ( TFGameRules()->GetGameType() != TF_GAMETYPE_ESCORT )
+		return NULL;
+
+	if ( pushingTeam == TF_TEAM_RED )
+	{
+		/*
+		if ( m_redPayloadToPush == NULL )
+		{
+			// find our cart!
+			if ( TFGameRules()->HasMultipleTrains() )
+			{
+				// find the red cart
+			}
+			else
+			{
+				// normal Escort scenario, red always blocks
+				return NULL;
+			}
+		}
+
+		return m_redPayloadToPush;
+		*/
+		return NULL;
+	}
+
+	if ( pushingTeam == TF_TEAM_BLUE )
+	{
+		if ( m_bluePayloadToPush == NULL )
+		{
+			/*
+			if ( TFGameRules()->HasMultipleTrains() )
+			{
+				// find the blue cart
+			}
+			else*/
+			{
+				// only one cart in the map, and we need to push it
+				CTeamTrainWatcher* watcher = NULL;
+				while ( (watcher = dynamic_cast<CTeamTrainWatcher*>(gEntList.FindEntityByClassname( watcher, "team_train_watcher" ))) != NULL )
+				{
+					if ( !watcher->IsDisabled() )
+					{
+						m_bluePayloadToPush = watcher;
+						break;
+					}
+				}
+			}
+		}
+
+		return m_bluePayloadToPush;
+	}
+
+	return NULL;
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Return the Payload cart the given player needs to block from advancing, or NULL if none currently exists
+//-----------------------------------------------------------------------------
+CHandle< CTeamTrainWatcher > CTFGameRules::GetPayloadToBlock( int blockingTeam ) const
+{
+	if ( TFGameRules()->GetGameType() != TF_GAMETYPE_ESCORT )
+		return NULL;
+
+	if ( blockingTeam == TF_TEAM_RED )
+	{
+		if ( m_redPayloadToBlock == NULL )
+		{
+			// find our cart!
+			/*
+			if ( TFGameRules()->HasMultipleTrains() )
+			{
+				// find the red cart
+			}
+			else*/
+			{
+				// normal Escort scenario, red always blocks
+				CTeamTrainWatcher* watcher = NULL;
+				while ( (watcher = dynamic_cast<CTeamTrainWatcher*>(gEntList.FindEntityByClassname( watcher, "team_train_watcher" ))) != NULL )
+				{
+					if ( !watcher->IsDisabled() )
+					{
+						m_redPayloadToBlock = watcher;
+						break;
+					}
+				}
+			}
+		}
+
+		return m_redPayloadToBlock;
+	}
+
+	if ( blockingTeam == TF_TEAM_BLUE )
+	{
+		/*
+		if ( m_bluePayloadToBlock == NULL )
+		{
+			if ( TFGameRules()->HasMultipleTrains() )
+			{
+				// find the blue cart
+			}
+			else
+			{
+				// normal Payload, blue never blocks
+				return NULL;
+			}
+		}
+
+		return m_bluePayloadToBlock;
+		*/
+		return NULL;
+	}
+
+	return NULL;
+}
+
+void CTFGameRules::PlayTrainCaptureAlert( CTeamControlPoint* pPoint, bool bFinalPointInMap )
+{
+	if ( !pPoint )
+		return;
+
+	if ( State_Get() != GR_STATE_RND_RUNNING )
+		return;
+
+	const char* pszAlert = TEAM_TRAIN_ALERT;
+
+	// is this the final control point in the map?
+	if ( bFinalPointInMap )
+	{
+		pszAlert = TEAM_TRAIN_FINAL_ALERT;
+	}
+
+	CBroadcastRecipientFilter filter;
+	pPoint->EmitSound( filter, pPoint->entindex(), pszAlert );
+}
+
+#endif // GAME_DLL
 
 
 #ifdef CLIENT_DLL

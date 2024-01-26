@@ -19,6 +19,8 @@ BEGIN_DATADESC( CTeamControlPointMaster )
 	DEFINE_KEYFIELD( m_bScorePerCapture, FIELD_BOOLEAN, "score_style" ),
 	DEFINE_KEYFIELD( m_bPlayAllRounds, FIELD_BOOLEAN, "play_all_rounds" ),
 
+	DEFINE_KEYFIELD( m_flPartialCapturePointsRate, FIELD_FLOAT, "partial_cap_points_rate" ),
+
 //	DEFINE_FIELD( m_ControlPoints, CUtlMap < int , CTeamControlPoint * > ),
 //	DEFINE_FIELD( m_bFoundPoints, FIELD_BOOLEAN ),
 //	DEFINE_FIELD( m_ControlPointRounds, CUtlVector < CTeamControlPointRound * > ),
@@ -57,6 +59,14 @@ int ControlPointRoundSort( CTeamControlPointRound* const *p1, CTeamControlPointR
 	}
 
 	return -1;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: init
+//-----------------------------------------------------------------------------
+CTeamControlPointMaster::CTeamControlPointMaster()
+{
+	m_flPartialCapturePointsRate = 0.0f;
 }
 
 //-----------------------------------------------------------------------------
@@ -336,8 +346,10 @@ bool CTeamControlPointMaster::PointCanBeCapped( CTeamControlPoint *pPoint )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool CTeamControlPointMaster::FindControlPointRoundToPlay( void )
+int CTeamControlPointMaster::NumPlayableControlPointRounds( void )
 {
+	int nRetVal = 0;
+
 	for ( int i = 0 ; i < m_ControlPointRounds.Count() ; ++i )
 	{
 		CTeamControlPointRound *pRound = m_ControlPointRounds[i];
@@ -347,12 +359,12 @@ bool CTeamControlPointMaster::FindControlPointRoundToPlay( void )
 			if ( pRound->IsPlayable() )
 			{
 				// we found one that's playable
-				return true;
+				nRetVal++;
 			}
 		}
 	}
 
-	return false;
+	return nRetVal;
 }
 
 //-----------------------------------------------------------------------------
@@ -613,7 +625,7 @@ void CTeamControlPointMaster::CheckWinConditions( void )
 			int iWinners = m_ControlPointRounds[m_iCurrentRoundIndex]->CheckWinConditions();
 			if ( iWinners != -1 && iWinners >= FIRST_GAME_TEAM )
 			{
-				bool bForceMapReset = ( FindControlPointRoundToPlay() == false ); // are there any more rounds to play?
+				bool bForceMapReset = ( NumPlayableControlPointRounds() == 0 ); // are there any more rounds to play?
 
 				if ( !bForceMapReset )
 				{
@@ -684,7 +696,7 @@ void CTeamControlPointMaster::InternalSetWinner( int iTeam )
 	if ( m_ControlPointRounds.Count() > 0 )
 	{
 		// if we're playing rounds and there are more to play, don't do a full reset
-		bForceMapReset = ( FindControlPointRoundToPlay() == false );
+		bForceMapReset = ( NumPlayableControlPointRounds() == 0);
 	}
 
 	if ( iTeam == TEAM_UNASSIGNED )
@@ -778,7 +790,7 @@ void CTeamControlPointMaster::InputRoundSpawn( inputdata_t &input )
 	FindControlPointRounds();
 
 	SetBaseControlPoints();
-
+	/*
 	// init the ClientAreas
 	int index = 0;
 	
@@ -792,7 +804,7 @@ void CTeamControlPointMaster::InputRoundSpawn( inputdata_t &input )
 
 		pEnt = gEntList.FindEntityByClassname( pEnt, GetTriggerAreaCaptureName() );
 	}
-	
+	*/
 	ObjectiveResource()->ResetControlPoints();
 }
 
@@ -1209,6 +1221,15 @@ int CTeamControlPointMaster::CalcNumRoundsRemaining( int iTeam )
 
 	return iRoundsRemaining;
 }
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+float CTeamControlPointMaster::GetPartialCapturePointRate( void )
+{
+	return m_flPartialCapturePointsRate;
+}
+
 /*
 //-----------------------------------------------------------------------------
 // Purpose: 

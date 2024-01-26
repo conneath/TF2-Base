@@ -48,7 +48,6 @@ ActionResult< CTFBot >	CTFBotPayloadBlock::Update( CTFBot *me, float interval )
 	if ( m_repathTimer.IsElapsed() )
 	{
 		VPROF_BUDGET( "CTFBotPayloadBlock::Update( repath )", "NextBot" );
-		/*
 		CTeamTrainWatcher *trainWatcher = TFGameRules()->GetPayloadToBlock( me->GetTeamNumber() );
 		if ( !trainWatcher )
 		{
@@ -64,7 +63,6 @@ ActionResult< CTFBot >	CTFBotPayloadBlock::Update( CTFBot *me, float interval )
 		CTFBotPathCost cost( me, DEFAULT_ROUTE );
 		m_path.Compute( me, cart->WorldSpaceCenter(), cost );
 		m_repathTimer.Start( RandomFloat( 0.2f, 0.4f ) );
-		*/
 	}
 
 	// move towards next capture point

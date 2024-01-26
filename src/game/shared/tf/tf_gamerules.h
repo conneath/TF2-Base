@@ -46,6 +46,8 @@
 
 #endif
 
+class CTeamTrainWatcher;
+
 extern ConVar	tf_avoidteammates;
 
 extern Vector g_TFClassViewVectors[];
@@ -163,6 +165,8 @@ public:
 
 	bool			ShouldScorePerRound( void );
 
+	virtual void	PlayTrainCaptureAlert( CTeamControlPoint* pPoint, bool bFinalPointInMap );
+
 	// populate vector with set of control points the player needs to capture
 	virtual void CollectCapturePoints( CBasePlayer* player, CUtlVector< CTeamControlPoint* >* captureVector ) const;
 
@@ -171,6 +175,9 @@ public:
 
 	const CUtlVector< CHandle< CBaseEntity > >& GetHealthEntityVector( void );		// return vector of health entities 
 	const CUtlVector< CHandle< CBaseEntity > >& GetAmmoEntityVector( void );		// return vector of ammo entities 
+
+	CHandle< CTeamTrainWatcher > GetPayloadToPush( int pushingTeam ) const;			// return the train watcher for the Payload cart the given team needs to push to win, or NULL if none currently exists
+	CHandle< CTeamTrainWatcher > GetPayloadToBlock( int blockingTeam ) const;		// return the train watcher for the Payload cart the given team needs to block from advancing, or NULL if none currently exists
 
 protected:
 	virtual void	InitTeams( void );
@@ -323,6 +330,9 @@ private:
 
 	CUtlVector< CHandle< CBaseEntity > > m_healthVector;		// vector of active health entities
 	bool m_isHealthVectorReady;									// for lazy evaluation
+
+	mutable CHandle< CTeamTrainWatcher > m_bluePayloadToPush;
+	mutable CHandle< CTeamTrainWatcher > m_redPayloadToBlock;
 
 #endif
 

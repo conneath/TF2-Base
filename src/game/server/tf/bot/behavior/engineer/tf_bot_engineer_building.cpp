@@ -219,7 +219,6 @@ bool CTFBotEngineerBuilding::CheckIfSentryIsOutOfPosition( CTFBot *me ) const
 	}
 
 	// payload
-	/*
 	if ( TFGameRules()->GetGameType() == TF_GAMETYPE_ESCORT )
 	{
 		CTeamTrainWatcher *trainWatcher;
@@ -242,7 +241,7 @@ bool CTFBotEngineerBuilding::CheckIfSentryIsOutOfPosition( CTFBot *me ) const
 			return ( trainWatcher->GetTrainDistanceAlongTrack() > sentryDistanceAlongPath + behindTrainTolerance );
 		}
 	}
-	*/
+
 	// control points
 	mySentry->UpdateLastKnownArea();
 	CNavArea *sentryArea = mySentry->GetLastKnownArea();

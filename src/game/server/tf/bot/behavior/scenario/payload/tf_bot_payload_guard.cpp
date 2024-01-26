@@ -45,7 +45,6 @@ ActionResult< CTFBot >	CTFBotPayloadGuard::Update( CTFBot *me, float interval )
 		// prepare to fight
 		me->EquipBestWeaponForThreat( threat );
 	}
-	/*
 	CTeamTrainWatcher *trainWatcher = TFGameRules()->GetPayloadToBlock( me->GetTeamNumber() );
 	if ( !trainWatcher )
 	{
@@ -121,7 +120,6 @@ ActionResult< CTFBot >	CTFBotPayloadGuard::Update( CTFBot *me, float interval )
 			return SuspendFor( new CTFBotPrepareStickybombTrap, "Laying sticky bombs!" );
 		}
 	}
-	*/
 	return Continue();
 }
 

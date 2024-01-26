@@ -382,5 +382,40 @@
 		//"weaponid" "short"
 		//"bonuseffect" "byte"
 	}
+
+	"escort_speed"
+	{
+		"team"		"byte"			// which team
+		"speed"		"byte"
+		"players"	"byte"
+	}
+	
+	"escort_progress"
+	{
+		"team"		"byte"			// which team
+		"progress"	"float"
+		"reset"		"bool"
+	}
+
+	"escort_recede"
+	{
+		"team"			"byte"		// which team
+		"recedetime"	"float"
+	}
+
+
+	"gameui_activated"
+	{
+	}
+	
+	"gameui_hidden"
+	{
+	}
+	
+	"player_escort_score"
+	{
+		"player"	"byte"
+		"points"	"byte"
+	}
 }
 

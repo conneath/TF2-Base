@@ -50,7 +50,6 @@ ActionResult< CTFBot >	CTFBotPayloadPush::Update( CTFBot *me, float interval )
 
 		return Continue();
 	}
-	/*
 	CTeamTrainWatcher *trainWatcher = TFGameRules()->GetPayloadToPush( me->GetTeamNumber() );
 	if ( !trainWatcher )
 	{
@@ -94,7 +93,6 @@ ActionResult< CTFBot >	CTFBotPayloadPush::Update( CTFBot *me, float interval )
 
 	// push the cartTrigger
 	m_path.Update( me );
-	*/
 	return Continue();
 }
 

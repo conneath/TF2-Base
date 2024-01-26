@@ -627,6 +627,7 @@ CTFHudObjectiveStatus::CTFHudObjectiveStatus( const char *pElementName ) : CHudE
 
 	m_pFlagPanel = new CTFHudFlagObjectives( this, "ObjectiveStatusFlagPanel" );
 	m_pTimePanel = new CTFHudTimeStatus( this, "ObjectiveStatusTimePanel" );
+	m_pEscortPanel = new CTFHudEscort( this, "ObjectiveStatusEscort" );
 	m_pControlPointIconsPanel = NULL;
 	m_pControlPointProgressBar = new CControlPointProgressBar( this );
 
@@ -669,6 +670,11 @@ void CTFHudObjectiveStatus::Reset()
 	{
 		m_pFlagPanel->Reset();
 	}
+
+	if ( m_pEscortPanel )
+	{
+		m_pEscortPanel->Reset();
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -701,6 +707,12 @@ void CTFHudObjectiveStatus::SetVisiblePanels( void )
 		{
 			m_pControlPointIconsPanel->SetVisible( false );
 		}
+
+		// turn off the escort panel
+		if ( m_pEscortPanel && m_pEscortPanel->IsVisible() )
+		{
+			m_pEscortPanel->SetVisible( false );
+		}
 	}
 	else if ( TFGameRules()->GetGameType() == TF_GAMETYPE_CP )
 	{
@@ -715,6 +727,32 @@ void CTFHudObjectiveStatus::SetVisiblePanels( void )
 		{
 			m_pFlagPanel->SetVisible( false );
 		}
+
+		// turn off the escort panel
+		if ( m_pEscortPanel && m_pEscortPanel->IsVisible() )
+		{
+			m_pEscortPanel->SetVisible( false );
+		}
+	}
+	else if ( TFGameRules()->GetGameType() == TF_GAMETYPE_ESCORT )
+	{
+		// turn on the escort panel
+		if ( m_pEscortPanel && !m_pEscortPanel->IsVisible() ) // intentionally skipping EscortPanel version of IsVisible() to bypass the !m_bHaveValidPointPositions check
+		{
+			m_pEscortPanel->SetVisible( true );
+		}
+
+		// turn off the flag panel
+		if ( m_pFlagPanel && m_pFlagPanel->IsVisible() )
+		{
+			m_pFlagPanel->SetVisible( false );
+		}
+
+		// turn off the control point icons
+		if ( m_pControlPointIconsPanel && m_pControlPointIconsPanel->IsVisible() )
+		{
+			m_pControlPointIconsPanel->SetVisible( false );
+		}
 	}
 	else
 	{
@@ -728,6 +766,12 @@ void CTFHudObjectiveStatus::SetVisiblePanels( void )
 		if ( m_pControlPointIconsPanel && m_pControlPointIconsPanel->IsVisible() )
 		{
 			m_pControlPointIconsPanel->SetVisible( false );
+		}
+
+		// turn off the escort panel
+		if ( m_pEscortPanel && m_pEscortPanel->IsVisible() )
+		{
+			m_pEscortPanel->SetVisible( false );
 		}
 	}
 }

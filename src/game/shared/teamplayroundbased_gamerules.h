@@ -14,6 +14,7 @@
 #include "teamplay_round_timer.h"
 
 #ifdef GAME_DLL
+#include "team_control_point.h"
 	extern ConVar mp_respawnwavetime;
 	extern ConVar mp_showroundtransitions;
 	extern ConVar mp_enableroundwaittime;
@@ -238,6 +239,8 @@ public:
 	bool IsGameUnderTimeLimit( void );
 
 	CTeamRoundTimer* GetActiveRoundTimer( void );
+
+	virtual void PlayTrainCaptureAlert( CTeamControlPoint* pPoint, bool bFinalPointInMap ) { return; }
 
 protected:
 	virtual void Think( void );

@@ -1,0 +1,20 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models\weapons\w_bonesaw\w_ubersaw"
+
+	"$phong" "1"
+	"$phongexponent" "30"
+	"$phongboost" "10"	
+	"$lightwarptexture" "models\lightwarps\weapon_lightwarp"
+	"$phongfresnelranges" "[0.25 0.5 1]"
+	"$basemapalphaphongmask" "1"
+
+	"$rimlight" "1"
+	"$rimlightexponent" "4"	
+	"$rimlightboost" "2"
+
+	"$selfillum" "1"
+	"$selfillumtint" "[1 .2 0]"
+
+
+}

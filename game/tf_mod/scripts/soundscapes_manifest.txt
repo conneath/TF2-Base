@@ -12,5 +12,5 @@ soundscapes_manifest
 		"file"		"scripts/soundscapes_gravelpit.txt"
 		"file"		"scripts/soundscapes_hydro.txt"
 		"file"		"scripts/soundscapes_granary.txt"
-
+		"file"		"scripts/soundscapes_goldrush.txt"
 }

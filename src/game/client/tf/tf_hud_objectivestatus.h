@@ -14,6 +14,7 @@
 #include "tf_controls.h"
 #include "tf_imagepanel.h"
 #include "tf_hud_flagstatus.h"
+#include "tf_hud_escort.h"
 #include "hud_controlpointicons.h"
 #include "GameEventListener.h"
 #include "c_tf_player.h"
@@ -157,6 +158,7 @@ private:
 	CTFHudTimeStatus		*m_pTimePanel;
 	CHudControlPointIcons	*m_pControlPointIconsPanel;
 	CControlPointProgressBar *m_pControlPointProgressBar;
+	CTFHudEscort* m_pEscortPanel;
 };
 
 #endif	// TF_HUD_OBJECTIVESTATUS_H
