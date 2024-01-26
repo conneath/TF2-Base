@@ -1,7 +1,9 @@
-Unnamed TF2 Mod
+Unnamed TF2 Mod (Gold Rush update-like?)
 =====
 
-terrible tf_port/live tf2 leak code frankenstein, as of writing the major addition is TFBots, w/ some other smaller changes like autoreload and combattext/hitsounds
+terrible tf_port/live tf2 leak code frankenstein, as of writing the major additions are TFBots and the Payload gamemode, w/ some other smaller changes like autoreload and combattext/hitsounds
+
+Charinfo panel is also there as a WIP, the loadout panels aren't implemented yet (neither is econ or anything else thats related lol)
 
 ## Building
 
