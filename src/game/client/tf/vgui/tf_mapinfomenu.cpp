@@ -519,6 +519,7 @@ static s_MapInfo s_Maps[] = {
 	{	"cp_gravelpit", "Gravel Pit",	"#TF_AttackDefend",		},
 	{	"tc_hydro",		"Hydro",		"#TF_TerritoryControl",	},
 	{	"ctf_well",		"Well (CTF)",	"#Gametype_CTF",		},
+	{   "pl_goldrush",  "Gold Rush",    "#Gametype_Escort",     },
 };
 
 //-----------------------------------------------------------------------------
@@ -563,7 +564,8 @@ const char *GetMapDisplayName( const char *mapName )
 	// we haven't found a "friendly" map name, so let's just clean up what we have
 	if ( !Q_strncmp( szTempName, "cp_", 3 ) ||
 		 !Q_strncmp( szTempName, "tc_", 3 ) ||
-		 !Q_strncmp( szTempName, "ad_", 3 ) )
+		 !Q_strncmp( szTempName, "ad_", 3 ) || 
+		 !Q_strncmp( szTempName, "pl_", 3 ) )
 	{
 		pszSrc = szTempName + 3;
 	}
