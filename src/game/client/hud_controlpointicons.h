@@ -61,6 +61,7 @@ public:
 	virtual void PerformLayout( void );
 	virtual void Paint( void );
 	virtual bool IsVisible( void );
+	virtual void Reset( void );
 
 	void SetupForPoint( CControlPointIcon *pIcon );
 	void UpdateBarText( void );

@@ -928,11 +928,11 @@ void CHudControlPointIcons::UpdateProgressBarFor( int iIndex )
 	if ( pStatus && pStatus->GetControlPointProgressBar() )
 	{
 		CControlPointProgressBar *pProgressBar = pStatus->GetControlPointProgressBar();
-		if ( iIndex < 0 || iIndex >= ObjectiveResource()->GetNumControlPoints() )
+		if ( !IsVisible() || iIndex < 0 || iIndex >= ObjectiveResource()->GetNumControlPoints() )
 		{
 			pProgressBar->SetupForPoint( NULL );
 		}
-		else 
+		else
 		{
 			for (int i = 0; i < m_Icons.Count(); i++)
 			{
@@ -989,6 +989,18 @@ void CHudControlPointIcons::ShutdownIcons( void )
 		m_Icons[i]->MarkForDeletion();
 	}
 	m_Icons.RemoveAll();
+
+	// if we remove all the icons, we need to make sure the progress bar isn't holding onto one
+	CTFHudObjectiveStatus* pStatus = GET_HUDELEMENT( CTFHudObjectiveStatus );
+	if ( pStatus )
+	{
+		CControlPointProgressBar* pProgressBar = pStatus->GetControlPointProgressBar();
+		if ( pProgressBar )
+		{
+			m_iCurrentCP = -1;
+			pProgressBar->SetupForPoint( NULL );
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -1173,6 +1185,14 @@ void CControlPointProgressBar::PerformLayout( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
+void CControlPointProgressBar::Reset( void )
+{
+	m_pAttachedToIcon = NULL;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
 bool CControlPointProgressBar::IsVisible( void )
 {
 	if ( IsInFreezeCam() == true )
@@ -1180,6 +1200,11 @@ bool CControlPointProgressBar::IsVisible( void )
 
 	if ( m_iMidGroupIndex != -1 && gHUD.IsRenderGroupLockedFor( NULL, m_iMidGroupIndex ) )
 		return false;
+
+#ifdef TF_MOD_CLIENT
+	if ( TFGameRules()->GetGameType() == TF_GAMETYPE_ESCORT ) // conneath: hack so that we don't get duplicate teardrops on escort HUD sometimes
+		return false;
+#endif
 
 	return BaseClass::IsVisible();
 }

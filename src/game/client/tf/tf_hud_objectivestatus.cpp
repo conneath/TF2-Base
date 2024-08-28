@@ -675,6 +675,11 @@ void CTFHudObjectiveStatus::Reset()
 	{
 		m_pEscortPanel->Reset();
 	}
+
+	if ( m_pControlPointProgressBar )
+	{
+		m_pControlPointProgressBar->Reset();
+	}
 }
 
 //-----------------------------------------------------------------------------
