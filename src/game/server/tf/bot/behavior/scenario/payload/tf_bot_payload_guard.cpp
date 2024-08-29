@@ -193,7 +193,7 @@ EventDesiredResult< CTFBot > CTFBotPayloadGuard::OnTerritoryLost( CTFBot *me, in
 //---------------------------------------------------------------------------------------------
 QueryResultType	CTFBotPayloadGuard::ShouldRetreat( const INextBot *bot ) const
 {
-	/*
+	
 	CTFBot *me = ToTFBot( bot->GetEntity() );
 
 	CTeamTrainWatcher *trainWatcher = TFGameRules()->GetPayloadToBlock( me->GetTeamNumber() );
@@ -202,7 +202,7 @@ QueryResultType	CTFBotPayloadGuard::ShouldRetreat( const INextBot *bot ) const
 		// don't retreat if the cart is almost at the next checkpoint
 		return ANSWER_NO;
 	}
-	*/
+	
 	return ANSWER_UNDEFINED;
 }
 

@@ -333,9 +333,7 @@ CON_COMMAND_F( tf_bot_add, "Add a bot.", FCVAR_GAMEDLL )
 
 	// cvar can override classname
 	classname = FStrEq( tf_bot_force_class.GetString(), "" ) ? classname : tf_bot_force_class.GetString();
-	// GetClassIndexFromString is not implemented yet and i just want to get this working Right Now
-	// int iClassIndex = classname ? GetClassIndexFromString( classname ) : TF_CLASS_UNDEFINED;
-	int iClassIndex = TF_CLASS_UNDEFINED;
+	int iClassIndex = classname ? GetClassIndexFromString( classname ) : TF_CLASS_UNDEFINED;
 
 	int iTeam = TEAM_UNASSIGNED;
 	if ( FStrEq( teamname, "red" ) )

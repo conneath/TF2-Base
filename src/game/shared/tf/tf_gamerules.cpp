@@ -405,6 +405,8 @@ CTFGameRules::CTFGameRules()
 	Q_snprintf( szCommand, sizeof( szCommand ), "exec %s.cfg\n", STRING( gpGlobals->mapname ) );
 	engine->ServerCommand( szCommand );
 
+	m_areHealthAndAmmoVectorsReady = false;
+
 #else // GAME_DLL
 
 	ListenForGameEvent( "game_newmap" );
@@ -704,6 +706,10 @@ void CTFGameRules::SetupOnRoundStart( void )
 	}
 
 	// All entities have been spawned, now activate them
+	m_areHealthAndAmmoVectorsReady = false;
+	m_ammoVector.RemoveAll();
+	m_healthVector.RemoveAll();
+
 	pEnt = gEntList.FirstEnt();
 	while( pEnt )
 	{
