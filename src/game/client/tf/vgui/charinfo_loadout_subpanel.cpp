@@ -296,13 +296,13 @@ CCharInfoLoadoutSubPanel::CCharInfoLoadoutSubPanel( Panel* parent ) : vgui::Prop
 
 	m_iOverSubButton = -1;
 
-	//m_pClassLoadoutPanel = new CClassLoadoutPanel( this );
+	m_pClassLoadoutPanel = new CClassLoadoutPanel( this );
 	m_pSelectLabel = NULL;
 	m_pLoadoutChangesLabel = NULL;
 	m_pNoSteamLabel = NULL;
 	m_pNoGCLabel = NULL;
 	m_pClassLabel = NULL;
-	//m_pItemsLabel = NULL;
+	m_pItemsLabel = NULL;
 	m_bSnapClassLayout = false;
 	m_bClassLayoutDirty = false;
 	m_bRequestingInventoryRefresh = false;
@@ -340,13 +340,13 @@ void CCharInfoLoadoutSubPanel::ApplySchemeSettings( vgui::IScheme* pScheme )
 	{
 		m_pClassLabel->GetPos( ignored, m_iClassLabelYPos );
 	}
-	/*
-	m_pItemsLabel = dynamic_cast<CExLabel*>(FindChildByName( "ItemsLabel" ));
+	
+	m_pItemsLabel = dynamic_cast<vgui::Label*>(FindChildByName( "ItemsLabel" ));
 	if ( m_pItemsLabel )
 	{
 		m_pItemsLabel->GetPos( ignored, m_iItemLabelYPos );
 	}
-	*/
+	
 	// Start classes sized as if the mouse is in the middle of the screen
 	m_iMouseXPos = -1;
 	m_bSnapClassLayout = true;
@@ -392,7 +392,7 @@ void CCharInfoLoadoutSubPanel::OnSelectionEnded( void )
 //-----------------------------------------------------------------------------
 void CCharInfoLoadoutSubPanel::OnCancelSelection( void )
 {
-	//PostMessage( m_pClassLoadoutPanel, new KeyValues( "CancelSelection" ) );
+	PostMessage( m_pClassLoadoutPanel, new KeyValues( "CancelSelection" ) );
 	RequestFocus();
 }
 
@@ -404,11 +404,21 @@ void CCharInfoLoadoutSubPanel::OnCharInfoClosing( void )
 }
 
 //-----------------------------------------------------------------------------
+// Purpose: conn - When CClassLoadoutPanel closes, set our index to undefined to continue OnTick
+//-----------------------------------------------------------------------------
+void CCharInfoLoadoutSubPanel::OnLoadoutClosed( void )
+{
+	m_iCurrentClassIndex = TF_CLASS_UNDEFINED;
+	UpdateModelPanels();
+	RequestFocus();
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
 void CCharInfoLoadoutSubPanel::OnCommand( const char* command )
 {
-	/*
+	
 	if ( !Q_strnicmp( command, "loadout ", 8 ) )
 	{
 		// Ignore selection while we don't have a steam connection
@@ -416,7 +426,7 @@ void CCharInfoLoadoutSubPanel::OnCommand( const char* command )
 		if ( !TFInventoryManager()->GetLocalTFInventory()->RetrievedInventoryFromSteam() )
 			return;
 		*/
-	/*
+	
 		m_flStartExplanationsAt = 0;
 
 		const char* pszClass = command + 8;
@@ -430,7 +440,7 @@ void CCharInfoLoadoutSubPanel::OnCommand( const char* command )
 			}
 		}
 	}
-	else*/
+	else
 	{
 		engine->ClientCmd( const_cast<char*>(command) );
 	}
@@ -506,7 +516,6 @@ void CCharInfoLoadoutSubPanel::OpenSubPanel( charinfo_activepanels_t iPanel )
 //-----------------------------------------------------------------------------
 void CCharInfoLoadoutSubPanel::UpdateModelPanels( bool bOpenClassLoadout )
 {
-	/*
 	int iLabelClassToSet = -1;
 	int iClassIndexToSet = 0;
 	
@@ -529,7 +538,6 @@ void CCharInfoLoadoutSubPanel::UpdateModelPanels( bool bOpenClassLoadout )
 		m_bClassLayoutDirty = true;
 		InvalidateLayout();
 	}
-	*/
 }
 
 //-----------------------------------------------------------------------------
@@ -704,7 +712,11 @@ void CCharInfoLoadoutSubPanel::UpdateLabelFromClass( int nClass )
 
 	if ( m_pItemsLabel )
 	{
-		//m_pItemsLabel->SetVisible( true );
+		m_pItemsLabel->SetVisible( true );
+		const wchar_t* wszItemsName = g_pVGuiLocalize->Find( "#NoItemsFoundShort" );
+		m_pItemsLabel->SetText( wszItemsName );
+		//vgui::IScheme* pScheme = vgui::scheme()->GetIScheme( GetScheme() );
+		//m_pItemsLabel->SetFgColor(pScheme->GetColor(m_ItemColorNone, Color( 255, 255, 255, 255 ) ) );
 	}
 	/*
 	CUtlVector<CEconItemView*> pList;
@@ -748,8 +760,8 @@ void CCharInfoLoadoutSubPanel::UpdateLabelFromClass( int nClass )
 
 	m_pClassLabel->SetVisible( true );
 	m_pClassLabel->SetPos( iCenterX - (m_pClassLabel->GetWide() * 0.5), m_iClassLabelYPos );
-	//m_pItemsLabel->SetVisible( true );
-	//m_pItemsLabel->SetPos( iCenterX - (m_pItemsLabel->GetWide() * 0.5), m_iItemLabelYPos );
+	m_pItemsLabel->SetVisible( true );
+	m_pItemsLabel->SetPos( iCenterX - (m_pItemsLabel->GetWide() * 0.5), m_iItemLabelYPos );
 }
 
 void CCharInfoLoadoutSubPanel::UpdateLabelFromSubButton( int nButton )
@@ -835,7 +847,7 @@ void CCharInfoLoadoutSubPanel::RecalculateTargetClassLayoutAtPos( int x, int y )
 			m_iOverSubButton = -1;
 			m_iLabelSetToClass = -1;
 			m_pClassLabel->SetVisible( false );
-			//m_pItemsLabel->SetVisible( false );
+			m_pItemsLabel->SetVisible( false );
 	}
 }
 

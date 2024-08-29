@@ -137,6 +137,8 @@ enum
 extern const char *g_aPlayerClassNames[];				// localized class names
 extern const char *g_aPlayerClassNames_NonLocalized[];	// non-localized class names
 
+int GetClassIndexFromString( const char* pClassName, int nLastClassIndex = TF_LAST_NORMAL_CLASS );
+
 // menu buttons are not in the same order as the defines
 extern int iRemapIndexToClass[TF_CLASS_MENU_BUTTONS];
 int GetRemappedMenuIndexForClass( int iClass );

@@ -17,7 +17,7 @@
 #include "tf_controls.h"
 #include "tf_shareddefs.h"
 //#include "item_pickup_panel.h"
-//#include "class_loadout_panel.h"
+#include "class_loadout_panel.h"
 
 #define NUM_CLASSES_IN_LOADOUT_PANEL		(TF_LAST_NORMAL_CLASS)		// We don't allow unlockables for the civilian
 
@@ -87,6 +87,7 @@ public:
 	virtual void	PerformLayout( void );
 	virtual void	OnCursorMoved( int x, int y );
 
+	void			OnLoadoutClosed( void );
 	void			SetClassIndex( int iClassIndex, bool bOpenClassLoadout );
 	void			SetTeamIndex( int iTeamIndex );
 	void			OpenSubPanel( charinfo_activepanels_t iPanel );
@@ -129,7 +130,7 @@ private:
 	int					m_iCurrentTeamIndex;
 	charinfo_activepanels_t	m_iShowingPanel;
 	charinfo_activepanels_t	m_iPrevShowingPanel;
-	//CClassLoadoutPanel* m_pClassLoadoutPanel;
+	CClassLoadoutPanel* m_pClassLoadoutPanel;
 	vgui::Label* m_pSelectLabel;
 	vgui::Label* m_pLoadoutChangesLabel;
 	vgui::Label* m_pNoSteamLabel;

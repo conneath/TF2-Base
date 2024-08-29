@@ -264,33 +264,33 @@ void CCharacterInfoPanel::NotifyListenersOfCloseEvent()
 //-----------------------------------------------------------------------------
 void CCharacterInfoPanel::OnCommand( const char* command )
 {
-	if ( FStrEq( command, "back" ) )
+	if ( FStrEq( command, "close" ) )
 	{
 		// If we're at the base loadout page, or if we want to force it, close the dialog completely...
 		// NOTE: Right now we don't support closing from the item selection screen.
-		
-		//const int iShowingPanel = m_pLoadoutPanel->GetShowingPanel();
-		//const int iCurrentClassIndex = m_pLoadoutPanel->GetCurrentClassIndex();
-		//const bool bIsInSelectionPanel = iShowingPanel == CHAP_LOADOUT && m_pLoadoutPanel->GetClassLoadoutPanel()->IsInSelectionPanel();
-		//const bool bNoClass = iCurrentClassIndex == TF_CLASS_UNDEFINED;
-		//const bool bAtClosePanel = !bIsInSelectionPanel &&
-		//	((iShowingPanel == m_iClosePanel && bNoClass) || (iShowingPanel == CHAP_LOADOUT && -m_iClosePanel == iCurrentClassIndex));
-		//const bool bAtBaseLoadoutPage = iShowingPanel == CHAP_LOADOUT && bNoClass;
-		//if ( bAtClosePanel || bAtBaseLoadoutPage )
+		const int iShowingPanel = m_pLoadoutPanel->GetShowingPanel();
+		const int iCurrentClassIndex = m_pLoadoutPanel->GetCurrentClassIndex();
+		/*const bool bIsInSelectionPanel = iShowingPanel == CHAP_LOADOUT && m_pLoadoutPanel->GetClassLoadoutPanel()->IsInSelectionPanel();*/
+		const bool bIsInSelectionPanel = false; // item selection panel not implemented yet
+		const bool bNoClass = iCurrentClassIndex == TF_CLASS_UNDEFINED;
+		const bool bAtClosePanel = !bIsInSelectionPanel &&
+			((iShowingPanel == m_iClosePanel && bNoClass) || (iShowingPanel == CHAP_LOADOUT && -m_iClosePanel == iCurrentClassIndex));
+		const bool bAtBaseLoadoutPage = iShowingPanel == CHAP_LOADOUT && bNoClass;
+		if ( bAtClosePanel || bAtBaseLoadoutPage )
 		{
 			Close();
 		}
 		// In the item selection panel?
-		/*
+		
 		else if ( bIsInSelectionPanel )
 		{
-			m_pLoadoutPanel->GetClassLoadoutPanel()->GetItemSelectionPanel()->OnBackPressed();
+			//m_pLoadoutPanel->GetClassLoadoutPanel()->GetItemSelectionPanel()->OnBackPressed();
 		}
-		*/
+		
 		// In any other panel, just go back.
-		//else
+		else
 		{
-			//ShowPanel( true );
+			ShowPanel( true );
 		}
 	}
 	else
