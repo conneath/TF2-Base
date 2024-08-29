@@ -707,6 +707,54 @@
 // End Player Deaths
 //-----------------------------------------------------------------------------
 
+// note: in 1.0.2.8 the attacker and defender lines were different soundscripts
+"Announcer.Cart.Warning"
+{
+	"channel"		"CHAN_VOICE2"
+	"volume"		"VOL_NORM"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_NONE"
+
+	"rndwave"
+	{
+		"wave"	"vo/announcer_cart_attacker_warning1.wav"
+		"wave"	"vo/announcer_cart_attacker_warning2.wav"
+		"wave"	"vo/announcer_cart_attacker_warning3.wav"
+		"wave"	"vo/announcer_cart_attacker_warning4.wav"
+		"wave"	"vo/announcer_cart_defender_warning1.wav"
+		"wave"	"vo/announcer_cart_defender_warning2.wav"
+		"wave"	"vo/announcer_cart_defender_warning3.wav"
+		"wave"	"vo/announcer_cart_defender_warning4.wav"
+		"wave"	"vo/announcer_cart_defender_warning5.wav"
+		"wave"	"vo/announcer_cart_defender_warning6.wav"
+	}
+}
+
+"Announcer.Cart.FinalWarning"
+
+{
+	"channel"		"CHAN_VOICE2"
+	"volume"		"VOL_NORM"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_NONE"
+
+	"rndwave"
+	{
+		"wave"	"vo/announcer_cart_attacker_finalwarning1.wav"
+		"wave"	"vo/announcer_cart_attacker_finalwarning2.wav"
+		"wave"	"vo/announcer_cart_attacker_finalwarning3.wav"
+		"wave"	"vo/announcer_cart_attacker_finalwarning4.wav"
+		"wave"	"vo/announcer_cart_attacker_finalwarning5.wav"
+		"wave"	"vo/announcer_cart_defender_finalwarning1.wav"
+		"wave"	"vo/announcer_cart_defender_finalwarning2.wav"
+		"wave"	"vo/announcer_cart_defender_finalwarning3.wav"
+		"wave"	"vo/announcer_cart_defender_finalwarning4.wav"
+		"wave"	"vo/announcer_cart_defender_finalwarning5.wav"
+	}
+}
+
 "Announcer.Success"
 {
 	"channel"		"CHAN_VOICE"

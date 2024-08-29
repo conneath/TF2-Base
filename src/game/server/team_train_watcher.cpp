@@ -331,12 +331,24 @@ CTeamTrainWatcher::CTeamTrainWatcher()
 		g_hTeamTrainWatcherMaster = CreateEntityByName( "team_train_watcher_master" );
 	}
 */
+	Precache();
+
 	ListenForGameEvent( "path_track_passed" );
 }
 
 CTeamTrainWatcher::~CTeamTrainWatcher()
 {
 	m_Sparks.Purge();
+}
+
+void CTeamTrainWatcher::Precache( void )
+{
+	PrecacheScriptSound( TEAM_TRAIN_ALERT );
+	PrecacheScriptSound( TEAM_TRAIN_FINAL_ALERT );
+	PrecacheScriptSound( TEAM_TRAIN_ALARM );
+	PrecacheScriptSound( TEAM_TRAIN_ALARM_SINGLE );
+
+	BaseClass::Precache();
 }
 
 void CTeamTrainWatcher::UpdateOnRemove( void )
