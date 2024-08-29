@@ -1,9 +1,11 @@
-Unnamed TF2 Mod (Gold Rush update-like?)
+Team Fortress 2: Gold Rush
 =====
 
-terrible tf_port/live tf2 leak code frankenstein, as of writing the major additions are TFBots and the Payload gamemode, w/ some other smaller changes like autoreload and combattext/hitsounds
+damn, another tf2 soucremod...
 
-Charinfo panel is also there as a WIP, the loadout panels aren't implemented yet (neither is econ or anything else thats related lol)
+You could call this a tf_port ""plus"", as of writing the major additions are TFBots and the Payload gamemode, w/ some other smaller changes like autoreload and combattext/hitsounds
+
+The loadout panels are WIP, and econ (item system) itself isn't here (yet)
 
 ## Building
 
