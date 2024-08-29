@@ -16,6 +16,8 @@
 #include "tf_weapon_pipebomblauncher.h"
 #include "in_buttons.h"
 
+
+
 // Client specific.
 #ifdef CLIENT_DLL
 #include "c_tf_player.h"
@@ -24,9 +26,9 @@
 #include "soundenvelope.h"
 #include "c_tf_playerclass.h"
 #include "iviewrender.h"
-
+#include "c_tf_weapon_builder.h"
 #define CTFPlayerClass C_TFPlayerClass
-
+#define CTFWeaponBuilder C_TFWeaponBuilder
 // Server specific.
 #else
 #include "tf_player.h"
@@ -36,6 +38,7 @@
 #include "tf_team.h"
 #include "tf_gamestats.h"
 #include "tf_playerclass.h"
+#include "tf_weapon_builder.h"
 #endif
 
 ConVar tf_spy_invis_time( "tf_spy_invis_time", "1.0", FCVAR_DEVELOPMENTONLY | FCVAR_REPLICATED, "Transition time in and out of spy invisibility", true, 0.1, true, 5.0 );
@@ -190,6 +193,11 @@ CTFPlayerShared::CTFPlayerShared()
 	m_flStealthNextChangeTime = 0.0f;
 	m_iCritMult = 0;
 	m_flInvisibility = 0.0f;
+
+	// hauling stuff, experimental
+	m_bCarryingObject = false;
+	m_hCarriedObject = NULL;
+	// hauling stuff, experimental
 
 #ifdef CLIENT_DLL
 	m_iDisguiseWeaponModelIndex = -1;
@@ -1168,6 +1176,44 @@ bool CTFPlayerShared::IsPlayerDominatingMe( int iPlayerIndex )
 {
 	return m_bPlayerDominatingMe.Get( iPlayerIndex );
 }
+
+// hauling stuff, experimental
+#ifdef GAME_DLL
+void CTFPlayerShared::SetCarriedObject(CBaseObject* pObj)
+{
+	m_bCarryingObject = (pObj != NULL);
+	m_hCarriedObject.Set(pObj);
+	if (m_pOuter)
+		m_pOuter->TeamFortress_SetSpeed();
+}
+#endif
+
+void CTFPlayer::StartBuildingObjectOfType(int iType /*, int iMode*/)
+{
+	// early out if we can't build this type of object
+	if (CanBuild(iType/*, iMode*/) != CB_CAN_BUILD)
+		return;
+
+	// Does this type require a specific builder?
+	CTFWeaponBuilder* pBuilder = CTFPlayerSharedUtils::GetBuilderForObjectType(this, iType);
+	if (pBuilder)
+	{
+#ifdef GAME_DLL
+		pBuilder->SetSubType(iType);
+		//pBuilder->SetObjectMode(iMode);
+
+
+		if (GetActiveTFWeapon() == pBuilder)
+		{
+			SetActiveWeapon(NULL);
+		}
+#endif
+
+		// try to switch to this weapon
+		Weapon_Switch(pBuilder);
+	}
+}
+// hauling stuff, experimental
 
 //-----------------------------------------------------------------------------
 // Purpose:
@@ -2217,10 +2263,11 @@ bool CTFPlayer::HasTheFlag( void )
 	return false;
 }
 
+// hauling stuff, experimental
 //-----------------------------------------------------------------------------
 // Purpose: Return true if this player's allowed to build another one of the specified object
 //-----------------------------------------------------------------------------
-int CTFPlayer::CanBuild( int iObjectType )
+int CTFPlayer::CanBuild( int iObjectType, int iObjectMode )
 {
 	if ( iObjectType < 0 || iObjectType >= OBJ_LAST )
 		return CB_UNKNOWN_OBJECT;
@@ -2253,6 +2300,7 @@ int CTFPlayer::CanBuild( int iObjectType )
 
 	return CB_CAN_BUILD;
 }
+// hauling stuff, experimental
 
 //-----------------------------------------------------------------------------
 // Purpose: Get the number of objects of the specified type that this player has

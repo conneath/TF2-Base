@@ -232,7 +232,10 @@ public:
 	void AddBuildResources( int iAmount );
 
 	bool IsBuilding( void );
-	int CanBuild( int iObjectType );
+	// hauling stuff, experimental
+	int CanBuild(int iObjectType, int iObjectMode = 0);
+	// hauling stuff, experimental
+
 
 	CBaseObject	*GetObject( int index );
 	// TODO: originally, this function had an iObjectMode parameter too, for the teleporter entrance/exit, but we don't have modes implemented yet and the teleporter is actually 2 seperate buildings rn
@@ -249,6 +252,7 @@ public:
 	void RemoveObject( CBaseObject *pObject );
 	bool PlayerOwnsObject( CBaseObject *pObject );
 	void DetonateOwnedObjectsOfType( int iType );
+
 	void StartBuildingObjectOfType( int iType );
 
 	void OnSapperPlaced( CBaseEntity* sappedObject );			// invoked when we place a sapper on an enemy building
