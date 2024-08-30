@@ -14,17 +14,12 @@
 #include "tf_weaponbase.h"
 #include "basegrenade_shared.h"
 
-
-
 // Client specific.
 #ifdef CLIENT_DLL
 class C_TFPlayer;
-#define CTFWeaponBuilder C_TFWeaponBuilder
-#define CBaseObject C_BaseObject
 // Server specific.
 #else
 class CTFPlayer;
-#include "../../server/tf/tf_weapon_builder.h"
 #endif
 
 //=============================================================================
@@ -205,13 +200,6 @@ public:
 	bool	IsPlayerDominatingMe( int iPlayerIndex );
 	void	SetPlayerDominatingMe( CTFPlayer *pPlayer, bool bDominated );
 
-	// hauling stuff, experimental
-	bool	IsCarryingObject(void)		const { return m_bCarryingObject; }
-	CBaseObject* GetCarriedObject(void)	const { return m_hCarriedObject.Get(); }
-	void	SetCarriedObject(CBaseObject* pObj);
-	void	StartBuildingObjectOfType(int iType, int iObjectMode = 0);
-	// hauling stuff, experimental
-
 private:
 
 	void ImpactWaterTrace( trace_t &trace, const Vector &vecStart );
@@ -272,11 +260,6 @@ private:
 
 	// Vars that are not networked.
 	OuterClass			*m_pOuter;					// C_TFPlayer or CTFPlayer (client/server).
-
-	// hauling stuff, experimental
-	CNetworkHandle(CBaseObject, m_hCarriedObject);
-	CNetworkVar(bool, m_bCarryingObject);
-	// hauling stuff, experimental
 
 #ifdef GAME_DLL
 	// Healer handling
@@ -343,13 +326,3 @@ private:
 extern const char *g_pszBDayGibs[22];
 
 #endif // TF_PLAYER_SHARED_H
-
-// hauling stuff, experimental
-class CTFPlayerSharedUtils
-{
-public:
-	//static CEconItemView* GetEconItemViewByLoadoutSlot(CTFPlayer* pTFPlayer, int iSlot, CEconEntity** pEntity = NULL);
-	//static bool ConceptIsPartnerTaunt(int iConcept);
-	static CTFWeaponBuilder* GetBuilderForObjectType(CTFPlayer* pTFPlayer, int iObjectType);
-};
-// hauling stuff, experimental

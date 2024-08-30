@@ -104,10 +104,6 @@ IMPLEMENT_SERVERCLASS_ST(CBaseObject, DT_BaseObject)
 	SendPropInt(SENDINFO(m_iObjectType), Q_log2( OBJ_LAST ) + 1, SPROP_UNSIGNED ),
 	SendPropBool(SENDINFO(m_bBuilding) ),
 	SendPropBool(SENDINFO(m_bPlacing) ),
-	// hauling stuff, experimental
-	SendPropBool(SENDINFO(m_bCarried)),
-	SendPropBool(SENDINFO(m_bCarryDeploy)),
-	// hauling stuff, experimental
 	SendPropFloat(SENDINFO(m_flPercentageConstructed), 8, 0, 0.0, 1.0f ),
 	SendPropInt(SENDINFO(m_fObjectFlags), OF_BIT_COUNT, SPROP_UNSIGNED ),
 	SendPropEHandle(SENDINFO(m_hBuiltOnEntity)),
@@ -171,9 +167,6 @@ public:
 CBaseObject::CBaseObject()
 {
 	m_iHealth = m_iMaxHealth = m_flHealth = 0;
-	// hauling stuff, experimental
-	m_iHealthOnPickup = 0;
-	// hauling stuff, experimental
 	m_flPercentageConstructed = 0;
 	m_bPlacing = false;
 	m_bBuilding = false;
@@ -2489,48 +2482,3 @@ void CBaseObject::SetModel( const char *pModel )
 	m_aGibs.Purge();
 	BuildGibList( m_aGibs, GetModelIndex(), 1.0f, COLLISION_GROUP_NONE );
 }
-
-// hauling stuff, experimental
-
-void CBaseObject::MakeCarriedObject(CTFPlayer* pCarrier)
-{
-	if (pCarrier)
-	{
-		// Make the object inactive.
-		m_bCarried = true;
-		m_bCarryDeploy = false;
-		pCarrier->m_Shared.SetCarriedObject(this);
-		m_iHealthOnPickup = m_iHealth; // If we are damaged, we want to remember how much damage we had sustained.
-
-		// Remove screens.
-		DestroyScreens();
-
-		// Mount it to the player.
-		FollowEntity(pCarrier);
-
-		IGameEvent* event = gameeventmanager->CreateEvent("player_carryobject");
-		if (event)
-		{
-			event->SetInt("userid", pCarrier->GetUserID());
-			event->SetInt("object", GetType());
-			event->SetInt("index", entindex());	// object entity index
-
-			gameeventmanager->FireEvent(event, true);	// don't send to clients
-		}
-	}
-}
-
-void CBaseObject::DropCarriedObject(CTFPlayer* pCarrier)
-{
-	m_bCarried = false;
-	m_bCarryDeploy = false;
-
-	if (pCarrier)
-	{
-		pCarrier->m_Shared.SetCarriedObject(NULL);
-	}
-
-	StopFollowingEntity();
-}
-
-// hauling stuff, experimental

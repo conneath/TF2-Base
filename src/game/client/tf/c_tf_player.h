@@ -203,12 +203,6 @@ public:
 	bool	DoClassSpecialSkill( void );
 	bool	CanGoInvisible( void );
 
-	// hauling stuff, experimental
-	bool	CanPickupBuilding(CBaseObject* pPickupObject);
-	bool	TryToPickupBuilding(void);
-	void	StartBuildingObjectOfType(int iType);
-	// hauling stuff, experimental
-
 public:
 	// Ragdolls.
 	virtual C_BaseAnimating *BecomeRagdollOnClient();
@@ -217,11 +211,7 @@ public:
 	Vector m_vecRagdollVelocity;
 
 	// Objects
-
-	// hauling stuff, experimental
-	int CanBuild(int iObjectType, int iObjectMode = 0);
-	// hauling stuff, experimental
-
+	int CanBuild( int iObjectType );
 	CUtlVector< CHandle<C_BaseObject> > m_aObjects;
 
 	virtual CStudioHdr *OnNewModel( void );

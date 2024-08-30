@@ -139,10 +139,6 @@ public:
 	virtual bool	IsDying( void ) { return m_bDying; }
 	void DestroyScreens( void );
 
-	// Carrying
-	virtual void	MakeCarriedObject(CTFPlayer* pCarrier);
-	virtual void	DropCarriedObject(CTFPlayer* pCarrier);
-
 	// Data
 	virtual Class_T	Classify( void );
 	virtual int		GetType( void );
@@ -319,11 +315,6 @@ protected:
 	typedef CHandle<CVGuiScreen>	ScreenHandle_t;
 	CUtlVector<ScreenHandle_t>	m_hScreens;
 
-	// hauling stuff, experimental
-	CNetworkVar(bool, m_bCarried);
-	CNetworkVar(bool, m_bCarryDeploy);
-	// hauling stuff, experimental
-
 private:
 	// Make sure we pick up changes to these.
 	IMPLEMENT_NETWORK_VAR_FOR_DERIVED( m_iHealth );
@@ -347,11 +338,6 @@ private:
 	float	m_flConstructionTimeLeft;	// Current time left in construction
 	float	m_flTotalConstructionTime;	// Total construction time (the value of GetTotalTime() at the time construction 
 										// started, ie, incase you teleport out of a construction yard)
-
-	// hauling stuff, experimental
-	int		m_iHealthOnPickup;
-	float	m_flCarryDeployTime;
-	// hauling stuff, experimental
 
 	CNetworkVar( float, m_flPercentageConstructed );	// Used to send to client
 	float	m_flHealth;					// Health during construction. Needed a float due to small increases in health.
