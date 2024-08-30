@@ -1,6 +1,6 @@
 "GameInfo"
 {
-	game	"Unnamed TF2 Mod"
+	game	"Team Fortress 2: Gold Rush"
 	gamelogo 1
 	type multiplayer_only
 	nomodels 1

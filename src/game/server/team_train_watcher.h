@@ -46,6 +46,8 @@ public:
 	CTeamTrainWatcher();
 	~CTeamTrainWatcher();
 
+	virtual void Precache( void );
+
 	virtual void UpdateOnRemove( void );
 	virtual int UpdateTransmitState();
 
