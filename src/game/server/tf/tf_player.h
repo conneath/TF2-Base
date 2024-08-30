@@ -20,7 +20,7 @@ class CTFGoal;
 class CTFGoalItem;
 class CTFItem;
 class CTFWeaponBuilder;
-class CBaseObject;
+//class CBaseObject;
 class CTFWeaponBase;
 class CIntroViewpoint;
 class CTriggerAreaCapture;
@@ -422,6 +422,10 @@ public:
 	bool IsThreatAimingTowardMe( CBaseEntity* threat, float cosTolerance = 0.8f ) const;	// return true if the given threat is aiming in our direction
 	bool IsThreatFiringAtMe( CBaseEntity* threat ) const;		// return true if the given threat is aiming in our direction and firing its weapon
 	bool IsInCombat( void ) const;								// return true if we are engaged in active combat
+
+	bool CanPickupBuilding( CBaseObject* pPickupObject );
+	bool TryToPickupBuilding( void );
+	float				m_flCommentOnCarrying; // for hauling responses
 
 protected:
 	// protected because CTFBot uses these originally private functions

@@ -465,15 +465,30 @@ void CTFWeaponBuilder::StartPlacement( void )
 {
 	StopPlacement();
 
-	// Create the slab
-	m_hObjectBeingBuilt = (CBaseObject*)CreateEntityByName( GetObjectInfo( m_iObjectType )->m_pClassName );
+	CTFPlayer* pTFPlayer = ToTFPlayer( GetOwner() );
+	if ( !pTFPlayer )
+		return;
+
+	if ( pTFPlayer->m_Shared.IsCarryingObject() )
+	{
+		m_hObjectBeingBuilt = pTFPlayer->m_Shared.GetCarriedObject();
+		m_hObjectBeingBuilt->StopFollowingEntity();
+	}
+	else
+	{
+		// Create the slab
+		m_hObjectBeingBuilt = (CBaseObject*)CreateEntityByName( GetObjectInfo( m_iObjectType )->m_pClassName );
+	}
+
 	if ( m_hObjectBeingBuilt )
 	{
+		bool bIsCarried = m_hObjectBeingBuilt->IsCarried();
 		m_hObjectBeingBuilt->Spawn();
 		m_hObjectBeingBuilt->StartPlacement( ToTFPlayer( GetOwner() ) );
 
 		// Stomp this here in the same frame we make the object, so prevent clientside warnings that it's under attack
-		m_hObjectBeingBuilt->m_iHealth = OBJECT_CONSTRUCTION_STARTINGHEALTH;
+		if ( !bIsCarried )
+			m_hObjectBeingBuilt->m_iHealth = OBJECT_CONSTRUCTION_STARTINGHEALTH;
 	}
 }
 
@@ -484,7 +499,14 @@ void CTFWeaponBuilder::StopPlacement( void )
 {
 	if ( m_hObjectBeingBuilt )
 	{
-		m_hObjectBeingBuilt->StopPlacement();
+		if ( m_hObjectBeingBuilt->IsCarried() )
+		{
+			m_hObjectBeingBuilt->MakeCarriedObject( ToTFPlayer( GetOwner() ) );
+		}
+		else
+		{
+			m_hObjectBeingBuilt->StopPlacement();
+		}
 		m_hObjectBeingBuilt = NULL;
 	}
 }

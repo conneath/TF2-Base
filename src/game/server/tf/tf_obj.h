@@ -108,8 +108,8 @@ public:
 	bool			IsBuilding( void ) { return m_bBuilding; };
 	bool			IsPlacing( void ) { return m_bPlacing; };
 	virtual bool	IsUpgrading( void ) const { return false; }
-	// placeholder
-	virtual bool	IsCarried( void ) const { return false; }
+	// hauling
+	virtual bool	IsCarried( void ) const { return m_bCarried; }
 	bool			MustBeBuiltOnAttachmentPoint( void ) const;
 
 	// Returns information about the various control panels
@@ -212,7 +212,9 @@ public:
 
 	const char		*GetResponseRulesModifier( void );
 
-public:		
+	// hauling
+	virtual void	MakeCarriedObject( CTFPlayer* pCarrier );
+	virtual void	DropCarriedObject( CTFPlayer* pCarrier );
 
 	virtual bool TestHitboxes( const Ray_t &ray, unsigned int fContentsMask, trace_t& tr );
 
@@ -315,6 +317,11 @@ protected:
 	typedef CHandle<CVGuiScreen>	ScreenHandle_t;
 	CUtlVector<ScreenHandle_t>	m_hScreens;
 
+	// hauling
+	float			GetCarryDeployTime() { return m_flCarryDeployTime; }
+	CNetworkVar( bool, m_bCarried );
+	CNetworkVar( bool, m_bCarryDeploy );
+
 private:
 	// Make sure we pick up changes to these.
 	IMPLEMENT_NETWORK_VAR_FOR_DERIVED( m_iHealth );
@@ -361,6 +368,9 @@ private:
 
 	// Gibs.
 	CUtlVector<breakmodel_t>	m_aGibs;
+
+	// hauling
+	float	m_flCarryDeployTime;
 
 	CNetworkVar( bool, m_bServerOverridePlacement );
 };

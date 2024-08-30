@@ -17,8 +17,10 @@
 // Client specific.
 #ifdef CLIENT_DLL
 class C_TFPlayer;
+#include "baseobject_shared.h"
 // Server specific.
 #else
+#include "tf_obj.h"
 class CTFPlayer;
 #endif
 
@@ -200,6 +202,10 @@ public:
 	bool	IsPlayerDominatingMe( int iPlayerIndex );
 	void	SetPlayerDominatingMe( CTFPlayer *pPlayer, bool bDominated );
 
+	// hauling
+	bool	IsCarryingObject( void )		const { return m_bCarryingObject; }
+	CBaseObject* GetCarriedObject( void )	const { return m_hCarriedObject.Get(); }
+	void	SetCarriedObject( CBaseObject* pObj );
 private:
 
 	void ImpactWaterTrace( trace_t &trace, const Vector &vecStart );
@@ -306,6 +312,9 @@ private:
 	CNetworkArray( bool, m_bPlayerDominated, MAX_PLAYERS+1 );		// array of state per other player whether player is dominating other players
 	CNetworkArray( bool, m_bPlayerDominatingMe, MAX_PLAYERS+1 );	// array of state per other player whether other players are dominating this player
 	
+	// hauling
+	CNetworkHandle( CBaseObject, m_hCarriedObject );
+	CNetworkVar( bool, m_bCarryingObject );
 #ifdef GAME_DLL
 	float	m_flNextCritUpdate;
 	CUtlVector<CTFDamageEvent> m_DamageEvents;
@@ -324,5 +333,14 @@ private:
 #define TF_DEATH_ASSISTER_REVENGE		0x0008	// assister got revenge on victim
 
 extern const char *g_pszBDayGibs[22];
+
+class CTargetOnlyFilter : public CTraceFilterSimple
+{
+public:
+	CTargetOnlyFilter( CBaseEntity* pShooter, CBaseEntity* pTarget );
+	virtual bool ShouldHitEntity( IHandleEntity* pHandleEntity, int contentsMask );
+	CBaseEntity* m_pShooter;
+	CBaseEntity* m_pTarget;
+};
 
 #endif // TF_PLAYER_SHARED_H

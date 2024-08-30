@@ -234,6 +234,9 @@ private:
 	bool			m_bOldDisabled;
 	float			m_flPercentageConstructed;
 	EHANDLE			m_hBuiltOnEntity;
+	bool			m_bCarried;
+	bool			m_bCarryDeploy;
+	bool			m_bOldCarryDeploy;
 
 	CNetworkVector( m_vecBuildMaxs );
 	CNetworkVector( m_vecBuildMins );
