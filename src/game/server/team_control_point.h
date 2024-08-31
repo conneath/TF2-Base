@@ -70,7 +70,7 @@ public:
 	int			GetPointIndex( void ) { return m_iPointIndex; }
 	void		SetPointIndex( int index ) { m_iPointIndex = index; }
 
-	bool		GetWarnOnCap( void ) { return m_bWarnOnCap; }
+	int			GetWarnOnCap( void ) { return m_iWarnOnCap; }
 	string_t	GetWarnSound( void ) { return m_iszWarnSound; }
 
 	// int			GetTeamIcon( int iTeam );
@@ -118,7 +118,7 @@ private:
 	int			m_iTeam;			
 	int			m_iDefaultOwner;			// Team that initially owns the cap point
 	int			m_iIndex;					// The index of this point in the controlpointArray
-	bool		m_bWarnOnCap;				// Warn the team that owns the control point when the opposing team starts to capture it.
+	int				m_iWarnOnCap;				// Warn the team that owns the control point when the opposing team starts to capture it.
 	string_t	m_iszPrintName;
 	string_t	m_iszWarnSound;				// Sound played if the team needs to be warned about this point being captured
 	bool		m_bRandomOwnerOnRestart;	// Do we want to randomize the owner after a restart?

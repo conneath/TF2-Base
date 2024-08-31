@@ -167,10 +167,10 @@ public:
 	bool PlayingMiniRounds( void ){ return m_bPlayingMiniRounds; }
 	bool IsInMiniRound( int index ) { return m_bInMiniRound[index]; }
 
-	bool ShouldWarnOnCap( int index )
+	int GetCapWarningLevel( int index )
 	{
 		Assert( index < m_iNumControlPoints );
-		return m_bWarnOnCap[index];
+		return m_iWarnOnCap[index];
 	}
 
 	const char *GetWarnSound( int index )
@@ -289,7 +289,7 @@ protected:
 	int			m_iTeamBaseIcons[MAX_TEAMS];
 	int			m_iBaseControlPoints[MAX_TEAMS];
 	bool		m_bInMiniRound[MAX_CONTROL_POINTS];
-	bool		m_bWarnOnCap[MAX_CONTROL_POINTS];
+	bool		m_iWarnOnCap[MAX_CONTROL_POINTS];
 	char		m_iszWarnSound[MAX_CONTROL_POINTS][255];
 	float		m_flPathDistance[MAX_CONTROL_POINTS];
 	bool		m_bCPLocked[MAX_CONTROL_POINTS];

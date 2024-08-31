@@ -22,7 +22,7 @@ BEGIN_DATADESC(CTeamControlPoint)
 	DEFINE_KEYFIELD( m_iCPGroup,				FIELD_INTEGER,	"point_group" ),
 	DEFINE_KEYFIELD( m_iDefaultOwner,			FIELD_INTEGER,	"point_default_owner" ),
 	DEFINE_KEYFIELD( m_iPointIndex,				FIELD_INTEGER,	"point_index" ),
-	DEFINE_KEYFIELD( m_bWarnOnCap,				FIELD_BOOLEAN,	"point_warn_on_cap" ),
+	DEFINE_KEYFIELD( m_iWarnOnCap,				FIELD_INTEGER,	"point_warn_on_cap" ),
 	DEFINE_KEYFIELD( m_iszWarnSound,			FIELD_STRING,	"point_warn_sound" ),
 
 	DEFINE_KEYFIELD( m_iszCaptureStartSound,	FIELD_STRING,	"point_capture_start_sound" ),
