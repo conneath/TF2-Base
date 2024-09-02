@@ -309,7 +309,7 @@ void CEscortStatusTeardrop::UpdateBarText( int iCPIndex )
 	// we can't capture because it's blocked
 	if ( iCappingTeam == iPlayerTeam )
 	{
-		m_pBarText->SetText( "#Team_Progress_Blocked" );
+		m_pBarText->SetText( "#Team_Capture_Blocked" );
 		return;
 	}
 
