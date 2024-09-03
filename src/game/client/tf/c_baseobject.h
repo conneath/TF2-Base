@@ -109,6 +109,7 @@ public:
 	bool			IsPlacing( void ) const { return m_bPlacing; }
 	bool			IsBuilding( void ) const { return m_bBuilding; }
 	virtual bool	IsUpgrading( void ) const { return false; }
+	bool			IsCarried( void ) const { return m_bCarried; }
 
 	virtual void	FinishedBuilding( void ) { return; }
 
@@ -234,6 +235,9 @@ private:
 	bool			m_bOldDisabled;
 	float			m_flPercentageConstructed;
 	EHANDLE			m_hBuiltOnEntity;
+	bool			m_bCarried;
+	bool			m_bCarryDeploy;
+	bool			m_bOldCarryDeploy;
 
 	CNetworkVector( m_vecBuildMaxs );
 	CNetworkVector( m_vecBuildMins );

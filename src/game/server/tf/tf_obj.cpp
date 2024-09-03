@@ -39,6 +39,7 @@
 #include "tf_obj_sapper.h"
 #include "particle_parse.h"
 #include "tf_fx.h"
+#include "tf_weapon_builder.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -104,6 +105,7 @@ IMPLEMENT_SERVERCLASS_ST(CBaseObject, DT_BaseObject)
 	SendPropInt(SENDINFO(m_iObjectType), Q_log2( OBJ_LAST ) + 1, SPROP_UNSIGNED ),
 	SendPropBool(SENDINFO(m_bBuilding) ),
 	SendPropBool(SENDINFO(m_bPlacing) ),
+	SendPropBool( SENDINFO( m_bCarried ) ),
 	SendPropFloat(SENDINFO(m_flPercentageConstructed), 8, 0, 0.0, 1.0f ),
 	SendPropInt(SENDINFO(m_fObjectFlags), OF_BIT_COUNT, SPROP_UNSIGNED ),
 	SendPropEHandle(SENDINFO(m_hBuiltOnEntity)),
@@ -175,6 +177,7 @@ CBaseObject::CBaseObject()
 	m_SolidToPlayers = SOLID_TO_PLAYER_USE_DEFAULT;
 	m_bPlacementOK = false;
 	m_aGibs.Purge();
+	m_iHealthOnPickup = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -284,18 +287,18 @@ void CBaseObject::Spawn( void )
 
 	m_bHasSapper = false;
 	m_takedamage = DAMAGE_YES;
-	m_flHealth = m_iMaxHealth = m_iHealth;
-	m_iKills = 0;
+	//m_flHealth = m_iMaxHealth = m_iHealth;
+	//m_iKills = 0;
 
-	SetContextThink( &CBaseObject::BaseObjectThink, gpGlobals->curtime + 0.1, OBJ_BASE_THINK_CONTEXT );
+	//SetContextThink( &CBaseObject::BaseObjectThink, gpGlobals->curtime + 0.1, OBJ_BASE_THINK_CONTEXT );
 
 	AddFlag( FL_OBJECT ); // So NPCs will notice it
 	SetViewOffset( WorldSpaceCenter() - GetAbsOrigin() );
 
-	if (!VPhysicsGetObject())
-	{
-		VPhysicsInitStatic();
-	}
+	//if (!VPhysicsGetObject())
+	//{
+	//	VPhysicsInitStatic();
+	//}
 
 	m_RepairerList.SetLessFunc( PlayerIndexLessFunc );
 
@@ -309,6 +312,26 @@ void CBaseObject::Spawn( void )
 
 	// assume valid placement
 	m_bServerOverridePlacement = true;
+
+	if ( !IsCarried() )
+		FirstSpawn();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Initialization that should only be done when the object is first created.
+//-----------------------------------------------------------------------------
+void CBaseObject::FirstSpawn()
+{
+	if ( !VPhysicsGetObject() )
+		VPhysicsInitStatic();
+
+	//m_iUpgradeMetal = 0;
+	m_iKills = 0;
+	//m_iAssists = 0;
+	//m_ConstructorList.SetLessFunc( PlayerIndexLessFunc );
+	m_flHealth = m_iMaxHealth = m_iHealth;
+
+	SetContextThink( &CBaseObject::BaseObjectThink, gpGlobals->curtime + 0.1, OBJ_BASE_THINK_CONTEXT );
 }
 
 //-----------------------------------------------------------------------------
@@ -621,6 +644,52 @@ void CBaseObject::Activate( void )
 	Assert( 0 );
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: Turns the object into one carried by someone.
+//-----------------------------------------------------------------------------
+void CBaseObject::MakeCarriedObject( CTFPlayer* pCarrier )
+{
+	if ( pCarrier )
+	{
+		// Make the object inactive.
+		m_bCarried = true;
+		m_bCarryDeploy = false;
+		pCarrier->m_Shared.SetCarriedObject( this );
+		m_iHealthOnPickup = m_iHealth; // If we are damaged, we want to remember how much damage we had sustained.
+
+		// Remove screens.
+		DestroyScreens();
+
+		// Mount it to the player.
+		FollowEntity( pCarrier );
+
+		IGameEvent* event = gameeventmanager->CreateEvent( "player_carryobject" );
+		if ( event )
+		{
+			event->SetInt( "userid", pCarrier->GetUserID() );
+			event->SetInt( "object", GetType() );
+			event->SetInt( "index", entindex() );	// object entity index
+
+			gameeventmanager->FireEvent( event, true );	// don't send to clients
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Turns the object into one carried by someone.
+//-----------------------------------------------------------------------------
+void CBaseObject::DropCarriedObject( CTFPlayer* pCarrier )
+{
+	m_bCarried = false;
+	m_bCarryDeploy = false;
+
+	if ( pCarrier )
+	{
+		pCarrier->m_Shared.SetCarriedObject( NULL );
+	}
+
+	StopFollowingEntity();
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -657,6 +726,18 @@ void CBaseObject::DetonateObject( void )
 void CBaseObject::DestroyObject( void )
 {
 	TRACE_OBJECT( UTIL_VarArgs( "%0.2f CBaseObject::DestroyObject %p:%s\n", gpGlobals->curtime, this, GetClassname() ) );
+
+	// If we are carried, uncarry us before destruction.
+	if ( IsCarried() && GetBuilder() )
+	{
+		DropCarriedObject( GetBuilder() );
+
+		CTFWeaponBuilder* pBuilder = dynamic_cast<CTFWeaponBuilder*>(GetBuilder()->Weapon_OwnsThisID( TF_WEAPON_BUILDER ));
+		if ( pBuilder )
+		{
+			pBuilder->SwitchOwnersWeaponToLast();
+		}
+	}
 
 	if ( GetBuilder() )
 	{
@@ -1093,17 +1174,28 @@ bool CBaseObject::StartBuilding( CBaseEntity *pBuilder )
 			((CTFPlayer*)pBuilder)->HintMessage( HINT_ENGINEER_USE_WRENCH_ONOWN );
 		}
 		*/
-
-		int iAmountPlayerPaidForMe = ((CTFPlayer*)pBuilder)->StartedBuildingObject( m_iObjectType );
-		if ( !iAmountPlayerPaidForMe )
+		if ( !IsCarried() )
 		{
-			// Player couldn't afford to pay for me, so abort
-			ClientPrint( (CBasePlayer*)pBuilder, HUD_PRINTCENTER, "Not enough resources.\n" );
-			StopPlacement();
-			return false;
+			int iAmountPlayerPaidForMe = ((CTFPlayer*)pBuilder)->StartedBuildingObject( m_iObjectType );
+			if ( !iAmountPlayerPaidForMe )
+			{
+				// Player couldn't afford to pay for me, so abort
+				ClientPrint( (CBasePlayer*)pBuilder, HUD_PRINTCENTER, "Not enough resources.\n" );
+				StopPlacement();
+				return false;
+			}
+			((CTFPlayer*)pBuilder)->SpeakConceptIfAllowed( MP_CONCEPT_BUILDING_OBJECT, GetResponseRulesModifier() );
 		}
+		else // redeploy
+		{
+			m_bCarried = false;
+			m_bCarryDeploy = true;
+			m_flCarryDeployTime = gpGlobals->curtime;
+			SetActivity( ACT_OBJ_ASSEMBLING );
 
-		((CTFPlayer*)pBuilder)->SpeakConceptIfAllowed( MP_CONCEPT_BUILDING_OBJECT, GetResponseRulesModifier() );
+			((CTFPlayer*)pBuilder)->m_flCommentOnCarrying = 0.f;
+			((CTFPlayer*)pBuilder)->SpeakConceptIfAllowed( MP_CONCEPT_REDEPLOY_BUILDING, GetResponseRulesModifier() );
+		}
 	}
 	
 	// Add this object to the team's list (because we couldn't add it during
@@ -1115,7 +1207,22 @@ bool CBaseObject::StartBuilding( CBaseEntity *pBuilder )
 
 	m_bPlacing = false;
 	m_bBuilding = true;
-	SetHealth( OBJECT_CONSTRUCTION_STARTINGHEALTH );
+	if ( m_bCarryDeploy )
+	{
+		SetHealth( m_iHealthOnPickup );
+		IGameEvent* event = gameeventmanager->CreateEvent( "player_dropobject" );
+		if ( event )
+		{
+			CTFPlayer* pTFPlayer = ToTFPlayer( pBuilder );
+			event->SetInt( "userid", pTFPlayer ? pTFPlayer->GetUserID() : 0 );
+			event->SetInt( "object", GetType() );
+			event->SetInt( "index", entindex() );	// object entity index
+
+			gameeventmanager->FireEvent( event, true );	// don't send to clients
+		}
+	}
+	else SetHealth( OBJECT_CONSTRUCTION_STARTINGHEALTH );
+
 	m_flPercentageConstructed = 0;
 
 	m_nRenderMode = kRenderNormal; 
@@ -1220,6 +1327,13 @@ void CBaseObject::FinishedBuilding( void )
 //-----------------------------------------------------------------------------
 void CBaseObject::SetHealth( float flHealth )
 {
+	if ( m_bCarryDeploy && (flHealth > m_iHealthOnPickup) )
+	{
+		// If we are re-deploying after being carried we shouldn't gain more health than we had
+		// on pickup until the deploy process is finished.
+		flHealth = m_iHealthOnPickup;
+	}
+
 	bool changed = m_flHealth != flHealth;
 
 	m_flHealth = flHealth;
@@ -1668,6 +1782,13 @@ float CBaseObject::GetRepairMultiplier( void )
 			// Each player hitting it builds twice as fast
 			flMultiplier *= 2.0;
 		}
+	}
+
+	// See if we have any attributes that want to modify our build rate
+	CTFPlayer* pBuilder = GetOwner();
+	if ( pBuilder )
+	{
+		flMultiplier += pBuilder->GetObjectBuildSpeedMultiplier( ObjectType(), m_bCarryDeploy );
 	}
 
 	return flMultiplier;

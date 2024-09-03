@@ -20,7 +20,7 @@ class CTFGoal;
 class CTFGoalItem;
 class CTFItem;
 class CTFWeaponBuilder;
-class CBaseObject;
+//class CBaseObject;
 class CTFWeaponBase;
 class CIntroViewpoint;
 class CTriggerAreaCapture;
@@ -250,6 +250,7 @@ public:
 	bool PlayerOwnsObject( CBaseObject *pObject );
 	void DetonateOwnedObjectsOfType( int iType );
 	void StartBuildingObjectOfType( int iType );
+	float GetObjectBuildSpeedMultiplier( int iObjectType, bool bIsRedeploy ) const;
 
 	void OnSapperPlaced( CBaseEntity* sappedObject );			// invoked when we place a sapper on an enemy building
 	bool IsPlacingSapper( void ) const;							// return true if we are a spy who placed a sapper on a building in the last few moments
@@ -422,6 +423,10 @@ public:
 	bool IsThreatAimingTowardMe( CBaseEntity* threat, float cosTolerance = 0.8f ) const;	// return true if the given threat is aiming in our direction
 	bool IsThreatFiringAtMe( CBaseEntity* threat ) const;		// return true if the given threat is aiming in our direction and firing its weapon
 	bool IsInCombat( void ) const;								// return true if we are engaged in active combat
+
+	bool CanPickupBuilding( CBaseObject* pPickupObject );
+	bool TryToPickupBuilding( void );
+	float				m_flCommentOnCarrying; // for hauling responses
 
 protected:
 	// protected because CTFBot uses these originally private functions

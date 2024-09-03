@@ -66,7 +66,10 @@ public:
 
 	CUtlVector< EHANDLE >	m_hHealingTargets;
 
+	virtual void	MakeCarriedObject( CTFPlayer* pCarrier );
+
 private:
+	void ResetHealingTargets( void );
 
 	//CNetworkArray( EHANDLE, m_hHealingTargets, MAX_DISPENSER_HEALING_TARGETS );
 

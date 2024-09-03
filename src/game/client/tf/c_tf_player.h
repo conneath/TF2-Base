@@ -203,6 +203,9 @@ public:
 	bool	DoClassSpecialSkill( void );
 	bool	CanGoInvisible( void );
 
+	// hauling
+	bool	CanPickupBuilding( C_BaseObject* pPickupObject );
+	bool	TryToPickupBuilding( void );
 public:
 	// Ragdolls.
 	virtual C_BaseAnimating *BecomeRagdollOnClient();

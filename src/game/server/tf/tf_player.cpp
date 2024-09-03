@@ -424,6 +424,17 @@ void CTFPlayer::TFPlayerThink()
 		}
 	}
 
+	if ( gpGlobals->curtime > m_flCommentOnCarrying && (m_flCommentOnCarrying != 0.f) )
+	{
+		m_flCommentOnCarrying = 0.f;
+
+		CBaseObject* pObj = m_Shared.GetCarriedObject();
+		if ( pObj )
+		{
+			SpeakConceptIfAllowed( MP_CONCEPT_CARRYING_BUILDING, pObj->GetResponseRulesModifier() );
+		}
+	}
+
 	SetContextThink( &CTFPlayer::TFPlayerThink, gpGlobals->curtime, "TFPlayerThink" );
 }
 
@@ -2013,6 +2024,10 @@ bool CTFPlayer::ClientCommand( const CCommand &args )
 	{
 		if ( args.ArgC() == 2 )
 		{
+			// can't issue a build command while carrying an object
+			if ( m_Shared.IsCarryingObject() )
+				return true;
+
 			// player wants to build something
 			int iBuilding = atoi( args[ 1 ] );
 
@@ -2270,6 +2285,36 @@ void CTFPlayer::StartBuildingObjectOfType( int iType )
 		}
 	}
 
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+float CTFPlayer::GetObjectBuildSpeedMultiplier( int iObjectType, bool bIsRedeploy ) const
+{
+	float flBuildRate = 1.f; // need a base value for mult
+
+	switch ( iObjectType )
+	{
+	case OBJ_SENTRYGUN:
+		//CALL_ATTRIB_HOOK_FLOAT( flBuildRate, sentry_build_rate_multiplier );
+		flBuildRate += bIsRedeploy ? 2.0 : 0.0f;
+		break;
+	case OBJ_TELEPORTER_ENTRANCE:
+		//CALL_ATTRIB_HOOK_FLOAT( flBuildRate, teleporter_build_rate_multiplier );
+		flBuildRate += bIsRedeploy ? 3.0 : 0.0f;
+		break;
+	case OBJ_TELEPORTER_EXIT:
+		//CALL_ATTRIB_HOOK_FLOAT( flBuildRate, teleporter_build_rate_multiplier );
+		flBuildRate += bIsRedeploy ? 3.0 : 0.0f;
+		break;
+	case OBJ_DISPENSER:
+		//CALL_ATTRIB_HOOK_FLOAT( flBuildRate, teleporter_build_rate_multiplier );
+		flBuildRate += bIsRedeploy ? 3.0 : 0.0f;
+		break;
+	}
+
+	return flBuildRate - 1.0f; // sub out the initial 1 so the final result is added
 }
 
 //-----------------------------------------------------------------------------
@@ -3210,6 +3255,16 @@ void CTFPlayer::Event_Killed( const CTakeDamageInfo &info )
 	bool bDisguised = m_Shared.InCond( TF_COND_DISGUISED );
 	// we want the rag doll to burn if the player was burning and was not a pryo (who only burns momentarily)
 	bool bBurning = m_Shared.InCond( TF_COND_BURNING ) && ( TF_CLASS_PYRO != GetPlayerClass()->GetClassIndex() );
+
+	if ( m_Shared.IsCarryingObject() )
+	{
+		CTakeDamageInfo info( pPlayerAttacker, pPlayerAttacker, NULL, vec3_origin, GetAbsOrigin(), 0, DMG_GENERIC );
+		//info.SetDamageCustom( TF_DMG_CUSTOM_CARRIED_BUILDING );
+		if ( m_Shared.GetCarriedObject() != NULL )
+		{
+			m_Shared.GetCarriedObject()->Killed( info );
+		}
+	}
 
 	// Remove all conditions...
 	m_Shared.RemoveAllCond( NULL );
@@ -4566,7 +4621,7 @@ void CTFPlayer::AddObject( CBaseObject *pObject )
 	hObject = pObject;
 
 	bool alreadyInList = PlayerOwnsObject( pObject );
-	Assert( !alreadyInList );
+	//Assert( !alreadyInList );
 	if ( !alreadyInList )
 	{
 		m_aObjects.AddToTail( hObject );

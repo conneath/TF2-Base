@@ -15,7 +15,7 @@
 #include "tf_weapon_medigun.h"
 #include "tf_weapon_pipebomblauncher.h"
 #include "in_buttons.h"
-
+#include "UtlSortVector.h"
 // Client specific.
 #ifdef CLIENT_DLL
 #include "c_tf_player.h"
@@ -24,6 +24,7 @@
 #include "soundenvelope.h"
 #include "c_tf_playerclass.h"
 #include "iviewrender.h"
+#include "c_tf_weapon_builder.h"
 
 #define CTFPlayerClass C_TFPlayerClass
 
@@ -36,6 +37,7 @@
 #include "tf_team.h"
 #include "tf_gamestats.h"
 #include "tf_playerclass.h"
+#include "tf_weapon_builder.h"
 #endif
 
 ConVar tf_spy_invis_time( "tf_spy_invis_time", "1.0", FCVAR_DEVELOPMENTONLY | FCVAR_REPLICATED, "Transition time in and out of spy invisibility", true, 0.1, true, 5.0 );
@@ -61,8 +63,12 @@ ConVar tf_spy_cloak_no_attack_time( "tf_spy_cloak_no_attack_time", "2.0", FCVAR_
 
 ConVar tf_damage_disablespread( "tf_damage_disablespread", "0", FCVAR_NOTIFY | FCVAR_REPLICATED, "Toggles the random damage spread applied to all player damage." );
 
+ConVar tf_hauling( "tf_hauling", "1", FCVAR_NOTIFY | FCVAR_REPLICATED, "Toggle carrying of Engineer buildings (Engineer Update)" );
+
 #define TF_SPY_STEALTH_BLINKTIME   0.3f
 #define TF_SPY_STEALTH_BLINKSCALE  0.85f
+
+#define TF_BUILDING_PICKUP_RANGE 150
 
 #define TF_PLAYER_CONDITION_CONTEXT	"TFPlayerConditionContext"
 
@@ -126,6 +132,9 @@ BEGIN_RECV_TABLE_NOBASE( CTFPlayerShared, DT_TFPlayerShared )
 	RecvPropInt( RECVINFO( m_nDisguiseClass ) ),
 	RecvPropInt( RECVINFO( m_iDisguiseTargetIndex ) ),
 	RecvPropInt( RECVINFO( m_iDisguiseHealth ) ),
+	// Engineer
+	RecvPropEHandle( RECVINFO( m_hCarriedObject ) ),
+	RecvPropBool( RECVINFO( m_bCarryingObject ) ),
 	// Local Data.
 	RecvPropDataTable( "tfsharedlocaldata", 0, 0, &REFERENCE_RECV_TABLE(DT_TFPlayerSharedLocal) ),
 END_RECV_TABLE()
@@ -166,6 +175,9 @@ BEGIN_SEND_TABLE_NOBASE( CTFPlayerShared, DT_TFPlayerShared )
 	SendPropInt( SENDINFO( m_nDisguiseClass ), 4, SPROP_UNSIGNED ),
 	SendPropInt( SENDINFO( m_iDisguiseTargetIndex ), 7, SPROP_UNSIGNED ),
 	SendPropInt( SENDINFO( m_iDisguiseHealth ), 10 ),
+	// Engineer
+	SendPropEHandle( SENDINFO( m_hCarriedObject ) ),
+	SendPropBool( SENDINFO( m_bCarryingObject ) ),
 	// Local Data.
 	SendPropDataTable( "tfsharedlocaldata", 0, &REFERENCE_SEND_TABLE( DT_TFPlayerSharedLocal ), SendProxy_SendLocalDataTable ),	
 END_SEND_TABLE()
@@ -195,6 +207,9 @@ CTFPlayerShared::CTFPlayerShared()
 	m_iDisguiseWeaponModelIndex = -1;
 	m_pDisguiseWeaponInfo = NULL;
 #endif
+
+	m_bCarryingObject = false;
+	m_hCarriedObject = NULL;
 }
 
 void CTFPlayerShared::Init( CTFPlayer *pPlayer )
@@ -1845,6 +1860,16 @@ int	CTFPlayerShared::GetNumKillsInTime( float flTime )
 
 #endif
 
+void CTFPlayerShared::SetCarriedObject( CBaseObject* pObj )
+{
+	m_bCarryingObject = (pObj != NULL);
+	m_hCarriedObject.Set( pObj );
+#ifdef GAME_DLL
+	if ( m_pOuter )
+		m_pOuter->TeamFortress_SetSpeed();
+#endif
+}
+
 //=============================================================================
 //
 // Shared player code that isn't CTFPlayerShared
@@ -2169,6 +2194,11 @@ void CTFPlayer::TeamFortress_SetSpeed()
 		}
 	}
 
+	if ( m_Shared.IsCarryingObject() )
+	{
+		maxfbspeed *= 0.90f;
+	}
+
 	// Set the speed
 	SetMaxSpeed( maxfbspeed );
 }
@@ -2467,12 +2497,299 @@ bool CTFPlayer::DoClassSpecialSkill( void )
 		}
 		bDoSkill = true;
 		break;
-
+	case TF_CLASS_ENGINEER:
+	{
+		bDoSkill = TryToPickupBuilding();
+	}
 	default:
 		break;
 	}
 
 	return bDoSkill;
+}
+
+//=============================================================================
+//
+// Shared player code that isn't CTFPlayerShared
+//
+//-----------------------------------------------------------------------------
+struct penetrated_target_list
+{
+	CBaseEntity* pTarget;
+	float flDistanceFraction;
+};
+
+//-----------------------------------------------------------------------------
+class CBulletPenetrateEnum : public IEntityEnumerator
+{
+public:
+	CBulletPenetrateEnum( Ray_t* pRay, CBaseEntity* pShooter, int nCustomDamageType, bool bIgnoreTeammates = true )
+	{
+		m_pRay = pRay;
+		m_pShooter = pShooter;
+		m_nCustomDamageType = nCustomDamageType;
+		m_bIgnoreTeammates = bIgnoreTeammates;
+	}
+
+	// We need to sort the penetrated targets into order, with the closest target first
+	class PenetratedTargetLess
+	{
+	public:
+		bool Less( const penetrated_target_list& src1, const penetrated_target_list& src2, void* pCtx )
+		{
+			return src1.flDistanceFraction < src2.flDistanceFraction;
+		}
+	};
+
+	virtual bool EnumEntity( IHandleEntity* pHandleEntity )
+	{
+		trace_t tr;
+
+		CBaseEntity* pEnt = static_cast<CBaseEntity*>(pHandleEntity);
+
+		// Ignore collisions with the shooter
+		if ( pEnt == m_pShooter )
+			return true;
+
+		if ( pEnt->IsCombatCharacter() || pEnt->IsBaseObject() )
+		{
+			if ( m_bIgnoreTeammates && pEnt->GetTeam() == m_pShooter->GetTeam() )
+				return true;
+
+			enginetrace->ClipRayToEntity( *m_pRay, MASK_SOLID | CONTENTS_HITBOX, pHandleEntity, &tr );
+
+			if ( tr.fraction < 1.0f )
+			{
+				penetrated_target_list newEntry;
+				newEntry.pTarget = pEnt;
+				newEntry.flDistanceFraction = tr.fraction;
+				m_Targets.Insert( newEntry );
+				return true;
+			}
+		}
+
+		return true;
+	}
+
+public:
+	Ray_t* m_pRay;
+	int			 m_nCustomDamageType;
+	CBaseEntity* m_pShooter;
+	bool		 m_bIgnoreTeammates;
+	CUtlSortVector<penetrated_target_list, PenetratedTargetLess> m_Targets;
+};
+
+
+CTargetOnlyFilter::CTargetOnlyFilter( CBaseEntity* pShooter, CBaseEntity* pTarget )
+	: CTraceFilterSimple( pShooter, COLLISION_GROUP_NONE )
+{
+	m_pShooter = pShooter;
+	m_pTarget = pTarget;
+}
+
+bool CTargetOnlyFilter::ShouldHitEntity( IHandleEntity* pHandleEntity, int contentsMask )
+{
+	CBaseEntity* pEnt = static_cast<CBaseEntity*>(pHandleEntity);
+
+	if ( pEnt && pEnt == m_pTarget )
+		return true;
+	else if ( !pEnt || pEnt != m_pTarget )
+	{
+		// If we hit a solid piece of the world, we're done.
+		if ( pEnt->IsBSPModel() && pEnt->IsSolid() )
+			return CTraceFilterSimple::ShouldHitEntity( pHandleEntity, contentsMask );
+		return false;
+	}
+	else
+		return CTraceFilterSimple::ShouldHitEntity( pHandleEntity, contentsMask );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+bool CTFPlayer::CanPickupBuilding( CBaseObject* pPickupObject )
+{
+	if ( !pPickupObject )
+		return false;
+
+	if ( pPickupObject->IsBuilding() )
+		return false;
+
+	if ( pPickupObject->IsUpgrading() )
+		return false;
+
+	if ( pPickupObject->HasSapper() )
+		return false;
+
+	// this was for the Cow Mangler and post sapper removal building disable
+	//if ( pPickupObject->IsPlasmaDisabled() )
+	//	return false;
+
+	// If we were recently carried & placed we may still be upgrading up to our old level.
+	//if ( pPickupObject->GetUpgradeLevel() != pPickupObject->GetHighestUpgradeLevel() )
+	//	return false;
+
+	if ( m_Shared.IsCarryingObject() )
+		return false;
+	/*
+	if ( m_Shared.IsLoserStateStunned() || m_Shared.IsControlStunned() )
+		return false;
+
+	if ( m_Shared.IsLoser() )
+		return false;
+	*/
+	if ( TFGameRules()->State_Get() != GR_STATE_RND_RUNNING && TFGameRules()->State_Get() != GR_STATE_STALEMATE /* && TFGameRules()->State_Get() != GR_STATE_BETWEEN_RNDS */ )
+		return false;
+
+	// There's ammo in the clip... no switching away!
+	if ( GetActiveTFWeapon() && GetActiveTFWeapon()->AutoFiresFullClip() && GetActiveTFWeapon()->Clip1() > 0 )
+		return false;
+
+
+	// Check it's within range
+	int nPickUpRangeSq = TF_BUILDING_PICKUP_RANGE * TF_BUILDING_PICKUP_RANGE;
+	//int iIncreasedRangeCost = 0;
+	int nSqrDist = (EyePosition() - pPickupObject->GetAbsOrigin()).LengthSqr();
+	/*
+	// Extra range only works with primary weapon
+	CTFWeaponBase* pWeapon = GetActiveTFWeapon();
+	CALL_ATTRIB_HOOK_INT_ON_OTHER( pWeapon, iIncreasedRangeCost, building_teleporting_pickup );
+	if ( iIncreasedRangeCost != 0 )
+	{
+		// False on deadzone
+		if ( nSqrDist > nPickUpRangeSq && nSqrDist < TF_BUILDING_RESCUE_MIN_RANGE_SQ )
+			return false;
+		if ( nSqrDist >= TF_BUILDING_RESCUE_MIN_RANGE_SQ && GetAmmoCount( TF_AMMO_METAL ) < iIncreasedRangeCost )
+			return false;
+		return true;
+	}
+	else*/ if ( nSqrDist > nPickUpRangeSq )
+		return false;
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+bool CTFPlayer::TryToPickupBuilding()
+{
+	if ( !tf_hauling.GetBool() )
+		return false; // hauling is disabled
+
+	if ( m_Shared.IsCarryingObject() )
+		return false;
+
+	if ( m_Shared.InCond( TF_COND_TAUNTING ) )
+		return false;
+	/*
+#ifdef GAME_DLL
+	int iCannotPickUpBuildings = 0;
+	CALL_ATTRIB_HOOK_INT( iCannotPickUpBuildings, cannot_pick_up_buildings );
+	if ( iCannotPickUpBuildings )
+	{
+		return false;
+	}
+#endif
+	*/
+	// Check to see if a building we own is in front of us.
+	Vector vecForward;
+	AngleVectors( EyeAngles(), &vecForward, NULL, NULL );
+
+	int iPickUpRange = TF_BUILDING_PICKUP_RANGE;
+	/*
+	int iIncreasedRangeCost = 0;
+	CTFWeaponBase* pWeapon = GetActiveTFWeapon();
+	CALL_ATTRIB_HOOK_INT_ON_OTHER( pWeapon, iIncreasedRangeCost, building_teleporting_pickup );
+	if ( iIncreasedRangeCost != 0 )
+	{
+		iPickUpRange = TF_BUILDING_RESCUE_MAX_RANGE;
+	}
+	*/
+	// Create a ray a see if any of my objects touch it
+	Ray_t ray;
+	ray.Init( EyePosition(), EyePosition() + vecForward * iPickUpRange );
+
+	CBulletPenetrateEnum ePickupPenetrate( &ray, this, TF_DMG_CUSTOM_PENETRATE_ALL_PLAYERS, false );
+	enginetrace->EnumerateEntities( ray, false, &ePickupPenetrate );
+
+	CBaseObject* pPickupObject = NULL;
+	float flCurrDistanceSq = iPickUpRange * iPickUpRange;
+
+	for ( int i = 0; i < GetObjectCount(); i++ )
+	{
+		CBaseObject* pObj = GetObject( i );
+		if ( !pObj )
+			continue;
+
+		float flDistToObjSq = (pObj->GetAbsOrigin() - GetAbsOrigin()).LengthSqr();
+		if ( flDistToObjSq > flCurrDistanceSq )
+			continue;
+
+		FOR_EACH_VEC( ePickupPenetrate.m_Targets, iTarget )
+		{
+			if ( ePickupPenetrate.m_Targets[iTarget].pTarget == pObj )
+			{
+				CTargetOnlyFilter penetrateFilter( this, pObj );
+				trace_t pTraceToUse;
+				UTIL_TraceLine( EyePosition(), EyePosition() + vecForward * iPickUpRange, (MASK_SOLID | CONTENTS_HITBOX), &penetrateFilter, &pTraceToUse );
+				if ( pTraceToUse.m_pEnt == pObj )
+				{
+					pPickupObject = pObj;
+					flCurrDistanceSq = flDistToObjSq;
+					break;
+				}
+			}
+			if ( ePickupPenetrate.m_Targets[iTarget].pTarget->IsWorld() )
+			{
+				break;
+			}
+		}
+	}
+
+	if ( !CanPickupBuilding( pPickupObject ) )
+	{
+		if ( pPickupObject )
+		{
+			CSingleUserRecipientFilter filter( this );
+			EmitSound( filter, entindex(), "Player.UseDeny", NULL, 0.0f );
+		}
+
+		return false;
+	}
+
+#ifdef CLIENT_DLL
+
+	return (bool)pPickupObject;
+
+#elif GAME_DLL
+
+	if ( pPickupObject )
+	{
+		pPickupObject->MakeCarriedObject( this );
+
+		CTFWeaponBuilder* pBuilder = dynamic_cast<CTFWeaponBuilder*>(Weapon_OwnsThisID( TF_WEAPON_BUILDER ));
+		if ( pBuilder )
+		{
+			if ( GetActiveTFWeapon() == pBuilder )
+				SetActiveWeapon( NULL );
+
+			Weapon_Switch( pBuilder );
+			pBuilder->m_flNextSecondaryAttack = gpGlobals->curtime + 0.5f;
+		}
+
+		SpeakConceptIfAllowed( MP_CONCEPT_PICKUP_BUILDING, pPickupObject->GetResponseRulesModifier() );
+
+		m_flCommentOnCarrying = gpGlobals->curtime + random->RandomFloat( 6.f, 12.f );
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
+
+#endif
 }
 
 //-----------------------------------------------------------------------------

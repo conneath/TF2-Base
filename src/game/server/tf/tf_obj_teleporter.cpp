@@ -275,6 +275,8 @@ void CObjectTeleporter::OnGoActive( void )
 
 	SetState( TELEPORTER_STATE_IDLE );
 
+	m_bCarryDeploy = false;
+
 	BaseClass::OnGoActive();
 
 	SetPlaybackRate( 0.0f );
@@ -512,6 +514,9 @@ void CObjectTeleporter::DeterminePlaybackRate( void )
 //-----------------------------------------------------------------------------
 void CObjectTeleporter::TeleporterThink( void )
 {
+	if ( IsCarried() )
+		return;
+
 	SetContextThink( &CObjectTeleporter::TeleporterThink, gpGlobals->curtime + BUILD_TELEPORTER_NEXT_THINK, TELEPORTER_THINK_CONTEXT );
 
 	// At any point, if our match is not ready, revert to IDLE
@@ -813,4 +818,11 @@ CObjectTeleporter* CObjectTeleporter::FindMatch( void )
 	}
 
 	return pMatch;
+}
+
+void CObjectTeleporter::MakeCarriedObject( CTFPlayer* pCarrier )
+{
+	ShowDirectionArrow( false );
+
+	BaseClass::MakeCarriedObject( pCarrier );
 }
