@@ -70,6 +70,8 @@ public:
 		return (GetState() == TELEPORTER_STATE_SENDING && m_hTeleportingPlayer == pPlayer);
 	}
 
+	virtual void	MakeCarriedObject( CTFPlayer* pCarrier );
+
 protected:
 	CNetworkVar( int, m_iState );
 	CNetworkVar( float, m_flRechargeTime );

@@ -208,7 +208,8 @@ void CObjectDispenser::OnGoActive( void )
 	SetModel( DISPENSER_MODEL );
 
 	// Put some ammo in the Dispenser
-	m_iAmmoMetal = 25;
+	if ( !m_bCarryDeploy )
+		m_iAmmoMetal = 25;
 
 	// Begin thinking
 	SetContextThink( &CObjectDispenser::RefillThink, gpGlobals->curtime + 3, REFILL_CONTEXT );
@@ -217,6 +218,8 @@ void CObjectDispenser::OnGoActive( void )
 	m_flNextAmmoDispense = gpGlobals->curtime + 0.5;
 
 	m_hTouchTrigger = CBaseEntity::Create( "dispenser_touch_trigger", GetAbsOrigin(), vec3_angle, this );
+
+	m_bCarryDeploy = false;
 
 	BaseClass::OnGoActive();
 
@@ -357,6 +360,8 @@ bool CObjectDispenser::DispenseAmmo( CTFPlayer *pPlayer )
 
 void CObjectDispenser::RefillThink( void )
 {
+	if ( IsCarried() )
+		return;
 	SetContextThink( &CObjectDispenser::RefillThink, gpGlobals->curtime + 6, REFILL_CONTEXT );
 
 	if ( IsDisabled() )
@@ -377,6 +382,8 @@ void CObjectDispenser::RefillThink( void )
 //-----------------------------------------------------------------------------
 void CObjectDispenser::DispenseThink( void )
 {
+	if ( IsCarried() )
+		return;
 	if ( IsDisabled() )
 	{
 		// Don't heal or dispense ammo
@@ -482,10 +489,32 @@ void CObjectDispenser::EndTouch( CBaseEntity *pOther )
 }
 
 //-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CObjectDispenser::ResetHealingTargets( void )
+{
+	// tell all the players we're not healing them anymore
+	for ( int i = m_hHealingTargets.Count() - 1; i >= 0; i-- )
+	{
+		EHANDLE hEnt = m_hHealingTargets[i];
+		CBaseEntity* pOther = hEnt.Get();
+
+		if ( pOther )
+		{
+			StopHealing( pOther );
+		}
+	}
+
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: Try to start healing this target
 //-----------------------------------------------------------------------------
 void CObjectDispenser::StartHealing( CBaseEntity *pOther )
 {
+	if ( IsCarried() )
+		return;
+
 	AddHealingTarget( pOther );
 
 	CTFPlayer *pPlayer = ToTFPlayer( pOther );
@@ -593,4 +622,23 @@ int CObjectDispenser::DrawDebugTextOverlays(void)
 		text_offset++;
 	}
 	return text_offset;
+}
+
+//-----------------------------------------------------------------------------
+// 
+//-----------------------------------------------------------------------------
+void CObjectDispenser::MakeCarriedObject( CTFPlayer* pCarrier )
+{
+	if ( m_hTouchTrigger.Get() )
+	{
+		UTIL_Remove( m_hTouchTrigger );
+	}
+
+	ResetHealingTargets();
+
+	m_hTouchingEntities.Purge();
+
+	StopSound( "Building_Dispenser.Idle" );
+
+	BaseClass::MakeCarriedObject( pCarrier );
 }

@@ -70,6 +70,7 @@ public:
 	// Creation
 	virtual void	Precache();
 	virtual void	Spawn( void );
+	virtual void	FirstSpawn( void );
 	virtual void	Activate( void );
 
 	virtual bool	ShouldCollide( int collisionGroup, int contentsMask ) const;
@@ -326,6 +327,8 @@ private:
 	// Make sure we pick up changes to these.
 	IMPLEMENT_NETWORK_VAR_FOR_DERIVED( m_iHealth );
 	IMPLEMENT_NETWORK_VAR_FOR_DERIVED( m_takedamage );
+
+	int			m_iHealthOnPickup;
 
 	Activity	m_Activity;
 

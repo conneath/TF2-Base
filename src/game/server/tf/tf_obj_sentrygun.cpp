@@ -129,6 +129,7 @@ CObjectSentrygun::CObjectSentrygun()
 	SetMaxHealth( SENTRYGUN_MAX_HEALTH );
 	m_iHealth = SENTRYGUN_MAX_HEALTH;
 	SetType( OBJ_SENTRYGUN );
+	m_iHighestUpgradeLevel = 1;
 
 	m_flSentryRange = SENTRY_MAX_RANGE;
 }
@@ -146,11 +147,15 @@ void CObjectSentrygun::Spawn()
 	m_takedamage = DAMAGE_YES;
 
 	m_iUpgradeLevel = 1;
-	m_iUpgradeMetal = 0;
 	m_iUpgradeMetalRequired = SENTRYGUN_UPGRADE_METAL;
 
-	SetMaxHealth( SENTRYGUN_MAX_HEALTH );
-	SetHealth( SENTRYGUN_MAX_HEALTH );
+
+	if ( !IsCarried() )
+	{
+		m_iUpgradeMetal = 0;
+		SetMaxHealth( SENTRYGUN_MAX_HEALTH );
+		SetHealth( SENTRYGUN_MAX_HEALTH );
+	}
 
 	// Rotate Details
 	m_iRightBound = 45;
@@ -282,7 +287,19 @@ void CObjectSentrygun::OnGoActive( void )
 	bool bUnderwater = ( UTIL_PointContents( EyePosition() ) & MASK_WATER ) ? true : false;
 	SetWaterLevel( ( bUnderwater ) ? 3 : 0 );	
 
-	m_iAmmoShells = m_iMaxAmmoShells;
+
+	if ( m_bCarryDeploy )
+	{
+		m_iAmmoShells = m_iOldAmmoShells;
+		m_iAmmoRockets = m_iOldAmmoRockets;
+	}
+	else
+	{
+		m_iAmmoShells = m_iMaxAmmoShells;
+		m_iAmmoRockets = m_iMaxAmmoRockets;
+	}
+
+	SillyRedeployUpgradeHack();
 
 	// Init attachments for level 1 sentry gun
 	m_iAttachments[SENTRYGUN_ATTACHMENT_MUZZLE] = LookupAttachment( "muzzle" );
@@ -381,10 +398,18 @@ void CObjectSentrygun::StartUpgrading( void )
 	// Increase level
 	m_iUpgradeLevel++;
 
+	if ( GetHighestUpgradeLevel() < m_iUpgradeLevel )
+	{
+		m_iHighestUpgradeLevel = m_iUpgradeLevel;
+	}
+
 	// more health
-	int iMaxHealth = GetMaxHealth();
-	SetMaxHealth( iMaxHealth * 1.2 );
-	SetHealth( iMaxHealth * 1.2 );
+	if ( !m_bCarryDeploy )
+	{
+		int iMaxHealth = GetMaxHealth();
+		SetMaxHealth( iMaxHealth * 1.2 );
+		SetHealth( iMaxHealth * 1.2 );
+	}
 
 	EmitSound( "Building_Sentrygun.Built" );
 		
@@ -398,7 +423,8 @@ void CObjectSentrygun::StartUpgrading( void )
 		break;
 	case 3:
 		SetModel( SENTRY_MODEL_LEVEL_3_UPGRADE );
-		m_iAmmoRockets = SENTRYGUN_MAX_ROCKETS;
+		if( !m_bCarryDeploy )
+			m_iAmmoRockets = SENTRYGUN_MAX_ROCKETS;
 		m_flHeavyBulletResist = SENTRYGUN_MINIGUN_RESIST_LVL_3;
 		SetViewOffset( SENTRYGUN_EYE_OFFSET_LEVEL_3 );
 		m_iMaxAmmoShells = SENTRYGUN_MAX_SHELLS_3;
@@ -409,7 +435,8 @@ void CObjectSentrygun::StartUpgrading( void )
 	}
 
 	// more ammo capability
-	m_iAmmoShells = m_iMaxAmmoShells;
+	if( !m_bCarryDeploy )
+		m_iAmmoShells = m_iMaxAmmoShells;
 
 	m_iState.Set( SENTRY_STATE_UPGRADING );
 
@@ -445,6 +472,23 @@ void CObjectSentrygun::FinishUpgrading( void )
 	m_iAttachments[SENTRYGUN_ATTACHMENT_ROCKET_R] = LookupAttachment( "rocket_r" );
 
 	EmitSound( "Building_Sentrygun.Built" );
+
+	SillyRedeployUpgradeHack();
+}
+
+// HACK!! because of how the code is structured right now i have to set m_bCarryDeploy in each building types code
+void CObjectSentrygun::SillyRedeployUpgradeHack( void )
+{
+	// if we've been at a higher level previously that means we were redeployed (this code is temporarily here untill upgrading is moved to CBaseObject)
+	if ( GetUpgradeLevel() < GetHighestUpgradeLevel() )
+	{
+		// Keep moving up levels until we reach the level we were at before.
+		StartUpgrading();
+	}
+	else
+	{
+		m_bCarryDeploy = false;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -1435,6 +1479,17 @@ void CObjectSentrygun::SetModel( const char *pModel )
 	ReattachChildren();
 
 	ResetSequenceInfo();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CObjectSentrygun::MakeCarriedObject( CTFPlayer* pCarrier )
+{
+	BaseClass::MakeCarriedObject( pCarrier );
+
+	m_iOldAmmoShells = m_iAmmoShells;
+	m_iOldAmmoRockets = m_iAmmoRockets;
 }
 
 LINK_ENTITY_TO_CLASS( tf_projectile_sentryrocket, CTFProjectile_SentryRocket );

@@ -132,6 +132,9 @@ BEGIN_RECV_TABLE_NOBASE( CTFPlayerShared, DT_TFPlayerShared )
 	RecvPropInt( RECVINFO( m_nDisguiseClass ) ),
 	RecvPropInt( RECVINFO( m_iDisguiseTargetIndex ) ),
 	RecvPropInt( RECVINFO( m_iDisguiseHealth ) ),
+	// Engineer
+	RecvPropEHandle( RECVINFO( m_hCarriedObject ) ),
+	RecvPropBool( RECVINFO( m_bCarryingObject ) ),
 	// Local Data.
 	RecvPropDataTable( "tfsharedlocaldata", 0, 0, &REFERENCE_RECV_TABLE(DT_TFPlayerSharedLocal) ),
 END_RECV_TABLE()
@@ -172,6 +175,9 @@ BEGIN_SEND_TABLE_NOBASE( CTFPlayerShared, DT_TFPlayerShared )
 	SendPropInt( SENDINFO( m_nDisguiseClass ), 4, SPROP_UNSIGNED ),
 	SendPropInt( SENDINFO( m_iDisguiseTargetIndex ), 7, SPROP_UNSIGNED ),
 	SendPropInt( SENDINFO( m_iDisguiseHealth ), 10 ),
+	// Engineer
+	SendPropEHandle( SENDINFO( m_hCarriedObject ) ),
+	SendPropBool( SENDINFO( m_bCarryingObject ) ),
 	// Local Data.
 	SendPropDataTable( "tfsharedlocaldata", 0, &REFERENCE_SEND_TABLE( DT_TFPlayerSharedLocal ), SendProxy_SendLocalDataTable ),	
 END_SEND_TABLE()
@@ -201,6 +207,9 @@ CTFPlayerShared::CTFPlayerShared()
 	m_iDisguiseWeaponModelIndex = -1;
 	m_pDisguiseWeaponInfo = NULL;
 #endif
+
+	m_bCarryingObject = false;
+	m_hCarriedObject = NULL;
 }
 
 void CTFPlayerShared::Init( CTFPlayer *pPlayer )
@@ -1851,6 +1860,16 @@ int	CTFPlayerShared::GetNumKillsInTime( float flTime )
 
 #endif
 
+void CTFPlayerShared::SetCarriedObject( CBaseObject* pObj )
+{
+	m_bCarryingObject = (pObj != NULL);
+	m_hCarriedObject.Set( pObj );
+#ifdef GAME_DLL
+	if ( m_pOuter )
+		m_pOuter->TeamFortress_SetSpeed();
+#endif
+}
+
 //=============================================================================
 //
 // Shared player code that isn't CTFPlayerShared
@@ -2175,6 +2194,11 @@ void CTFPlayer::TeamFortress_SetSpeed()
 		}
 	}
 
+	if ( m_Shared.IsCarryingObject() )
+	{
+		maxfbspeed *= 0.90f;
+	}
+
 	// Set the speed
 	SetMaxSpeed( maxfbspeed );
 }
@@ -2473,7 +2497,10 @@ bool CTFPlayer::DoClassSpecialSkill( void )
 		}
 		bDoSkill = true;
 		break;
-
+	case TF_CLASS_ENGINEER:
+	{
+		bDoSkill = TryToPickupBuilding();
+	}
 	default:
 		break;
 	}
@@ -2647,6 +2674,9 @@ bool CTFPlayer::CanPickupBuilding( CBaseObject* pPickupObject )
 //-----------------------------------------------------------------------------
 bool CTFPlayer::TryToPickupBuilding()
 {
+	if ( !tf_hauling.GetBool() )
+		return false; // hauling is disabled
+
 	if ( m_Shared.IsCarryingObject() )
 		return false;
 

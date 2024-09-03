@@ -65,11 +65,15 @@ public:
 	virtual bool	IsUpgrading( void ) const;
 
 	int				GetUpgradeLevel( void ) { return m_iUpgradeLevel; }
+	int				GetHighestUpgradeLevel( void ) { return Min( (int)m_iHighestUpgradeLevel, 3 ); } // all this upgrading shit is going to be moved to the base object class soon btw
+	void			SetHighestUpgradeLevel( int nLevel ) { m_iHighestUpgradeLevel = Min( nLevel, 3 ); }
+	void			SillyRedeployUpgradeHack( void );
 
 	virtual float	GetTimeSinceLastFired( void ) const { return m_timeSinceLastFired.GetElapsedTime(); }
 
 	virtual const QAngle& GetTurretAngles( void ) const { return m_vecCurAngles; }
 
+	virtual void	MakeCarriedObject( CTFPlayer* pCarrier );
 private:
 
 	// Main think
@@ -106,6 +110,7 @@ private:
 
 	// Upgrade Level ( 1, 2, 3 )
 	CNetworkVar( int, m_iUpgradeLevel );
+	int m_iHighestUpgradeLevel;
 
 	IntervalTimer m_timeSinceLastFired;
 
@@ -131,6 +136,8 @@ private:
 	CNetworkVar( int, m_iMaxAmmoShells );
 	CNetworkVar( int, m_iAmmoRockets );
 	CNetworkVar( int, m_iMaxAmmoRockets );
+	int m_iOldAmmoShells;
+	int m_iOldAmmoRockets;
 
 	int	m_iAmmoType;
 

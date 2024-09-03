@@ -374,13 +374,16 @@ BuildingHudAlert_t C_ObjectSentrygun::GetBuildingAlertLevel( void )
 
 	BuildingHudAlert_t alertLevel = BUILDING_HUD_ALERT_NONE;
 
-	if ( !IsBuilding() && flShellPercent < 0.25 )
+	if ( !IsCarried() )
 	{
-		alertLevel = BUILDING_HUD_ALERT_VERY_LOW_AMMO;
-	}
-	else if ( !IsBuilding() && flShellPercent < 0.50 )
-	{
-		alertLevel = BUILDING_HUD_ALERT_LOW_AMMO;
+		if ( !IsBuilding() && flShellPercent < 0.25 )
+		{
+			alertLevel = BUILDING_HUD_ALERT_VERY_LOW_AMMO;
+		}
+		else if ( !IsBuilding() && flShellPercent < 0.50 )
+		{
+			alertLevel = BUILDING_HUD_ALERT_LOW_AMMO;
+		}
 	}
 
 	return max( baseAlertLevel, alertLevel );

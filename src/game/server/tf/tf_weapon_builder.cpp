@@ -97,6 +97,9 @@ bool CTFWeaponBuilder::CanDeploy( void )
 	if (!pPlayer)
 		return false;
 
+	if ( pPlayer->m_Shared.IsCarryingObject() )
+		return BaseClass::CanDeploy();
+
 	if ( pPlayer->CanBuild( m_iObjectType ) != CB_CAN_BUILD )
 	{
 		return false;
@@ -162,6 +165,14 @@ Activity CTFWeaponBuilder::GetDrawActivity( void )
 //-----------------------------------------------------------------------------
 bool CTFWeaponBuilder::Holster( CBaseCombatWeapon *pSwitchingTo )
 {
+
+	CTFPlayer* pOwner = ToTFPlayer( GetOwner() );
+	if ( !pOwner )
+		return false;
+
+	if ( pOwner->m_Shared.IsCarryingObject() )
+		return false;
+
 	if ( m_iBuildState == BS_PLACING || m_iBuildState == BS_PLACING_INVALID )
 	{
 		SetCurrentState( BS_IDLE );
@@ -555,6 +566,7 @@ void CTFWeaponBuilder::StartBuilding( void )
 	if ( pPlayer )
 	{
 		pPlayer->RemoveInvisibility();
+		pPlayer->m_Shared.SetCarriedObject( NULL );
 	}
 }
 

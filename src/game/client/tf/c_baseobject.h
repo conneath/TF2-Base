@@ -109,6 +109,7 @@ public:
 	bool			IsPlacing( void ) const { return m_bPlacing; }
 	bool			IsBuilding( void ) const { return m_bBuilding; }
 	virtual bool	IsUpgrading( void ) const { return false; }
+	bool			IsCarried( void ) const { return m_bCarried; }
 
 	virtual void	FinishedBuilding( void ) { return; }
 

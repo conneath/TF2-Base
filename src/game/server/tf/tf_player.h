@@ -250,6 +250,7 @@ public:
 	bool PlayerOwnsObject( CBaseObject *pObject );
 	void DetonateOwnedObjectsOfType( int iType );
 	void StartBuildingObjectOfType( int iType );
+	float GetObjectBuildSpeedMultiplier( int iObjectType, bool bIsRedeploy ) const;
 
 	void OnSapperPlaced( CBaseEntity* sappedObject );			// invoked when we place a sapper on an enemy building
 	bool IsPlacingSapper( void ) const;							// return true if we are a spy who placed a sapper on a building in the last few moments

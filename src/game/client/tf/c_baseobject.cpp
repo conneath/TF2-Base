@@ -46,6 +46,7 @@ IMPLEMENT_CLIENTCLASS_DT(C_BaseObject, DT_BaseObject, CBaseObject)
 	RecvPropInt(RECVINFO(m_iObjectType)),
 	RecvPropInt(RECVINFO(m_bBuilding)),
 	RecvPropInt(RECVINFO(m_bPlacing)),
+	RecvPropBool( RECVINFO( m_bCarried ) ),
 	RecvPropFloat(RECVINFO(m_flPercentageConstructed)),
 	RecvPropInt(RECVINFO(m_fObjectFlags)),
 	RecvPropEHandle(RECVINFO(m_hBuiltOnEntity)),
