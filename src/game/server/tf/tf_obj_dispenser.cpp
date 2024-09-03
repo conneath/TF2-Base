@@ -10,6 +10,7 @@
 #include "engine/IEngineSound.h"
 #include "tf_player.h"
 #include "tf_team.h"
+#include "tf_gamerules.h"
 #include "vguiscreen.h"
 #include "world.h"
 #include "explode.h"
@@ -70,6 +71,10 @@ END_SEND_TABLE()
 BEGIN_DATADESC( CObjectDispenser )
 	DEFINE_THINKFUNC( RefillThink ),
 	DEFINE_THINKFUNC( DispenseThink ),
+
+	// key
+	DEFINE_KEYFIELD( m_iszCustomTouchTrigger, FIELD_STRING, "touch_trigger" ),
+
 END_DATADESC()
 
 
@@ -100,8 +105,8 @@ public:
 		BaseClass::Spawn();
 		AddSpawnFlags( SF_TRIGGER_ALLOW_CLIENTS );
 		InitTrigger();
-		SetSolid( SOLID_BBOX );
-		UTIL_SetSize(this, Vector(-70,-70,-70), Vector(70,70,70) );
+		//SetSolid( SOLID_BBOX );
+		//UTIL_SetSize(this, Vector(-70,-70,-70), Vector(70,70,70) );
 	}
 
 	virtual void StartTouch( CBaseEntity *pEntity )
@@ -137,6 +142,7 @@ CObjectDispenser::CObjectDispenser()
 	UseClientSideAnimation();
 
 	m_hTouchingEntities.Purge();
+	m_bUseGenerateMetalSound = true;
 
 	SetType( OBJ_DISPENSER );
 }
@@ -198,13 +204,14 @@ void CObjectDispenser::SetModel( const char *pModel )
 //-----------------------------------------------------------------------------
 void CObjectDispenser::OnGoActive( void )
 {
+	/*
 	CTFPlayer *pBuilder = GetBuilder();
 
 	Assert( pBuilder );
 
 	if ( !pBuilder )
 		return;
-
+	*/
 	SetModel( DISPENSER_MODEL );
 
 	// Put some ammo in the Dispenser
@@ -217,7 +224,31 @@ void CObjectDispenser::OnGoActive( void )
 
 	m_flNextAmmoDispense = gpGlobals->curtime + 0.5;
 
-	m_hTouchTrigger = CBaseEntity::Create( "dispenser_touch_trigger", GetAbsOrigin(), vec3_angle, this );
+	if ( m_hTouchTrigger.Get() && dynamic_cast<CObjectCartDispenser*>(this) != NULL )
+	{
+		UTIL_Remove( m_hTouchTrigger.Get() );
+		m_hTouchTrigger = NULL;
+	}
+
+	float flRadius = 64.f;
+
+	if ( m_iszCustomTouchTrigger != NULL_STRING )
+	{
+		m_hTouchTrigger = dynamic_cast<CDispenserTouchTrigger*> (gEntList.FindEntityByName( NULL, m_iszCustomTouchTrigger ));
+
+		if ( m_hTouchTrigger.Get() != NULL )
+		{
+			m_hTouchTrigger->SetOwnerEntity( this );	//owned
+		}
+	}
+
+	if ( m_hTouchTrigger.Get() == NULL )
+	{
+		m_hTouchTrigger = CBaseEntity::Create( "dispenser_touch_trigger", GetAbsOrigin(), vec3_angle, this );
+		UTIL_SetSize( m_hTouchTrigger.Get(), Vector( -flRadius, -flRadius, -flRadius ), Vector( flRadius, flRadius, flRadius ) );
+		m_hTouchTrigger->SetSolid( SOLID_BBOX );
+	}
+	//m_hTouchTrigger = CBaseEntity::Create( "dispenser_touch_trigger", GetAbsOrigin(), vec3_angle, this );
 
 	m_bCarryDeploy = false;
 
@@ -373,7 +404,8 @@ void CObjectDispenser::RefillThink( void )
 	if ( m_iAmmoMetal < DISPENSER_MAX_METAL_AMMO )
 	{
 		m_iAmmoMetal = min( m_iAmmoMetal + DISPENSER_MAX_METAL_AMMO * 0.1, DISPENSER_MAX_METAL_AMMO );
-		EmitSound( "Building_Dispenser.GenerateMetal" );
+		if ( m_bUseGenerateMetalSound )
+			EmitSound( "Building_Dispenser.GenerateMetal" );
 	}
 }
 
@@ -586,6 +618,7 @@ void CObjectDispenser::AddHealingTarget( CBaseEntity *pOther )
 	// add to tail
 	EHANDLE hOther = pOther;
 	m_hHealingTargets.AddToTail( hOther );
+	NetworkStateChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -596,6 +629,7 @@ void CObjectDispenser::RemoveHealingTarget( CBaseEntity *pOther )
 	// remove
 	EHANDLE hOther = pOther;
 	m_hHealingTargets.FindAndRemove( hOther );
+	NetworkStateChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -641,4 +675,106 @@ void CObjectDispenser::MakeCarriedObject( CTFPlayer* pCarrier )
 	StopSound( "Building_Dispenser.Idle" );
 
 	BaseClass::MakeCarriedObject( pCarrier );
+}
+
+
+//-----------------------------------------------------------------------------
+// Cart Dispenser
+//-----------------------------------------------------------------------------
+
+BEGIN_DATADESC( CObjectCartDispenser )
+DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable ),
+DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable ),
+END_DATADESC()
+
+IMPLEMENT_SERVERCLASS_ST( CObjectCartDispenser, DT_ObjectCartDispenser )
+END_SEND_TABLE()
+
+LINK_ENTITY_TO_CLASS( mapobj_cart_dispenser, CObjectCartDispenser );
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+CObjectCartDispenser::CObjectCartDispenser()
+{
+	m_bUseGenerateMetalSound = false;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void CObjectCartDispenser::Spawn( void )
+{
+	// This cast is for the benefit of GCC
+	m_fObjectFlags |= (int)OF_DOESNT_HAVE_A_MODEL;
+	m_takedamage = DAMAGE_NO;
+	OnGoActive();
+	//m_iUpgradeLevel = 1;
+
+	//TFGameRules()->OnDispenserBuilt( this );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Finished building
+//-----------------------------------------------------------------------------
+void CObjectCartDispenser::OnGoActive( void )
+{
+	BaseClass::OnGoActive();
+
+	SetModel( "" );
+}
+
+//-----------------------------------------------------------------------------
+// Spawn the vgui control screens on the object
+//-----------------------------------------------------------------------------
+void CObjectCartDispenser::GetControlPanelInfo( int nPanelIndex, const char*& pPanelName )
+{
+	// no panels
+	return;
+}
+
+//-----------------------------------------------------------------------------
+// Don't decrement our metal count
+//-----------------------------------------------------------------------------
+int CObjectCartDispenser::DispenseMetal( CTFPlayer* pPlayer )
+{
+	int iMetal = pPlayer->GiveAmmo( MIN( m_iAmmoMetal, DISPENSER_DROP_METAL ), TF_AMMO_METAL, false/*, kAmmoSource_DispenserOrCart*/);
+	return iMetal;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CObjectCartDispenser::SetModel( const char* pModel )
+{
+	CBaseObject::SetModel( pModel );
+}
+/*
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CObjectCartDispenser::InputSetDispenserLevel( inputdata_t& inputdata )
+{
+	int iLevel = inputdata.value.Int();
+
+	if ( iLevel >= 1 && iLevel <= 3 )
+	{
+		m_iUpgradeLevel = iLevel;
+	}
+}
+*/
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CObjectCartDispenser::InputEnable( inputdata_t& inputdata )
+{
+	SetDisabled( false );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CObjectCartDispenser::InputDisable( inputdata_t& inputdata )
+{
+	SetDisabled( true );
 }

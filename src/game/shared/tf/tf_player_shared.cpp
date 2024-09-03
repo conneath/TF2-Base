@@ -559,6 +559,8 @@ void CTFPlayerShared::ConditionGameRulesThink( void )
 		float fTotalHealAmount = 0.0f;
 		for ( int i = 0; i < m_aHealers.Count(); i++ )
 		{
+			// right now this assert triggers if theres no pPlayer (like when you're healed by the payload dispenser)
+			// TODO: must rework m_aHealers to use CBaseEntity and pHealScorer
 			Assert( m_aHealers[i].pPlayer );
 
 			// Dispensers don't heal above 100%

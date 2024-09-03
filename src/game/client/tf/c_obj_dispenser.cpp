@@ -172,7 +172,17 @@ void C_ObjectDispenser::UpdateEffects( void )
 				pszEffectName = "dispenser_heal_blue";
 			}
 
-			CNewParticleEffect *pEffect = ParticleProp()->Create( pszEffectName, PATTACH_POINT_FOLLOW, "heal_origin" );
+			CNewParticleEffect* pEffect;
+
+			// if we don't have a model, attach at the origin, otherwise use attachment 'heal_origin'
+			if ( FBitSet( GetObjectFlags(), OF_DOESNT_HAVE_A_MODEL ) )
+			{
+				pEffect = ParticleProp()->Create( pszEffectName, PATTACH_ABSORIGIN_FOLLOW );
+			}
+			else
+			{
+				pEffect = ParticleProp()->Create( pszEffectName, PATTACH_POINT_FOLLOW, "heal_origin" );
+			}
 			ParticleProp()->AddControlPoint( pEffect, 1, pTarget, PATTACH_ABSORIGIN_FOLLOW, NULL, Vector(0,0,50) );
 
 			int iIndex = m_hHealingTargetEffects.AddToTail();
@@ -267,3 +277,6 @@ void CDispenserControlPanel::OnTickActive( C_BaseObject *pObj, C_TFPlayer *pLoca
 
 	m_pAmmoProgress->SetProgress( flMetal );
 }
+
+IMPLEMENT_CLIENTCLASS_DT( C_ObjectCartDispenser, DT_ObjectCartDispenser, CObjectCartDispenser )
+END_RECV_TABLE()

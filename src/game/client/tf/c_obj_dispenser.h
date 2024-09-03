@@ -79,4 +79,11 @@ public:
 	CDispenserControlPanel_Red( vgui::Panel *parent, const char *panelName ) : CDispenserControlPanel( parent, panelName ) {}
 };
 
+
+class C_ObjectCartDispenser : public C_ObjectDispenser
+{
+	DECLARE_CLASS( C_ObjectCartDispenser, C_ObjectDispenser );
+public:
+	DECLARE_CLIENTCLASS();
+};
 #endif	//C_OBJ_DISPENSER_H

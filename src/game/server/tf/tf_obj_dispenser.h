@@ -68,19 +68,22 @@ public:
 
 	virtual void	MakeCarriedObject( CTFPlayer* pCarrier );
 
+protected:
+	bool m_bUseGenerateMetalSound;
+
+	CNetworkVar( int, m_iAmmoMetal );
+
 private:
 	void ResetHealingTargets( void );
 
 	//CNetworkArray( EHANDLE, m_hHealingTargets, MAX_DISPENSER_HEALING_TARGETS );
 
-
 	// Entities currently being touched by this trigger
 	CUtlVector< EHANDLE >	m_hTouchingEntities;
 
-	CNetworkVar( int, m_iAmmoMetal );
-
 	float m_flNextAmmoDispense;
 
+	string_t m_iszCustomTouchTrigger;
 	EHANDLE m_hTouchTrigger;
 
 	DECLARE_DATADESC();
@@ -91,4 +94,29 @@ inline int CObjectDispenser::GetAvailableMetal( void ) const
 	return m_iAmmoMetal;
 }
 
+
+//------------------------------------------------------------------------------
+class CObjectCartDispenser : public CObjectDispenser
+{
+	DECLARE_CLASS( CObjectCartDispenser, CObjectDispenser );
+
+public:
+	DECLARE_SERVERCLASS();
+	DECLARE_DATADESC();
+
+	CObjectCartDispenser();
+
+	virtual void Spawn( void );
+	virtual void OnGoActive( void );
+	virtual void GetControlPanelInfo( int nPanelIndex, const char*& pPanelName );
+
+	virtual int	DispenseMetal( CTFPlayer* pPlayer );
+
+	virtual bool	CanBeUpgraded( CTFPlayer* pPlayer ) { return false; }
+	virtual void	SetModel( const char* pModel );
+
+	//void InputSetDispenserLevel( inputdata_t& inputdata );
+	void InputEnable( inputdata_t& inputdata );
+	void InputDisable( inputdata_t& inputdata );
+};
 #endif // TF_OBJ_DISPENSER_H

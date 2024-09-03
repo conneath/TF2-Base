@@ -759,8 +759,9 @@ enum
 {
 	OF_ALLOW_REPEAT_PLACEMENT				= 0x01,
 	OF_MUST_BE_BUILT_ON_ATTACHMENT			= 0x02,
+	OF_DOESNT_HAVE_A_MODEL					= 0x04,
 
-	OF_BIT_COUNT	= 2
+	OF_BIT_COUNT	= 3
 };
 
 //--------------------------------------------------------------------------
