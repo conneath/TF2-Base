@@ -58,7 +58,7 @@ public:
 	int GetPreviousPointForPoint( int index, int team, int iPrevIndex );
 	bool TeamCanCapPoint( int index, int team );
 	void SetCapLayoutInHUD( const char *pszLayout ) { Q_strncpy(m_pszCapLayoutInHUD.GetForModify(), pszLayout, MAX_CAPLAYOUT_LENGTH ); }
-	void SetWarnOnCap( int index, bool bWarn );
+	void SetWarnOnCap( int index, int iWarnLevel );
 	void SetWarnSound( int index, string_t iszSound );
 	void SetCPLocked( int index, bool bLocked );
 	void SetTrackAlarm( int index, bool bAlarm );
@@ -174,7 +174,7 @@ private:
 	CNetworkArray(	int,		m_iTeamBaseIcons,	MAX_TEAMS );
 	CNetworkArray(  int,		m_iBaseControlPoints, MAX_TEAMS );
 	CNetworkArray(	bool,		m_bInMiniRound,		MAX_CONTROL_POINTS );
-	CNetworkArray(	bool,		m_bWarnOnCap,		MAX_CONTROL_POINTS );
+	CNetworkArray(	int,		m_iWarnOnCap,		MAX_CONTROL_POINTS );
 	CNetworkArray(	string_t,	m_iszWarnSound,		MAX_CONTROL_POINTS );
 	CNetworkArray( float, m_flPathDistance, MAX_CONTROL_POINTS );
 	CNetworkArray(  bool,       m_bCPLocked,        MAX_CONTROL_POINTS );

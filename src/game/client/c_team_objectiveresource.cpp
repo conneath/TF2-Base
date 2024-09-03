@@ -68,7 +68,7 @@ IMPLEMENT_CLIENTCLASS_DT_NOBASE(C_BaseTeamObjectiveResource, DT_BaseTeamObjectiv
 	RecvPropArray3( RECVINFO_ARRAY(m_iTeamBaseIcons),	RecvPropInt( RECVINFO(m_iTeamBaseIcons[0]) ) ),
 	RecvPropArray3( RECVINFO_ARRAY(m_iBaseControlPoints), RecvPropInt( RECVINFO(m_iBaseControlPoints[0]) ) ),
 	RecvPropArray3( RECVINFO_ARRAY(m_bInMiniRound),		RecvPropBool( RECVINFO(m_bInMiniRound[0]) ) ),
-	RecvPropArray3( RECVINFO_ARRAY(m_bWarnOnCap),		RecvPropBool( RECVINFO(m_bWarnOnCap[0]) ) ),
+	RecvPropArray3( RECVINFO_ARRAY(m_iWarnOnCap),		RecvPropBool( RECVINFO(m_iWarnOnCap[0]) ) ),
 	RecvPropArray( RecvPropString( RECVINFO( m_iszWarnSound[0]) ), m_iszWarnSound ),
 	RecvPropArray3( RECVINFO_ARRAY( m_flPathDistance ), RecvPropFloat( RECVINFO( m_flPathDistance[0] ) ) ),
 
@@ -101,7 +101,7 @@ C_BaseTeamObjectiveResource::C_BaseTeamObjectiveResource()
 		m_flCapLastThinkTime[i] = 0;
 		m_flLastCapWarningTime[i] = 0;
 		m_bWarnedOnFinalCap[i] = false; // have we warned
-		m_bWarnOnCap[i] = false; // should we warn
+		m_iWarnOnCap[i] = CP_WARN_NORMAL; // should we warn
 		m_iszWarnSound[i][0] = 0; // what sound should be played
 		m_flLazyCapPerc[i] = 0.0;
 
@@ -347,7 +347,7 @@ void C_BaseTeamObjectiveResource::ClientThink()
 							{
 								if ( m_iCappingTeam[i] != TEAM_UNASSIGNED && 
 									pPlayer->GetTeamNumber() != m_iCappingTeam[i] && 
-									ShouldWarnOnCap( i ) )
+									GetCapWarningLevel( i ) == CP_WARN_FINALCAP )
 								{
 									// Prevent spam
 									if ( gpGlobals->curtime > ( m_flLastCapWarningTime[i] + 5 ) )

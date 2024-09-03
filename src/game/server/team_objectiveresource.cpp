@@ -42,7 +42,7 @@ IMPLEMENT_SERVERCLASS_ST_NOBASE(CBaseTeamObjectiveResource, DT_BaseTeamObjective
 	SendPropArray3( SENDINFO_ARRAY3(m_iTeamBaseIcons), SendPropInt( SENDINFO_ARRAY(m_iTeamBaseIcons), 8 ) ),
 	SendPropArray3( SENDINFO_ARRAY3(m_iBaseControlPoints), SendPropInt( SENDINFO_ARRAY(m_iBaseControlPoints), 8 ) ),
 	SendPropArray3( SENDINFO_ARRAY3(m_bInMiniRound), SendPropBool( SENDINFO_ARRAY(m_bInMiniRound) ) ),
-	SendPropArray3( SENDINFO_ARRAY3(m_bWarnOnCap), SendPropBool( SENDINFO_ARRAY(m_bWarnOnCap) ) ),	
+	SendPropArray3( SENDINFO_ARRAY3(m_iWarnOnCap), SendPropInt( SENDINFO_ARRAY(m_iWarnOnCap), 4, SPROP_UNSIGNED ) ),	
 	SendPropArray3( SENDINFO_ARRAY3( m_flPathDistance ), SendPropFloat( SENDINFO_ARRAY( m_flPathDistance ), 8, 0, 0.0f, 1.0f ) ),
 	SendPropArray( SendPropStringT( SENDINFO_ARRAY( m_iszWarnSound ) ), m_iszWarnSound ),
 
@@ -75,7 +75,7 @@ BEGIN_DATADESC( CBaseTeamObjectiveResource )
 	DEFINE_ARRAY( m_iTeamBaseIcons, FIELD_INTEGER, MAX_TEAMS ),
 	DEFINE_ARRAY( m_iBaseControlPoints, FIELD_INTEGER, MAX_TEAMS ),
 	DEFINE_ARRAY( m_bInMiniRound, FIELD_BOOLEAN, MAX_CONTROL_POINTS ),
-	DEFINE_ARRAY( m_bWarnOnCap, FIELD_BOOLEAN, MAX_CONTROL_POINTS ),
+	DEFINE_ARRAY( m_iWarnOnCap, FIELD_INTEGER, MAX_CONTROL_POINTS ),
 	DEFINE_ARRAY( m_iszWarnSound, FIELD_STRING, MAX_CONTROL_POINTS ),
 	DEFINE_ARRAY( m_iNumTeamMembers, FIELD_INTEGER, MAX_CONTROL_POINTS*MAX_CONTROL_POINT_TEAMS ),
 	DEFINE_ARRAY( m_iCappingTeam, FIELD_INTEGER, MAX_CONTROL_POINTS ),
@@ -134,7 +134,7 @@ void CBaseTeamObjectiveResource::Spawn( void )
 		m_iCappingTeam.Set( i, TEAM_UNASSIGNED );
 		m_iTeamInZone.Set( i, TEAM_UNASSIGNED );
 		m_bInMiniRound.Set( i, true );
-		m_bWarnOnCap.Set( i, false );
+		m_iWarnOnCap.Set( i, CP_WARN_NORMAL );
 		m_flLazyCapPerc.Set( i, 0.0 );
 		m_bCPCapRateScalesWithPlayers.Set( i, true );
 
@@ -268,10 +268,10 @@ void CBaseTeamObjectiveResource::SetCPVisible( int index, bool bVisible )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CBaseTeamObjectiveResource::SetWarnOnCap( int index, bool bWarn )
+void CBaseTeamObjectiveResource::SetWarnOnCap( int index, int iWarnLevel )
 {
 	AssertValidIndex(index);
-	m_bWarnOnCap.Set( index, bWarn );
+	m_iWarnOnCap.Set( index, iWarnLevel );
 }
 
 //-----------------------------------------------------------------------------
