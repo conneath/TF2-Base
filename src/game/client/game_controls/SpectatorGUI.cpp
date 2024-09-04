@@ -476,6 +476,9 @@ void CSpectatorGUI::ApplySchemeSettings(IScheme *pScheme)
 	m_pBottomBarBlank->SetVisible( true );
 	m_pTopBar->SetVisible( true );
 
+	m_pBottomBarBlank->SetAlpha( 100 );
+	m_pTopBar->SetAlpha( 100 );
+
 	BaseClass::ApplySchemeSettings( pScheme );
 	SetBgColor(Color( 0,0,0,0 ) ); // make the background transparent
 	m_pTopBar->SetBgColor(GetBlackBarColor());
