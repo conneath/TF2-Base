@@ -834,6 +834,9 @@ bool CObjectSentrygun::ValidTargetObject( CBaseObject *pObject, const Vector &ve
 	if ( ( GetWaterLevel() == 0 && pObject->GetWaterLevel() >= 3 ) || ( GetWaterLevel() == 3 && pObject->GetWaterLevel() <= 0 ) )
 		return false;
 
+	if ( pObject->GetObjectFlags() & OF_DOESNT_HAVE_A_MODEL )
+		return false;
+
 	// Ray trace.
 	return FVisible( pObject, MASK_SHOT | CONTENTS_GRATE );
 }
