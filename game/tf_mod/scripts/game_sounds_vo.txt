@@ -18772,3 +18772,84 @@
 	"wave"			"vo/spy_Yes03.wav"
 }
 
+// ENGINEER HAULING LINES
+"engineer_sentrymoving01"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"1.000"
+	"pitch"		"PITCH_NORM"
+	"soundlevel"		"SNDLVL_95dB"
+	"wave"		"vo/engineer_sentrymoving01.wav"
+}
+
+"engineer_sentrymoving02"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"1.000"
+	"pitch"		"PITCH_NORM"
+	"soundlevel"		"SNDLVL_95dB"
+	"wave"		"vo/engineer_sentrymoving02.wav"
+}
+
+"engineer_sentrymoving03"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"1.000"
+	"pitch"		"PITCH_NORM"
+	"soundlevel"		"SNDLVL_95dB"
+	"wave"		"vo/engineer_sentrymoving03.wav"
+}
+
+"engineer_sentrypacking01"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"1.000"
+	"pitch"		"PITCH_NORM"
+	"soundlevel"		"SNDLVL_95dB"
+	"wave"		"vo/engineer_sentrypacking01.wav"
+}
+
+"engineer_sentrypacking02"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"1.000"
+	"pitch"		"PITCH_NORM"
+	"soundlevel"		"SNDLVL_95dB"
+	"wave"		"vo/engineer_sentrypacking02.wav"
+}
+
+"engineer_sentrypacking03"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"1.000"
+	"pitch"		"PITCH_NORM"
+	"soundlevel"		"SNDLVL_95dB"
+	"wave"		"vo/engineer_sentrypacking03.wav"
+}
+
+"engineer_sentryplanting01"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"1.000"
+	"pitch"		"PITCH_NORM"
+	"soundlevel"		"SNDLVL_95dB"
+	"wave"		"vo/engineer_sentryplanting01.wav"
+}
+
+"engineer_sentryplanting02"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"1.000"
+	"pitch"		"PITCH_NORM"
+	"soundlevel"		"SNDLVL_95dB"
+	"wave"		"vo/engineer_sentryplanting02.wav"
+}
+
+"engineer_sentryplanting03"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"1.000"
+	"pitch"		"PITCH_NORM"
+	"soundlevel"		"SNDLVL_95dB"
+	"wave"		"vo/engineer_sentryplanting03.wav"
+}

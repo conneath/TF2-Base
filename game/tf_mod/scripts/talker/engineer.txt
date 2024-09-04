@@ -324,6 +324,42 @@ Rule PlayerKilledForRevengeEngineer
 //--------------------------------------------------------------------------------------------------------------
 // Auto Speech Engineer
 //--------------------------------------------------------------------------------------------------------------
+Response CarrySentryEngineer
+{
+	scene "scenes/Player/Engineer/low/sentrymoving01.vcd" 
+	scene "scenes/Player/Engineer/low/sentrymoving02.vcd" 
+}
+Rule CarrySentryEngineer
+{
+	criteria ConceptEngineerCarryingBuilding IsEngineer 20PercentChance
+	Response CarrySentryEngineer
+}
+
+Response DeploySentryEngineer
+{
+	scene "scenes/Player/Engineer/low/sentryplanting01.vcd" 
+	scene "scenes/Player/Engineer/low/sentryplanting02.vcd" 
+	scene "scenes/Player/Engineer/low/sentryplanting03.vcd" 
+	scene "scenes/Player/Engineer/low/sentryplanting04.vcd" 
+}
+Rule DeploySentryEngineer
+{
+	criteria ConceptEngineerDeployBuilding IsEngineer
+	Response DeploySentryEngineer
+}
+
+Response PickupSentryEngineer
+{
+	scene "scenes/Player/Engineer/low/sentrypacking01.vcd" 
+	scene "scenes/Player/Engineer/low/sentrypacking02.vcd" 
+	scene "scenes/Player/Engineer/low/sentrypacking03.vcd" 
+}
+Rule PickupSentryEngineer
+{
+	criteria ConceptEngineerPickupBuilding IsEngineer
+	Response PickupSentryEngineer
+}
+
 Response PlayerBuildingDispenserEngineer
 {
 	scene "scenes/Player/Engineer/low/AutoBuildingDispenser01.vcd" 
