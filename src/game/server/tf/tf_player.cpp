@@ -5704,6 +5704,16 @@ void CTFPlayer::ModifyOrAppendCriteria( AI_CriteriaSet& criteriaSet )
 	criteriaSet.AppendCriteria( "beinghealed", m_Shared.InCond( TF_COND_HEALTH_BUFF ) ? "1" : "0" );
 	criteriaSet.AppendCriteria( "waitingforplayers", (TFGameRules()->IsInWaitingForPlayers() || TFGameRules()->IsInPreMatch()) ? "1" : "0" );
 
+	switch ( GetTFTeam()->GetRole() )
+	{
+	case TEAM_ROLE_DEFENDERS:
+		criteriaSet.AppendCriteria( "teamrole", "defense" );
+		break;
+	case TEAM_ROLE_ATTACKERS:
+		criteriaSet.AppendCriteria( "teamrole", "offense" );
+		break;
+	}
+
 	// Current weapon role
 	CTFWeaponBase *pActiveWeapon = m_Shared.GetActiveTFWeapon();
 	if ( pActiveWeapon )

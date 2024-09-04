@@ -10,7 +10,12 @@ Criterion "HeavyNotKillSpeech" "HeavyKillSpeech" "!=1" "required" weight 0
 Criterion "HeavyNotKillSpeechMelee" "HeavyKillSpeechMelee" "!=1" "required" weight 0
 Criterion "HeavyNotSaidHealThanks" "HeavySaidHealThanks" "!=1" "required"
 Criterion "IsHelpCapHeavy" "HeavyHelpCap" "1" "required" weight 0
-
+Criterion "NotSaidCartMovingBackwardD" "SaidCartMovingBackwardD" "!=1" "required" weight 0
+Criterion "NotSaidCartMovingBackwardO" "SaidCartMovingBackwardO" "!=1" "required" weight 0
+Criterion "NotSaidCartMovingForwardD" "SaidCartMovingForwardD" "!=1" "required" weight 0
+Criterion "NotSaidCartMovingForwardO" "SaidCartMovingForwardO" "!=1" "required" weight 0
+Criterion "NotSaidCartMovingStoppedD" "SaidCartMovingStoppedD" "!=1" "required" weight 0
+Criterion "NotSaidCartMovingStoppedO" "SaidCartMovingStoppedO" "!=1" "required" weight 0
 
 Response PlayerCloakedSpyDemomanHeavy
 {
@@ -190,6 +195,123 @@ Rule PlayerTeleporterThanksHeavy
 	Response PlayerTeleporterThanksHeavy
 }
 
+//--------------------------------------------------------------------------------------------------------------
+// Auto Speech Cart
+//--------------------------------------------------------------------------------------------------------------
+Response CartMovingBackwardsDefenseHeavy
+{
+	scene "scenes/Player/Heavy/low/1990.vcd" 
+	scene "scenes/Player/Heavy/low/1991.vcd" 
+	scene "scenes/Player/Heavy/low/1992.vcd" 
+	scene "scenes/Player/Heavy/low/2070.vcd" 
+	scene "scenes/Player/Heavy/low/2208.vcd" 
+	scene "scenes/Player/Heavy/low/2209.vcd" 
+	scene "scenes/Player/Heavy/low/2267.vcd" 
+	scene "scenes/Player/Heavy/low/2268.vcd" 
+}
+Rule CartMovingBackwardsDefenseHeavy
+{
+	criteria ConceptCartMovingBackward IsOnDefense IsHeavy NotSaidCartMovingBackwardD
+	ApplyContext "SaidCartMovingBackwardD:1:20"
+	Response CartMovingBackwardsDefenseHeavy
+}
+
+Response CartMovingBackwardsOffenseHeavy
+{
+	scene "scenes/Player/Heavy/low/1987.vcd" 
+	scene "scenes/Player/Heavy/low/1988.vcd" 
+	scene "scenes/Player/Heavy/low/1989.vcd" 
+	scene "scenes/Player/Heavy/low/2071.vcd" 
+	scene "scenes/Player/Heavy/low/2072.vcd" 
+	scene "scenes/Player/Heavy/low/2206.vcd" 
+	scene "scenes/Player/Heavy/low/2207.vcd" 
+}
+Rule CartMovingBackwardsOffenseHeavy
+{
+	criteria ConceptCartMovingBackward IsOnOffense IsHeavy NotSaidCartMovingBackwardO
+	ApplyContext "SaidCartMovingBackwardO:1:20"
+	Response CartMovingBackwardsOffenseHeavy
+}
+
+Response CartMovingForwardDefenseHeavy
+{
+	scene "scenes/Player/Heavy/low/1984.vcd" 
+	scene "scenes/Player/Heavy/low/1985.vcd" 
+	scene "scenes/Player/Heavy/low/2269.vcd" 
+	scene "scenes/Player/Heavy/low/1986.vcd" 
+	scene "scenes/Player/Heavy/low/2073.vcd" 
+	scene "scenes/Player/Heavy/low/2270.vcd" 
+}
+Rule CartMovingForwardDefenseHeavy
+{
+	criteria ConceptCartMovingForward IsOnDefense IsHeavy NotSaidCartMovingForwardD
+	ApplyContext "SaidCartMovingForwardD:1:20"
+	Response CartMovingForwardDefenseHeavy
+}
+
+Response CartMovingForwardOffenseHeavy
+{
+	scene "scenes/Player/Heavy/low/1963.vcd" 
+	scene "scenes/Player/Heavy/low/1964.vcd" 
+	scene "scenes/Player/Heavy/low/1965.vcd" 
+	scene "scenes/Player/Heavy/low/2179.vcd" 
+	scene "scenes/Player/Heavy/low/2180.vcd" 
+	scene "scenes/Player/Heavy/low/2181.vcd" 
+	scene "scenes/Player/Heavy/low/2182.vcd" 
+	scene "scenes/Player/Heavy/low/2183.vcd" 
+	scene "scenes/Player/Heavy/low/2184.vcd" 
+	scene "scenes/Player/Heavy/low/2271.vcd" 
+	scene "scenes/Player/Heavy/low/2185.vcd" 
+	scene "scenes/Player/Heavy/low/2186.vcd" 
+	scene "scenes/Player/Heavy/low/2187.vcd" 
+	scene "scenes/Player/Heavy/low/2188.vcd" 
+	scene "scenes/Player/Heavy/low/2189.vcd" 
+	scene "scenes/Player/Heavy/low/2190.vcd" 
+	scene "scenes/Player/Heavy/low/2203.vcd" 
+	scene "scenes/Player/Heavy/low/1957.vcd" 
+	scene "scenes/Player/Heavy/low/1958.vcd" 
+	scene "scenes/Player/Heavy/low/1959.vcd" 
+	scene "scenes/Player/Heavy/low/2202.vcd" 
+	scene "scenes/Player/Heavy/low/2201.vcd" 
+	scene "scenes/Player/Heavy/low/2193.vcd" 
+	scene "scenes/Player/Heavy/low/2066.vcd" 
+	scene "scenes/Player/Heavy/low/2261.vcd" 
+	scene "scenes/Player/Heavy/low/2262.vcd" 
+}
+Rule CartMovingForwardOffenseHeavy
+{
+	criteria ConceptCartMovingForward IsOnOffense IsHeavy NotSaidCartMovingForwardO
+	ApplyContext "SaidCartMovingForwardO:1:20"
+	Response CartMovingForwardOffenseHeavy
+}
+
+Response CartMovingStoppedDefenseHeavy
+{
+	scene "scenes/Player/Heavy/low/1966.vcd" 
+	scene "scenes/Player/Heavy/low/1967.vcd" 
+	scene "scenes/Player/Heavy/low/1968.vcd" 
+	scene "scenes/Player/Heavy/low/2191.vcd" 
+}
+Rule CartMovingStoppedDefenseHeavy
+{
+	criteria ConceptCartMovingStopped IsOnDefense IsHeavy NotSaidCartMovingStoppedD
+	ApplyContext "SaidCartMovingStoppedD:1:20"
+	Response CartMovingStoppedDefenseHeavy
+}
+
+Response CartMovingStoppedOffenseHeavy
+{
+	scene "scenes/Player/Heavy/low/1960.vcd" 
+	scene "scenes/Player/Heavy/low/1961.vcd" 
+	scene "scenes/Player/Heavy/low/2192.vcd" 
+	scene "scenes/Player/Heavy/low/1962.vcd" 
+}
+Rule CartMovingStoppedOffenseHeavy
+{
+	criteria ConceptCartMovingStopped IsOnOffense IsHeavy NotSaidCartMovingStoppedO
+	ApplyContext "SaidCartMovingStoppedO:1:20"
+	Response CartMovingStoppedOffenseHeavy
+}
 
 //--------------------------------------------------------------------------------------------------------------
 // Auto Speech Combat
