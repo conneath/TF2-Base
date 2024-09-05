@@ -236,6 +236,7 @@ public:
 	
 	virtual ~CTFGameRules();
 
+	virtual void LevelShutdown();
 	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );
 	virtual void Think();
 

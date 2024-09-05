@@ -43,6 +43,7 @@
 	#include "AI_ResponseSystem.h"
 	#include "hl2orange.spa.h"
 	#include "hltvdirector.h"
+	#include "bot/tf_bot_manager.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -1189,6 +1190,14 @@ void CTFGameRules::RadiusDamage( const CTakeDamageInfo &info, const Vector &vecS
 
 		return BaseClass::ClientCommand( pEdict, args );
 	}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTFGameRules::LevelShutdown()
+{
+	TheTFBots().LevelShutdown();
+}
 
 	// Add the ability to ignore the world trace
 	void CTFGameRules::Think()
