@@ -519,6 +519,7 @@ static s_MapInfo s_Maps[] = {
 	{	"cp_gravelpit", "Gravel Pit",	"#TF_AttackDefend",		},
 	{	"tc_hydro",		"Hydro",		"#TF_TerritoryControl",	},
 	{	"ctf_well",		"Well (CTF)",	"#Gametype_CTF",		},
+	{	"cp_badlands",	"Badlands",		"#Gametype_CP",			},
 	{   "pl_goldrush",  "Gold Rush",    "#Gametype_Escort",     },
 };
 
