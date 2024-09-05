@@ -7,6 +7,8 @@ You could call this a tf_port ""plus"", as of writing the major additions are TF
 
 The loadout panels are WIP, and econ (item system) itself isn't here (yet)
 
+Health & ammo kit model originally created by: https://tf2maps.net/downloads/health-ammo-kit.14825/
+
 ## Building
 
 ### For VS2022:
@@ -17,3 +19,4 @@ Run the createtfmod.bat file and open the newly created "games" solution
 
 \
 (you can also just use VS2015 if you want)
+
