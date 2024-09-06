@@ -839,12 +839,14 @@ public:
 	{
 		Assert( m_pResult );
 
-		if ( !pC_BaseEntity )
-			return;
+		float flResult = 0.0;
 
 		C_BaseEntity *pEntity = BindArgToEntity( pC_BaseEntity );
-		if ( !pEntity )
+		if ( !pEntity ) // we must be rendering in a VGUI model panel, just set it to 0
+		{
+			m_pResult->SetFloatValue( flResult );
 			return;
+		}
 
 		// default to zero
 		float flBurnStartTime = 0;
@@ -867,8 +869,6 @@ public:
 				flBurnStartTime = pRagDoll->GetBurnStartTime();
 			}
 		}
-
-		float flResult = 0.0;
 		
 		// if player/ragdoll is burning, set the burn level on the skin
 		if ( flBurnStartTime > 0 )

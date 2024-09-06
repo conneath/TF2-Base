@@ -98,13 +98,7 @@ void TFPlayerClassData_t::Parse( const char *szName )
 
 	// Parse class file.
 
-	const unsigned char *pKey = NULL;
-
-	if ( g_pGameRules )
-	{
-		pKey = g_pGameRules->GetEncryptionKey();
-	}
-
+	const unsigned char *pKey = GetTFEncryptionKey(); // lol
 	KeyValues *pKV = ReadEncryptedKVFile( filesystem, szName, pKey );
 	if ( pKV )
 	{

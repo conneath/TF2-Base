@@ -64,16 +64,18 @@ void CClassLoadoutPanel::ApplySchemeSettings( vgui::IScheme* pScheme )
 
 	m_pPlayerModelPanel = dynamic_cast<CBaseModelPanel*>(FindChildByName( "classmodelpanel" ));
 	m_pClassLabel = dynamic_cast<vgui::Label*>(FindChildByName( "ClassLabel" ));
-	//m_pTauntHintLabel = dynamic_cast<vgui::Label*>(FindChildByName( "TauntHintLabel" ));
-	//m_pTauntLabel = dynamic_cast<CExLabel*>(FindChildByName( "TauntLabel" ));
-	//m_pTauntCaratLabel = dynamic_cast<CExLabel*>(FindChildByName( "TauntCaratLabel" ));
-	//m_pBuildablesButton = dynamic_cast<CExButton*>(FindChildByName( "BuildablesButton" ));
-	//m_pCharacterLoadoutButton = dynamic_cast<CExImageButton*>(FindChildByName( "CharacterLoadoutButton" ));
-	//m_pTauntLoadoutButton = dynamic_cast<CExImageButton*>(FindChildByName( "TauntLoadoutButton" ));
-	//m_pPassiveAttribsLabel = dynamic_cast<CExLabel*>(FindChildByName( "PassiveAttribsLabel" ));
-	//m_pLoadoutPresetPanel = dynamic_cast<CLoadoutPresetPanel*>(FindChildByName( "loadout_preset_panel" ));
-	//m_pPresetsExplanationPopup = dynamic_cast<CExplanationPopup*>(FindChildByName( "PresetsExplanation" ));
-	//m_pTauntsExplanationPopup = dynamic_cast<CExplanationPopup*>(FindChildByName( "TauntsExplanation" ));
+
+	// temporary until econ is implemented, these should show when you're changing a weapon slot
+	FindChildByName( "InventoryCount0" )->SetVisible( false );
+	FindChildByName( "InventoryCount1" )->SetVisible( false );
+	FindChildByName( "InventoryCount2" )->SetVisible( false );
+
+	FindChildByName( "ChangeButton0" )->SetVisible( false );
+	FindChildByName( "ChangeButton1" )->SetVisible( false );
+	FindChildByName( "ChangeButton2" )->SetVisible( false );
+	// tell users no items exist yet for now
+	dynamic_cast<vgui::Label*>(FindChildByName( "NoneAvailableReason" ))->SetText( "#NoItemsExistLong" );
+
 	//m_pTopLinePanel = FindChildByName( "TopLine" ); where the fuck is this used lol
 	/*
 	if ( m_pPassiveAttribsLabel )
@@ -168,17 +170,8 @@ void CClassLoadoutPanel::PostShowPanel( bool bVisible )
 		{
 			m_pPlayerModelPanel->SetVisible( true );
 		}
-		// conn - this is temporary and Poopoocaca
-		if ( m_pClassLabel )
-		{
-			m_pClassLabel->SetText( g_aPlayerClassNames[m_iCurrentClassIndex] );	
-		}
-		/*
-		if ( m_pBuildablesButton )
-		{
-			m_pBuildablesButton->SetVisible( m_iCurrentClassIndex == TF_CLASS_ENGINEER );
-		}
-		*/
+
+		SetDialogVariable("loadoutclass", g_pVGuiLocalize->Find(g_aPlayerClassNames[m_iCurrentClassIndex]));
 	}
 }
 
@@ -209,36 +202,12 @@ void CClassLoadoutPanel::SetTeam( int iTeam )
 //-----------------------------------------------------------------------------
 void CClassLoadoutPanel::UpdateModelPanels( void )
 {
-	/*
-	// Search for a Robot Costume
-	bool bIsRobot = false;
-	static CSchemaAttributeDefHandle pAttrDef_PlayerRobot( "appear as mvm robot" );
-	// For now, fill them out with the local player's currently wielded items
-	for ( int i = 0; i < m_pItemModelPanels.Count(); i++ )
-	{
-		CEconItemView* pItemData = TFInventoryManager()->GetItemInLoadoutForClass( m_iCurrentClassIndex, i );
-		if ( !pItemData )
-			continue;
-		if ( FindAttribute( pItemData, pAttrDef_PlayerRobot ) )
-		{
-			bIsRobot = true;
-			break;
-		}
-	}
-	*/
 	// We're showing the loadout for a specific class.
 	TFPlayerClassData_t* pData = GetPlayerClassData( m_iCurrentClassIndex );
 	if ( m_pPlayerModelPanel )
 	{
-		//m_pPlayerModelPanel->ClearCarriedItems();
-		//m_pPlayerModelPanel->SetToPlayerClass( m_iCurrentClassIndex, bIsRobot );
-		//m_pPlayerModelPanel->SetTeam( m_iCurrentTeamIndex );
-		// conn - TODO: this is a placeholder right now, and it doesn't work when class data hasn't been loaded yet (e.g. before entering a server)
-#ifdef DEBUG
-		DevMsg( "%s\n", pData->GetModelName() );
-#endif
 		m_pPlayerModelPanel->SetMDL(pData->GetModelName());
-		//m_pPlayerModelPanel->SetSkin();
+		//m_pPlayerModelPanel->SetSkin(0);
 	}
 	/*
 	// For now, fill them out with the local player's currently wielded items

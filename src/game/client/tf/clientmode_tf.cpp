@@ -179,6 +179,8 @@ void ClientModeTFNormal::Init()
 	Assert( m_pScoreboard );
 #endif
 
+	InitPlayerClasses(); // urgh
+
 	BaseClass::Init();
 }
 

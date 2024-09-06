@@ -642,3 +642,8 @@ bool ClassCanBuild( int iClass, int iObjectType )
 
 	return ( iClass == TF_CLASS_ENGINEER );
 }
+
+const unsigned char* GetTFEncryptionKey( void )
+{
+	return (unsigned char*)"E2NcUkG2";
+}

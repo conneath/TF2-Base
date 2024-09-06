@@ -940,5 +940,6 @@ typedef enum
 	NUM_STOCK_NOTIFICATIONS
 } HudNotification_t;
 
+const unsigned char* GetTFEncryptionKey( void );
 
 #endif // TF_SHAREDDEFS_H
