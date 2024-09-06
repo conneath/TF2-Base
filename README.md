@@ -1,6 +1,8 @@
 Team Fortress 2: Gold Rush
 =====
 
+[Pre-Alpha Preview build download](https://conneath.net/repo/goldrush-pre-alpha-preview.7z)
+
 damn, another tf2 soucremod...
 
 You could call this a tf_port ""plus"", as of writing the major additions are TFBots and the Payload gamemode, w/ some other smaller changes like autoreload and combattext/hitsounds
