@@ -364,6 +364,10 @@ void CTFMapInfoMenu::LoadMapPage( const char *mapName )
 			{
 				pszDefault = "maps/default_cp.txt";
 			}
+			else if ( TFGameRules()->GetGameType() == TF_GAMETYPE_ESCORT )
+			{
+				pszDefault = "maps/default_payload.txt";
+			}
 		}
 
 		if ( g_pFullFileSystem->FileExists( pszDefault ) )

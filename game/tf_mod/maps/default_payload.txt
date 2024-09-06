@@ -1,0 +1,5 @@
+Objective:
+Escort the payload to the enemy base. Stand near the payload to make it move.
+
+Other Notes:
+Enemies can block the payload by getting close to it.
