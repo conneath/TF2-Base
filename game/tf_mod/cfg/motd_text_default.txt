@@ -9,3 +9,4 @@ Our map rotation is:
 - Hydro
 - Well (CTF)
 - Badlands
+- Gold Rush
