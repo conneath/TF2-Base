@@ -36,6 +36,7 @@ public:
 	virtual bool	ClientCommand( CTFPlayer *pPlayer, const CCommand &args );
 
 	virtual void	DetonateObject( void );
+	virtual void	DestroyObject( void ) OVERRIDE;
 	virtual void	OnGoActive( void );	
 	virtual bool	StartBuilding( CBaseEntity *pBuilder );
 	virtual int		DrawDebugTextOverlays(void) ;

@@ -190,6 +190,8 @@ bool CObjectDispenser::StartBuilding( CBaseEntity *pBuilder )
 
 	CreateBuildPoints();
 
+	TFGameRules()->OnDispenserBuilt( this );
+
 	return BaseClass::StartBuilding( pBuilder );
 }
 
@@ -329,7 +331,16 @@ void CObjectDispenser::DetonateObject( void )
 		DMG_BLAST | DMG_HALF_FALLOFF);
 	*/
 
+	TFGameRules()->OnDispenserDestroyed( this );
+
 	BaseClass::DetonateObject();
+}
+
+void CObjectDispenser::DestroyObject( void )
+{
+	TFGameRules()->OnDispenserDestroyed( this );
+
+	BaseClass::DestroyObject();
 }
 
 //-----------------------------------------------------------------------------
@@ -711,7 +722,7 @@ void CObjectCartDispenser::Spawn( void )
 	OnGoActive();
 	//m_iUpgradeLevel = 1;
 
-	//TFGameRules()->OnDispenserBuilt( this );
+	TFGameRules()->OnDispenserBuilt( this );
 }
 
 //-----------------------------------------------------------------------------

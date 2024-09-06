@@ -44,6 +44,7 @@
 	#include "hl2orange.spa.h"
 	#include "hltvdirector.h"
 	#include "bot/tf_bot_manager.h"
+	#include "nav_mesh.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -3350,6 +3351,41 @@ void CTFGameRules::SendHudNotification( IRecipientFilter &filter, const char *ps
 		WRITE_STRING( pszIcon );
 		WRITE_BYTE( iTeam );
 	MessageEnd();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTFGameRules::OnNavMeshLoad( void )
+{
+	TheNavMesh->SetPlayerSpawnName( "info_player_teamspawn" );
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTFGameRules::OnDispenserBuilt( CBaseEntity* dispenser )
+{
+	if ( !m_healthVector.HasElement( dispenser ) )
+	{
+		m_healthVector.AddToTail( dispenser );
+	}
+
+	if ( !m_ammoVector.HasElement( dispenser ) )
+	{
+		m_ammoVector.AddToTail( dispenser );
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTFGameRules::OnDispenserDestroyed( CBaseEntity* dispenser )
+{
+	m_healthVector.FindAndFastRemove( dispenser );
+	m_ammoVector.FindAndFastRemove( dispenser );
 }
 
 //-----------------------------------------------------------------------------

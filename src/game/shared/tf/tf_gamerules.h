@@ -298,6 +298,11 @@ public:
 
 	void	SendHudNotification( IRecipientFilter &filter, HudNotification_t iType );
 	void	SendHudNotification( IRecipientFilter &filter, const char *pszText, const char *pszIcon, int iTeam = TEAM_UNASSIGNED );
+
+	void	OnNavMeshLoad( void );
+	void	OnDispenserBuilt( CBaseEntity* dispenser );
+	void	OnDispenserDestroyed( CBaseEntity* dispenser );
+
 	// placeholder
 	bool	IsMannVsMachineMode(){ return false; }
 private:
