@@ -16,7 +16,7 @@
 #include "weapon_parse.h"
 #include "string_t.h"
 
-enum
+enum // see TFAttributeDefinition description_format
 {
 	ATTRIB_FORMAT_INVALID = -1,
 	ATTRIB_FORMAT_PERCENTAGE = 0,
@@ -26,20 +26,58 @@ enum
 	ATTRIB_FORMAT_OR,
 };
 
-enum
+enum // see TFAttributeDefinition effect_type
 {
 	ATTRIB_EFFECT_INVALID = -1,
-	ATTRIB_EFFECT_UNUSUAL = 0,
-	ATTRIB_EFFECT_STRANGE,
-	ATTRIB_EFFECT_NEUTRAL,
+	ATTRIB_EFFECT_NEUTRAL = 0,
 	ATTRIB_EFFECT_POSITIVE,
 	ATTRIB_EFFECT_NEGATIVE,
 };
+
+#define CALL_ATTRIB_HOOK_INT(value, name)			\
+		value = CTFAttributeManager::AttribHookValue<int>(value, #name, this)
+
+#define CALL_ATTRIB_HOOK_FLOAT(value, name)			\
+		value = CTFAttributeManager::AttribHookValue<float>(value, #name, this)
+
+#define CALL_ATTRIB_HOOK_STRING(value, name)		\
+		value = CTFAttributeManager::AttribHookValue<string_t>(value, #name, this)
+
+
+#define CALL_ATTRIB_HOOK_INT_ON_OTHER(ent, value, name)			\
+		value = CTFAttributeManager::AttribHookValue<int>(value, #name, ent)
+
+#define CALL_ATTRIB_HOOK_FLOAT_ON_OTHER(ent, value, name)			\
+		value = CTFAttributeManager::AttribHookValue<float>(value, #name, ent)
+
+#define CALL_ATTRIB_HOOK_STRING_ON_OTHER(ent, value, name)		\
+		value = CTFAttributeManager::AttribHookValue<string_t>(value, #name, ent)
 
 // Macro used to make strings empty
 #define CLEAR_STR(name)		\
 		name[0] = '\0'
 
+struct TFItemQuality
+{
+	TFItemQuality()
+	{
+		value = 0;
+	}
+
+	int value;
+};
+
+struct TFItemColor
+{
+	TFItemColor()
+	{
+		CLEAR_STR( color_name );
+	}
+
+	char color_name[128];
+};
+
+// Defines what an attribute is, values read from items_game.txt (or attributes.txt for Gold Rush update)
 struct TFAttributeDefinition
 {
 	TFAttributeDefinition()
@@ -54,25 +92,25 @@ struct TFAttributeDefinition
 		stored_as_integer = false;
 	}
 
-	char name[128];
-	char attribute_class[128];
-	char description_string[128];
-	bool string_attribute;
-	int description_format;
-	int effect_type;
-	bool hidden;
-	bool stored_as_integer;
+	char name[128]; // attribute's name (e.g. "add uber charge on hit")
+	char attribute_class[128]; // internal attribute class (e.g. add_onhit_ubercharge)
+	char description_string[128]; // localized string shown to the user in loadout
+	bool string_attribute; // unused?
+	int description_format; // VGUI: description type (e.g. value_is_percentage, value_is_additive)
+	int effect_type; // VGUI: affects the colour of the attribute text (positive, negative, neutral)
+	bool hidden; // if true, don't show in weapon stats
+	bool stored_as_integer; // is this attribute an integer value or a bool?
 };
 
 // Client specific.
 #ifdef CLIENT_DLL
-EXTERN_RECV_TABLE( DT_EconItemAttribute );
+EXTERN_RECV_TABLE( DT_TFItemAttribute );
 // Server specific.
 #else
-EXTERN_SEND_TABLE( DT_EconItemAttribute );
+EXTERN_SEND_TABLE( DT_TFItemAttribute );
 #endif
 
-class CTFItemAttribute
+class CTFItemAttribute // An attribute. Returned by CTFItemDefinition::IterateAttributes
 {
 public:
 	DECLARE_EMBEDDED_NETWORKVAR();
