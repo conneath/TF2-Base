@@ -11,11 +11,10 @@
 #include "tier0/memdbgon.h"
 
 //=============================================================================
-// CTFItemAttribute
+// CEconItemAttribute
 //=============================================================================
 
-
-BEGIN_NETWORK_TABLE_NOBASE( CTFItemAttribute, DT_TFItemAttribute )
+BEGIN_NETWORK_TABLE_NOBASE( CEconItemAttribute, DT_EconItemAttribute )
 #ifdef CLIENT_DLL
 RecvPropInt( RECVINFO( m_iAttributeDefinitionIndex ) ),
 RecvPropFloat( RECVINFO( value ) ),
@@ -29,10 +28,11 @@ SendPropString( SENDINFO( attribute_class ) ),
 #endif
 END_NETWORK_TABLE()
 
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CTFItemAttribute::Init( int iIndex, float flValue, const char* pszAttributeClass /*= NULL*/ )
+void CEconItemAttribute::Init( int iIndex, float flValue, const char* pszAttributeClass /*= NULL*/ )
 {
 	m_iAttributeDefinitionIndex = iIndex;
 	value = flValue;
@@ -44,7 +44,7 @@ void CTFItemAttribute::Init( int iIndex, float flValue, const char* pszAttribute
 	}
 	else
 	{
-		TFAttributeDefinition* pAttribDef = GetStaticData();
+		EconAttributeDefinition* pAttribDef = GetStaticData();
 		if ( pAttribDef )
 		{
 			V_strncpy( attribute_class.GetForModify(), pAttribDef->attribute_class, sizeof( attribute_class ) );
@@ -55,7 +55,7 @@ void CTFItemAttribute::Init( int iIndex, float flValue, const char* pszAttribute
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CTFItemAttribute::Init( int iIndex, const char* pszValue, const char* pszAttributeClass /*= NULL*/ )
+void CEconItemAttribute::Init( int iIndex, const char* pszValue, const char* pszAttributeClass /*= NULL*/ )
 {
 	m_iAttributeDefinitionIndex = iIndex;
 	value = 0.0f;
@@ -67,7 +67,7 @@ void CTFItemAttribute::Init( int iIndex, const char* pszValue, const char* pszAt
 	}
 	else
 	{
-		TFAttributeDefinition* pAttribDef = GetStaticData();
+		EconAttributeDefinition* pAttribDef = GetStaticData();
 		if ( pAttribDef )
 		{
 			V_strncpy( attribute_class.GetForModify(), pAttribDef->attribute_class, sizeof( attribute_class ) );
@@ -78,20 +78,20 @@ void CTFItemAttribute::Init( int iIndex, const char* pszValue, const char* pszAt
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-TFAttributeDefinition* CTFItemAttribute::GetStaticData( void )
+EconAttributeDefinition* CEconItemAttribute::GetStaticData( void )
 {
 	return GetItemSchema()->GetAttributeDefinition( m_iAttributeDefinitionIndex );
 }
 
 
 //=============================================================================
-// CTFItemDefinition
+// CEconItemDefinition
 //=============================================================================
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-TFItemVisuals* CTFItemDefinition::GetVisuals( int iTeamNum /*= TEAM_UNASSIGNED*/ )
+EconItemVisuals* CEconItemDefinition::GetVisuals( int iTeamNum /*= TEAM_UNASSIGNED*/ )
 {
 	if ( iTeamNum > LAST_SHARED_TEAM && iTeamNum < TF_TEAM_COUNT )
 	{
@@ -104,7 +104,7 @@ TFItemVisuals* CTFItemDefinition::GetVisuals( int iTeamNum /*= TEAM_UNASSIGNED*/
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CTFItemDefinition::GetLoadoutSlot( int iClass /*= TF_CLASS_UNDEFINED*/ )
+int CEconItemDefinition::GetLoadoutSlot( int iClass /*= TF_CLASS_UNDEFINED*/ )
 {
 	if ( iClass && item_slot_per_class[iClass] != -1 )
 	{
@@ -117,12 +117,12 @@ int CTFItemDefinition::GetLoadoutSlot( int iClass /*= TF_CLASS_UNDEFINED*/ )
 //-----------------------------------------------------------------------------
 // Purpose: Find an attribute with the specified class.
 //-----------------------------------------------------------------------------
-CTFItemAttribute* CTFItemDefinition::IterateAttributes( string_t strClass )
+CEconItemAttribute* CEconItemDefinition::IterateAttributes( string_t strClass )
 {
 	// Returning the first attribute found.
 	for ( int i = 0; i < attributes.Count(); i++ )
 	{
-		CTFItemAttribute* pAttribute = &attributes[i];
+		CEconItemAttribute* pAttribute = &attributes[i];
 
 		if ( pAttribute->m_strAttributeClass == strClass )
 		{

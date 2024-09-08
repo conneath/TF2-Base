@@ -41,7 +41,7 @@ const char* g_EffectTypes[] =
 	"negative"
 };
 
-void CTFSchemaParser::Parse( KeyValues* pKeyValuesData, bool bWildcard, const char* szFileWithoutEXT )
+void CEconSchemaParser::Parse( KeyValues* pKeyValuesData, bool bWildcard, const char* szFileWithoutEXT )
 {
 	KeyValues* pPrefabs = pKeyValuesData->FindKey( "prefabs" );
 	if ( pPrefabs )
@@ -80,7 +80,7 @@ void CTFSchemaParser::Parse( KeyValues* pKeyValuesData, bool bWildcard, const ch
 	}
 };
 
-void CTFSchemaParser::ParseGameInfo( KeyValues* pKeyValuesData )
+void CEconSchemaParser::ParseGameInfo( KeyValues* pKeyValuesData )
 {
 	for ( KeyValues* pSubData = pKeyValuesData->GetFirstSubKey(); pSubData != NULL; pSubData = pSubData->GetNextKey() )
 	{
@@ -88,28 +88,28 @@ void CTFSchemaParser::ParseGameInfo( KeyValues* pKeyValuesData )
 	}
 };
 
-void CTFSchemaParser::ParseQualities( KeyValues* pKeyValuesData )
+void CEconSchemaParser::ParseQualities( KeyValues* pKeyValuesData )
 {
 	for ( KeyValues* pSubData = pKeyValuesData->GetFirstSubKey(); pSubData != NULL; pSubData = pSubData->GetNextKey() )
 	{
-		TFItemQuality Quality;
+		EconQuality Quality;
 		GET_INT( (&Quality), pSubData, value );
 		GetItemSchema()->m_Qualities.Insert( pSubData->GetName(), Quality );
 	}
 
 };
 
-void CTFSchemaParser::ParseColors( KeyValues* pKeyValuesData )
+void CEconSchemaParser::ParseColors( KeyValues* pKeyValuesData )
 {
 	for ( KeyValues* pSubData = pKeyValuesData->GetFirstSubKey(); pSubData != NULL; pSubData = pSubData->GetNextKey() )
 	{
-		TFItemColor ColorDesc;
+		EconColor ColorDesc;
 		GET_STRING( (&ColorDesc), pSubData, color_name );
 		GetItemSchema()->m_Colors.Insert( pSubData->GetName(), ColorDesc );
 	}
 };
 
-void CTFSchemaParser::ParsePrefabs( KeyValues* pKeyValuesData )
+void CEconSchemaParser::ParsePrefabs( KeyValues* pKeyValuesData )
 {
 	for ( KeyValues* pSubData = pKeyValuesData->GetFirstSubKey(); pSubData != NULL; pSubData = pSubData->GetNextKey() )
 	{
@@ -118,7 +118,7 @@ void CTFSchemaParser::ParsePrefabs( KeyValues* pKeyValuesData )
 	}
 };
 
-void CTFSchemaParser::ParseItems( KeyValues* pKeyValuesData )
+void CEconSchemaParser::ParseItems( KeyValues* pKeyValuesData )
 {
 	for ( KeyValues* pSubData = pKeyValuesData->GetFirstSubKey(); pSubData != NULL; pSubData = pSubData->GetNextKey() )
 	{
@@ -126,7 +126,7 @@ void CTFSchemaParser::ParseItems( KeyValues* pKeyValuesData )
 		if ( !V_stricmp( pSubData->GetName(), "default" ) )
 			continue;
 
-		CTFItemDefinition* Item = new CTFItemDefinition;
+		CEconItemDefinition* Item = new CEconItemDefinition;
 		int index = atoi( pSubData->GetName() );
 
 		if ( ParseItemRec( pSubData, Item ) )
@@ -145,11 +145,11 @@ void CTFSchemaParser::ParseItems( KeyValues* pKeyValuesData )
 	GetItemSchema()->m_PrefabsValues.RemoveAll();
 };
 
-void CTFSchemaParser::ParseAttributes( KeyValues* pKeyValuesData )
+void CEconSchemaParser::ParseAttributes( KeyValues* pKeyValuesData )
 {
 	for ( KeyValues* pSubData = pKeyValuesData->GetFirstSubKey(); pSubData != NULL; pSubData = pSubData->GetNextKey() )
 	{
-		TFAttributeDefinition* pAttribute = new TFAttributeDefinition;
+		EconAttributeDefinition* pAttribute = new EconAttributeDefinition;
 		int index = atoi( pSubData->GetName() );
 
 		GET_STRING_DEFAULT( pAttribute, pSubData, name, (unnamed) );
@@ -170,9 +170,9 @@ void CTFSchemaParser::ParseAttributes( KeyValues* pKeyValuesData )
 	}
 };
 
-bool CTFSchemaParser::ParseVisuals( KeyValues* pData, CTFItemDefinition* pItem, int iIndex )
+bool CEconSchemaParser::ParseVisuals( KeyValues* pData, CEconItemDefinition* pItem, int iIndex )
 {
-	TFItemVisuals* pVisuals = &pItem->visual[iIndex];
+	EconItemVisuals* pVisuals = &pItem->visual[iIndex];
 
 	for ( KeyValues* pVisualData = pData->GetFirstSubKey(); pVisualData != NULL; pVisualData = pVisualData->GetNextKey() )
 	{
@@ -254,7 +254,7 @@ bool CTFSchemaParser::ParseVisuals( KeyValues* pData, CTFItemDefinition* pItem, 
 	return true;
 }
 
-bool CTFSchemaParser::ParseItemRec( KeyValues* pData, CTFItemDefinition* pItem )
+bool CEconSchemaParser::ParseItemRec( KeyValues* pData, CEconItemDefinition* pItem )
 {
 	char prefab[64];
 	Q_snprintf( prefab, sizeof( prefab ), pData->GetString( "prefab" ) );	//check if there's prefab for prefab.. PREFABSEPTION
@@ -290,7 +290,7 @@ bool CTFSchemaParser::ParseItemRec( KeyValues* pData, CTFItemDefinition* pItem )
 
 	if ( pszLoadoutSlot[0] )
 	{
-		//pItem->item_slot = UTIL_StringFieldToInt( pszLoadoutSlot, g_LoadoutSlots, TF_LOADOUT_SLOT_COUNT );
+		pItem->item_slot = UTIL_StringFieldToInt( pszLoadoutSlot, g_LoadoutSlots, TF_LOADOUT_SLOT_COUNT );
 	}
 
 	const char* pszAnimSlot = pData->GetString( "anim_slot" );
@@ -298,7 +298,7 @@ bool CTFSchemaParser::ParseItemRec( KeyValues* pData, CTFItemDefinition* pItem )
 	{
 		if ( V_strcmp( pszAnimSlot, "FORCE_NOT_USED" ) != 0 )
 		{
-			//pItem->anim_slot = UTIL_StringFieldToInt( pszAnimSlot, g_AnimSlots, TF_WPN_TYPE_COUNT );
+			pItem->anim_slot = UTIL_StringFieldToInt( pszAnimSlot, g_AnimSlots, TF_WPN_TYPE_COUNT );
 		}
 		else
 		{
@@ -360,7 +360,7 @@ bool CTFSchemaParser::ParseItemRec( KeyValues* pData, CTFItemDefinition* pItem )
 
 					if ( pszSlotname[0] != '1' )
 					{
-						//pItem->item_slot_per_class[iClass] = UTIL_StringFieldToInt( pszSlotname, g_LoadoutSlots, TF_LOADOUT_SLOT_COUNT );
+						pItem->item_slot_per_class[iClass] = UTIL_StringFieldToInt( pszSlotname, g_LoadoutSlots, TF_LOADOUT_SLOT_COUNT );
 					}
 				}
 			}
@@ -374,16 +374,16 @@ bool CTFSchemaParser::ParseItemRec( KeyValues* pData, CTFItemDefinition* pItem )
 				if ( iAttributeID == -1 )
 					continue;
 
-				TFAttributeDefinition* pAttribDef = GetItemSchema()->GetAttributeDefinition( iAttributeID );
+				EconAttributeDefinition* pAttribDef = GetItemSchema()->GetAttributeDefinition( iAttributeID );
 
 				if ( pAttribDef->string_attribute )
 				{
-					CTFItemAttribute attribute( iAttributeID, pAttribData->GetString( "value" ), pAttribData->GetString( "attribute_class" ) );
+					CEconItemAttribute attribute( iAttributeID, pAttribData->GetString( "value" ), pAttribData->GetString( "attribute_class" ) );
 					pItem->attributes.AddToTail( attribute );
 				}
 				else
 				{
-					CTFItemAttribute attribute( iAttributeID, pAttribData->GetFloat( "value" ), pAttribData->GetString( "attribute_class" ) );
+					CEconItemAttribute attribute( iAttributeID, pAttribData->GetFloat( "value" ), pAttribData->GetString( "attribute_class" ) );
 					pItem->attributes.AddToTail( attribute );
 				}
 			}

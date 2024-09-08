@@ -125,6 +125,34 @@ const char *g_aGameTypeNames[] =
 };
 
 //-----------------------------------------------------------------------------
+// Weapon Types
+//-----------------------------------------------------------------------------
+const char* g_AnimSlots[] =
+{
+	"primary",
+	"secondary",
+	"melee",
+	"grenade",
+	"building",
+	"pda",
+	"item1",
+	"item2",
+	"MELEE_ALLCLASS",
+	"secondary2",
+	"primary2"
+};
+
+const char* g_LoadoutSlots[] =
+{
+	"primary",
+	"secondary",
+	"melee",
+	"pda",
+	"pda2",
+	"building"
+};
+
+//-----------------------------------------------------------------------------
 // Ammo.
 //-----------------------------------------------------------------------------
 const char *g_aAmmoNames[] =

@@ -2,7 +2,6 @@
 #include "tf_item_view.h"
 #include "tf_item_system.h"
 #include "activitylist.h"
-#include "gamestringpool.h"
 
 #ifdef CLIENT_DLL
 #include "dt_utlvector_recv.h"
@@ -27,7 +26,7 @@ RecvPropBool( RECVINFO( m_bOnlyIterateItemViewAttributes ) ),
 RecvPropUtlVector(
 	RECVINFO_UTLVECTOR( m_AttributeList ),
 	MAX_ATTRIBUTES_SENT,
-	RecvPropDataTable( NULL, 0, 0, &REFERENCE_RECV_TABLE( DT_TFItemAttribute ) ) )
+	RecvPropDataTable( NULL, 0, 0, &REFERENCE_RECV_TABLE( DT_EconItemAttribute ) ) )
 	END_RECV_TABLE()
 #else
 BEGIN_SEND_TABLE_NOBASE( CEconItemView, DT_ScriptCreatedItem )
@@ -41,7 +40,7 @@ SendPropBool( SENDINFO( m_bOnlyIterateItemViewAttributes ) ),
 SendPropUtlVector(
 	SENDINFO_UTLVECTOR( m_AttributeList ),
 	MAX_ATTRIBUTES_SENT,
-	SendPropDataTable( NULL, 0, &REFERENCE_SEND_TABLE( DT_TFItemAttribute ) ) )
+	SendPropDataTable( NULL, 0, &REFERENCE_SEND_TABLE( DT_EconItemAttribute ) ) )
 	END_SEND_TABLE()
 #endif
 
@@ -94,7 +93,7 @@ int CEconItemView::GetItemDefIndex( void ) const
 //-----------------------------------------------------------------------------
 // Purpose: Get static item definition from schema.
 //-----------------------------------------------------------------------------
-CTFItemDefinition* CEconItemView::GetStaticData( void ) const
+CEconItemDefinition* CEconItemView::GetStaticData( void ) const
 {
 	return GetItemSchema()->GetItemDefinition( m_iItemDefinitionIndex );
 }
@@ -104,7 +103,7 @@ CTFItemDefinition* CEconItemView::GetStaticData( void ) const
 //-----------------------------------------------------------------------------
 const char* CEconItemView::GetWorldDisplayModel( int iClass/* = 0*/ ) const
 {
-	CTFItemDefinition* pStatic = GetStaticData();
+	CEconItemDefinition* pStatic = GetStaticData();
 	const char* pszModelName = NULL;
 
 	if ( pStatic )
@@ -126,7 +125,7 @@ const char* CEconItemView::GetWorldDisplayModel( int iClass/* = 0*/ ) const
 //-----------------------------------------------------------------------------
 const char* CEconItemView::GetPlayerDisplayModel( int iClass/* = 0*/ ) const
 {
-	CTFItemDefinition* pStatic = GetStaticData();
+	CEconItemDefinition* pStatic = GetStaticData();
 
 	if ( pStatic )
 	{
@@ -144,7 +143,7 @@ const char* CEconItemView::GetPlayerDisplayModel( int iClass/* = 0*/ ) const
 //-----------------------------------------------------------------------------
 const char* CEconItemView::GetEntityName()
 {
-	CTFItemDefinition* pStatic = GetStaticData();
+	CEconItemDefinition* pStatic = GetStaticData();
 
 	if ( pStatic )
 	{
@@ -160,7 +159,7 @@ const char* CEconItemView::GetEntityName()
 bool CEconItemView::IsCosmetic()
 {
 	bool result = false;
-	CTFItemDefinition* pStatic = GetStaticData();
+	CEconItemDefinition* pStatic = GetStaticData();
 
 	if ( pStatic )
 	{
@@ -175,7 +174,7 @@ bool CEconItemView::IsCosmetic()
 //-----------------------------------------------------------------------------
 int CEconItemView::GetAnimationSlot( void )
 {
-	CTFItemDefinition* pStatic = GetStaticData();
+	CEconItemDefinition* pStatic = GetStaticData();
 
 	if ( pStatic )
 	{
@@ -190,13 +189,13 @@ int CEconItemView::GetAnimationSlot( void )
 //-----------------------------------------------------------------------------
 Activity CEconItemView::GetActivityOverride( int iTeamNumber, Activity actOriginalActivity )
 {
-	CTFItemDefinition* pStatic = GetStaticData();
+	CEconItemDefinition* pStatic = GetStaticData();
 
 	if ( pStatic )
 	{
 		int iOverridenActivity = ACT_INVALID;
 
-		TFItemVisuals* pVisuals = pStatic->GetVisuals( iTeamNumber );
+		EconItemVisuals* pVisuals = pStatic->GetVisuals( iTeamNumber );
 		FIND_ELEMENT( pVisuals->animation_replacement, actOriginalActivity, iOverridenActivity );
 
 		if ( iOverridenActivity != ACT_INVALID )
@@ -211,13 +210,13 @@ Activity CEconItemView::GetActivityOverride( int iTeamNumber, Activity actOrigin
 //-----------------------------------------------------------------------------
 const char* CEconItemView::GetActivityOverride( int iTeamNumber, const char* name )
 {
-	CTFItemDefinition* pStatic = GetStaticData();
+	CEconItemDefinition* pStatic = GetStaticData();
 
 	if ( pStatic )
 	{
 		int iOriginalAct = ActivityList_IndexForName( name );
 		int iOverridenAct = ACT_INVALID;
-		TFItemVisuals* pVisuals = pStatic->GetVisuals( iTeamNumber );
+		EconItemVisuals* pVisuals = pStatic->GetVisuals( iTeamNumber );
 
 		FIND_ELEMENT( pVisuals->animation_replacement, iOriginalAct, iOverridenAct );
 
@@ -233,11 +232,11 @@ const char* CEconItemView::GetActivityOverride( int iTeamNumber, const char* nam
 //-----------------------------------------------------------------------------
 const char* CEconItemView::GetSoundOverride( int iIndex, int iTeamNum /*= 0*/ ) const
 {
-	CTFItemDefinition* pStatic = GetStaticData();
+	CEconItemDefinition* pStatic = GetStaticData();
 
 	if ( pStatic )
 	{
-		TFItemVisuals* pVisuals = pStatic->GetVisuals( iTeamNum );
+		EconItemVisuals* pVisuals = pStatic->GetVisuals( iTeamNum );
 		return pVisuals->aWeaponSounds[iIndex];
 	}
 
@@ -250,7 +249,7 @@ const char* CEconItemView::GetSoundOverride( int iIndex, int iTeamNum /*= 0*/ ) 
 bool CEconItemView::HasCapability( const char* name )
 {
 	bool result = false;
-	CTFItemDefinition* pStatic = GetStaticData();
+	CEconItemDefinition* pStatic = GetStaticData();
 
 	if ( pStatic )
 	{
@@ -266,7 +265,7 @@ bool CEconItemView::HasCapability( const char* name )
 bool CEconItemView::HasTag( const char* name )
 {
 	bool result = false;
-	CTFItemDefinition* pStatic = GetStaticData();
+	CEconItemDefinition* pStatic = GetStaticData();
 
 	if ( pStatic )
 	{
@@ -279,10 +278,10 @@ bool CEconItemView::HasTag( const char* name )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool CEconItemView::AddAttribute( CTFItemAttribute* pAttribute )
+bool CEconItemView::AddAttribute( CEconItemAttribute* pAttribute )
 {
 	// Make sure this attribute exists.
-	TFAttributeDefinition* pAttribDef = pAttribute->GetStaticData();
+	EconAttributeDefinition* pAttribDef = pAttribute->GetStaticData();
 
 	if ( pAttribDef )
 	{
@@ -304,13 +303,13 @@ void CEconItemView::SkipBaseAttributes( bool bSkip )
 //-----------------------------------------------------------------------------
 // Purpose: Find an attribute with the specified class.
 //-----------------------------------------------------------------------------
-CTFItemAttribute* CEconItemView::IterateAttributes( string_t strClass )
+CEconItemAttribute* CEconItemView::IterateAttributes( string_t strClass )
 {
 	// Returning the first attribute found.
 	// This is not how live TF2 does this but this will do for now.
 	for ( int i = 0; i < m_AttributeList.Count(); i++ )
 	{
-		CTFItemAttribute* pAttribute = &m_AttributeList[i];
+		CEconItemAttribute* pAttribute = &m_AttributeList[i];
 
 #ifdef GAME_DLL
 		string_t strMyClass = pAttribute->m_strAttributeClass;
@@ -325,7 +324,7 @@ CTFItemAttribute* CEconItemView::IterateAttributes( string_t strClass )
 		}
 	}
 
-	CTFItemDefinition* pStatic = GetStaticData();
+	CEconItemDefinition* pStatic = GetStaticData();
 
 	if ( pStatic && !m_bOnlyIterateItemViewAttributes )
 	{

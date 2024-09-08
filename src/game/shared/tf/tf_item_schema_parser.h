@@ -73,10 +73,10 @@
 				}												\
 				}	
 
-class CTFSchemaParser : public CScriptParser
+class CEconSchemaParser : public CScriptParser
 {
 public:
-	DECLARE_CLASS_GAMEROOT( CTFSchemaParser, CScriptParser );
+	DECLARE_CLASS_GAMEROOT( CEconSchemaParser, CScriptParser );
 	void Parse( KeyValues* pKeyValuesData, bool bWildcard, const char* szFileWithoutEXT );
 	void ParseGameInfo( KeyValues* pKeyValuesData );
 	void ParseQualities( KeyValues* pKeyValuesData );
@@ -84,8 +84,8 @@ public:
 	void ParsePrefabs( KeyValues* pKeyValuesData );
 	void ParseItems( KeyValues* pKeyValuesData );
 	void ParseAttributes( KeyValues* pKeyValuesData );
-	bool ParseVisuals( KeyValues* pData, CTFItemDefinition* pItem, int iIndex );
-	bool ParseItemRec( KeyValues* pData, CTFItemDefinition* pItem );
+	bool ParseVisuals( KeyValues* pData, CEconItemDefinition* pItem, int iIndex );
+	bool ParseItemRec( KeyValues* pData, CEconItemDefinition* pItem );
 
 };
 

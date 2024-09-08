@@ -1,0 +1,379 @@
+"items_game"
+{
+	"items"
+	{
+		"0"
+		{
+			"name"						"TF_WEAPON_BAT"
+			"prefab"					"weapon_bat"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Bat_Desc"
+			"model_world"				"models/weapons/w_models/w_bat.mdl"
+			"model_player"				"models/weapons/v_models/v_bat_scout.mdl"
+			"attach_to_hands"			"2"
+		}
+		"1"
+		{
+			"name"						"TF_WEAPON_BOTTLE"
+			"prefab"					"weapon_bottle"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Bottle_Desc"
+			"model_world"				"models/weapons/w_models/w_bottle.mdl"
+			"model_player"				"models/weapons/v_models/v_bottle_demoman.mdl"
+			"attach_to_hands"			"2"
+		}
+		"2"
+		{
+			"name"						"TF_WEAPON_FIREAXE"
+			"prefab"					"weapon_fireaxe"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_FireAxe_Desc"
+			"model_world"				"models/weapons/w_models/w_fireaxe.mdl"
+			"model_player"				"models/weapons/v_models/v_fireaxe_pyro.mdl"
+			"attach_to_hands"			"2"
+		}
+		"3"
+		{
+			"name"						"TF_WEAPON_CLUB"
+			"prefab"					"weapon_club"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Club_Desc"
+			"model_world"				"models/weapons/w_models/w_machete.mdl"
+			"model_player"				"models/weapons/v_models/v_machete_sniper.mdl"
+			"attach_to_hands"			"2"
+		}
+		"4"
+		{
+			"name"						"TF_WEAPON_KNIFE"
+			"prefab"					"weapon_knife"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Knife_Desc"
+			"model_world"				"models/weapons/w_models/w_knife.mdl"
+			"model_player"				"models/weapons/v_models/v_knife_spy.mdl"
+			"attach_to_hands"			"2"
+			"attributes"
+			{
+				"special taunt"
+				{
+					"attribute_class"	"special_taunt"
+					"value"				"1"
+				}
+			}
+		}
+		"5"
+		{
+			"name"						"TF_WEAPON_FISTS"
+			"prefab"					"weapon_fists"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Fists_Desc"
+			"model_player"				"models/weapons/v_models/v_fist_heavy.mdl"
+			"attach_to_hands"			"2"
+			"attributes"
+			{
+				"special taunt"
+				{
+					"attribute_class"	"special_taunt"
+					"value"				"1"
+				}
+			}
+		}
+		"6"
+		{
+			"name"						"TF_WEAPON_SHOVEL"
+			"prefab"					"weapon_shovel"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Shovel_Desc"
+			"model_world"				"models/weapons/w_models/w_shovel.mdl"
+			"model_player"				"models/weapons/v_models/v_shovel_soldier.mdl"
+			"attach_to_hands"			"2"
+		}
+		"7"
+		{
+			"name"						"TF_WEAPON_WRENCH"
+			"prefab"					"weapon_wrench"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Wrench_Desc"
+			"model_world"				"models/weapons/w_models/w_wrench.mdl"
+			"model_player"				"models/weapons/v_models/v_wrench_engineer.mdl"
+			"attach_to_hands"			"2"
+		}
+		"8"
+		{
+			"name"						"TF_WEAPON_BONESAW"
+			"prefab"					"weapon_bonesaw"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Bonesaw_Desc"
+			"model_world"				"models/weapons/w_models/w_bonesaw.mdl"
+			"model_player"				"models/weapons/v_models/v_bonesaw_medic.mdl"
+			"attach_to_hands"			"2"
+		}
+		"9"
+		{
+			"name"						"TF_WEAPON_SHOTGUN_PRIMARY"
+			"prefab"					"weapon_shotgun"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Shotgun_Primary_Desc"
+			"item_slot"					"primary"
+			"model_world"				"models/weapons/w_models/w_shotgun.mdl"
+			"model_player"				"models/weapons/v_models/v_shotgun_engineer.mdl"
+			"attach_to_hands"			"2"
+			"used_by_classes"
+			{
+				"engineer"				"1"
+			}
+		}
+		"10"
+		{
+			"name"						"TF_WEAPON_SHOTGUN_SOLDIER"
+			"prefab"					"weapon_shotgun"
+			"baseitem"					"1"
+			"hidden"					"1"
+			"item_description"			"#TF_Weapon_Shotgun_Soldier_Desc"
+			"item_slot"					"secondary"
+			"model_world"				"models/weapons/w_models/w_shotgun.mdl"
+			"model_player"				"models/weapons/v_models/v_shotgun_soldier.mdl"
+			"attach_to_hands"			"2"
+			"used_by_classes"
+			{
+				"soldier"				"1"
+			}
+		}
+		"11"
+		{
+			"name"						"TF_WEAPON_SHOTGUN_HWG"
+			"prefab"					"weapon_shotgun"
+			"baseitem"					"1"
+			"hidden"					"1"
+			"item_description"			"#TF_Weapon_Shotgun_HWG_Desc"
+			"item_slot"					"secondary"
+			"model_world"				"models/weapons/w_models/w_shotgun.mdl"
+			"model_player"				"models/weapons/v_models/v_shotgun_heavy.mdl"
+			"attach_to_hands"			"2"
+			"used_by_classes"
+			{
+				"heavy"					"1"
+			}
+		}
+		"12"
+		{
+			"name"						"TF_WEAPON_SHOTGUN_PYRO"
+			"prefab"					"weapon_shotgun"
+			"baseitem"					"1"
+			"hidden"					"1"
+			"item_description"			"#TF_Weapon_Shotgun_Pyro_Desc"
+			"item_slot"					"secondary"
+			"model_world"				"models/weapons/w_models/w_shotgun.mdl"
+			"model_player"				"models/weapons/v_models/v_shotgun_pyro.mdl"
+			"attach_to_hands"			"2"
+			"used_by_classes"
+			{
+				"pyro"					"1"
+			}
+			"attributes"
+			{
+				"special taunt"
+				{
+					"attribute_class"	"special_taunt"
+					"value"				"1"
+				}
+			}
+		}
+		"13"
+		{
+			"name"						"TF_WEAPON_SCATTERGUN"
+			"prefab"					"weapon_scattergun"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Scattergun_Desc"
+			"model_world"				"models/weapons/w_models/w_scattergun.mdl"
+			"model_player"				"models/weapons/v_models/v_scattergun_scout.mdl"
+			"attach_to_hands"			"2"
+		}
+		"14"
+		{
+			"name"						"TF_WEAPON_SNIPERRIFLE"
+			"prefab"					"weapon_sniperrifle"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_SniperRifle_Desc"
+			"model_world"				"models/weapons/w_models/w_sniperrifle.mdl"
+			"model_player"				"models/weapons/v_models/v_sniperrifle_sniper.mdl"
+			"attach_to_hands"			"2"
+		}
+		"15"
+		{
+			"name"						"TF_WEAPON_MINIGUN"
+			"prefab"					"weapon_minigun"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Minigun_Desc"
+			"model_world"				"models/weapons/w_models/w_minigun.mdl"
+			"model_player"				"models/weapons/v_models/v_minigun_heavy.mdl"
+			"attach_to_hands"			"2"
+		}
+		"16"
+		{
+			"name"						"TF_WEAPON_SMG"
+			"prefab"					"weapon_smg"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_SMG_Desc"
+			"model_world"				"models/weapons/w_models/w_smg.mdl"
+			"model_player"				"models/weapons/v_models/v_smg_sniper.mdl"
+			"attach_to_hands"			"2"
+			"attributes"
+			{
+				"no damage falloff over distance"
+				{
+					"attribute_class"	"mod_no_dmg_falloff"
+					"value"				"1"
+				}
+			}
+		}
+		"17"
+		{
+			"name"						"TF_WEAPON_SYRINGEGUN_MEDIC"
+			"prefab"					"weapon_syringegun"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_SyringeGun_Desc"
+			"model_world"				"models/weapons/w_models/w_syringegun.mdl"
+			"model_player"				"models/weapons/v_models/v_syringegun_medic.mdl"
+			"attach_to_hands"			"2"
+		}
+		"18"
+		{
+			"name"						"TF_WEAPON_ROCKETLAUNCHER"
+			"prefab"					"weapon_rocketlauncher"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_RocketLauncher_Desc"
+			"model_world"				"models/weapons/w_models/w_rocketlauncher.mdl"
+			"model_player"				"models/weapons/v_models/v_rocketlauncher_soldier.mdl"
+			"attach_to_hands"			"2"
+		}
+		"19"
+		{
+			"name"						"TF_WEAPON_GRENADELAUNCHER"
+			"prefab"					"weapon_grenade_launcher"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_GrenadeLauncher_Desc"
+			"model_world"				"models/weapons/w_models/w_grenadelauncher.mdl"
+			"model_player"				"models/weapons/v_models/v_grenadelauncher_demo.mdl"
+			"attach_to_hands"			"2"
+		}
+		"20"
+		{
+			"name"						"TF_WEAPON_PIPEBOMBLAUNCHER"
+			"prefab"					"weapon_stickybomb_launcher"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_PipebombLauncher_Desc"
+			"model_world"				"models/weapons/w_models/w_stickybomb_launcher.mdl"
+			"model_player"				"models/weapons/v_models/v_stickybomb_launcher_demo.mdl"
+			"attach_to_hands"			"2"
+		}
+		"21"
+		{
+			"name"						"TF_WEAPON_FLAMETHROWER"
+			"prefab"					"weapon_flamethrower"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_FlameThrower_Desc"
+			"model_world"				"models/weapons/w_models/w_flamethrower.mdl"
+			"model_player"				"models/weapons/v_models/v_flamethrower_pyro.mdl"
+			"attach_to_hands"			"2"
+		}
+		"22"
+		{
+			"name"						"TF_WEAPON_PISTOL"
+			"prefab"					"weapon_pistol"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Pistol_Desc"
+			"model_world"				"models/weapons/w_models/w_pistol.mdl"
+			"model_player"				"models/weapons/v_models/v_pistol_engineer.mdl"
+			"attach_to_hands"			"2"
+			"used_by_classes"
+			{
+				"engineer"				"1"
+			}
+		}
+		"23"
+		{
+			"name"						"TF_WEAPON_PISTOL_SCOUT"
+			"prefab"					"weapon_pistol"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Pistol_Scout_Desc"
+			"model_world"				"models/weapons/w_models/w_pistol.mdl"
+			"model_player"				"models/weapons/v_models/v_pistol_scout.mdl"
+			"attach_to_hands"			"2"
+			"used_by_classes"
+			{
+				"scout"					"1"
+			}
+		}
+		"24"
+		{
+			"name"						"TF_WEAPON_REVOLVER"
+			"prefab"					"weapon_revolver"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Revolver_Desc"
+			"model_world"				"models/weapons/w_models/w_revolver.mdl"
+			"model_player"				"models/weapons/v_models/v_revolver_spy.mdl"
+			"attach_to_hands"			"2"
+		}
+		"25"
+		{
+			"name"						"TF_WEAPON_PDA_ENGINEER_BUILD"
+			"prefab"					"weapon_pda"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_PDA_Engineer_Builder_Desc"
+			"model_world"				"models/weapons/w_models/w_builder.mdl"
+			"model_player"				"models/weapons/v_models/v_builder_engineer.mdl"
+			"attach_to_hands"			"2"
+		}
+		"26"
+		{
+			"name"						"TF_WEAPON_PDA_ENGINEER_DESTROY"
+			"prefab"					"weapon_pda_destroy"
+			"baseitem"					"1"
+			"model_world"				"models/weapons/w_models/w_pda_engineer.mdl"
+			"model_player"				"models/weapons/v_models/v_pda_engineer.mdl"
+			"attach_to_hands"			"2"
+		}
+		"27"
+		{
+			"name"						"TF_WEAPON_PDA_SPY"
+			"prefab"					"weapon_pda_spy"
+			"baseitem"					"1"
+		}
+		"28"
+		{
+			"name"						"TF_WEAPON_BUILDER"
+			"prefab"					"weapon_builder"
+			"baseitem"					"1"
+			"model_world"				"models/weapons/w_models/w_toolbox.mdl"
+			"model_player"				"models/weapons/v_models/v_wrench_engineer.mdl"
+			"attach_to_hands"			"2"
+		}
+		"29"
+		{
+			"name"						"TF_WEAPON_MEDIGUN"
+			"prefab"					"weapon_medigun"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Medigun_Desc"
+			"model_world"				"models/weapons/w_models/w_medigun.mdl"
+			"model_player"				"models/weapons/v_models/v_medigun_medic.mdl"
+			"attach_to_hands"			"2"
+		}
+		"30"
+		{
+			"name"						"TF_WEAPON_INVIS"
+			"prefab"					"weapon_invis"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Watch_Desc"
+		}
+		"31"
+		{
+			"name"						"TF_WEAPON_BUILDER_SPY"
+			"prefab"					"weapon_sapper"
+			"baseitem"					"1"
+			"item_description"			"#TF_Weapon_Spy_Sapper_Desc"
+			"model_world"				"models/weapons/w_models/w_sapper.mdl"
+			"model_player"				"models/weapons/v_models/v_sapper_spy.mdl"
+			"attach_to_hands"			"2"
+		}
+	}
+}

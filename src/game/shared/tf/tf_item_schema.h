@@ -1,22 +1,13 @@
-//================================================================
-// Goldrush Item Schema - powered by conneath industries ltd co tm
-// credit to the tf2c team for making the original econ system
-// that every tf2 mod seems to use these days (including us)
-//================================================================
-#ifndef TF_ITEM_SCHEMA_H
-#define TF_ITEM_SCHEMA_H
+#ifndef ECON_ITEM_SCHEMA_H
+#define ECON_ITEM_SCHEMA_H
+
 #ifdef _WIN32
 #pragma once
 #endif
 
 #include "tf_shareddefs.h"
-#include "networkvar.h"
-#include "utlvector.h"
-#include "utldict.h"
-#include "weapon_parse.h"
-#include "string_t.h"
 
-enum // see TFAttributeDefinition description_format
+enum
 {
 	ATTRIB_FORMAT_INVALID = -1,
 	ATTRIB_FORMAT_PERCENTAGE = 0,
@@ -26,40 +17,41 @@ enum // see TFAttributeDefinition description_format
 	ATTRIB_FORMAT_OR,
 };
 
-enum // see TFAttributeDefinition effect_type
+enum
 {
 	ATTRIB_EFFECT_INVALID = -1,
-	ATTRIB_EFFECT_NEUTRAL = 0,
+	ATTRIB_EFFECT_UNUSUAL = 0,
+	ATTRIB_EFFECT_STRANGE,
+	ATTRIB_EFFECT_NEUTRAL,
 	ATTRIB_EFFECT_POSITIVE,
 	ATTRIB_EFFECT_NEGATIVE,
 };
 
 #define CALL_ATTRIB_HOOK_INT(value, name)			\
-		value = CTFAttributeManager::AttribHookValue<int>(value, #name, this)
+		value = CAttributeManager::AttribHookValue<int>(value, #name, this)
 
 #define CALL_ATTRIB_HOOK_FLOAT(value, name)			\
-		value = CTFAttributeManager::AttribHookValue<float>(value, #name, this)
+		value = CAttributeManager::AttribHookValue<float>(value, #name, this)
 
 #define CALL_ATTRIB_HOOK_STRING(value, name)		\
-		value = CTFAttributeManager::AttribHookValue<string_t>(value, #name, this)
+		value = CAttributeManager::AttribHookValue<string_t>(value, #name, this)
 
 
 #define CALL_ATTRIB_HOOK_INT_ON_OTHER(ent, value, name)			\
-		value = CTFAttributeManager::AttribHookValue<int>(value, #name, ent)
+		value = CAttributeManager::AttribHookValue<int>(value, #name, ent)
 
 #define CALL_ATTRIB_HOOK_FLOAT_ON_OTHER(ent, value, name)			\
-		value = CTFAttributeManager::AttribHookValue<float>(value, #name, ent)
+		value = CAttributeManager::AttribHookValue<float>(value, #name, ent)
 
 #define CALL_ATTRIB_HOOK_STRING_ON_OTHER(ent, value, name)		\
-		value = CTFAttributeManager::AttribHookValue<string_t>(value, #name, ent)
+		value = CAttributeManager::AttribHookValue<string_t>(value, #name, ent)
 
-// Macro used to make strings empty
 #define CLEAR_STR(name)		\
 		name[0] = '\0'
 
-struct TFItemQuality
+struct EconQuality
 {
-	TFItemQuality()
+	EconQuality()
 	{
 		value = 0;
 	}
@@ -67,9 +59,9 @@ struct TFItemQuality
 	int value;
 };
 
-struct TFItemColor
+struct EconColor
 {
-	TFItemColor()
+	EconColor()
 	{
 		CLEAR_STR( color_name );
 	}
@@ -77,10 +69,9 @@ struct TFItemColor
 	char color_name[128];
 };
 
-// Defines what an attribute is, values read from items_game.txt (or attributes.txt for Gold Rush update)
-struct TFAttributeDefinition
+struct EconAttributeDefinition
 {
-	TFAttributeDefinition()
+	EconAttributeDefinition()
 	{
 		CLEAR_STR( name );
 		CLEAR_STR( attribute_class );
@@ -92,50 +83,50 @@ struct TFAttributeDefinition
 		stored_as_integer = false;
 	}
 
-	char name[128]; // attribute's name (e.g. "add uber charge on hit")
-	char attribute_class[128]; // internal attribute class (e.g. add_onhit_ubercharge)
-	char description_string[128]; // localized string shown to the user in loadout
-	bool string_attribute; // unused?
-	int description_format; // VGUI: description type (e.g. value_is_percentage, value_is_additive)
-	int effect_type; // VGUI: affects the colour of the attribute text (positive, negative, neutral)
-	bool hidden; // if true, don't show in weapon stats
-	bool stored_as_integer; // is this attribute an integer value or a bool?
+	char name[128];
+	char attribute_class[128];
+	char description_string[128];
+	bool string_attribute;
+	int description_format;
+	int effect_type;
+	bool hidden;
+	bool stored_as_integer;
 };
 
 // Client specific.
 #ifdef CLIENT_DLL
-EXTERN_RECV_TABLE( DT_TFItemAttribute );
+EXTERN_RECV_TABLE( DT_EconItemAttribute );
 // Server specific.
 #else
-EXTERN_SEND_TABLE( DT_TFItemAttribute );
+EXTERN_SEND_TABLE( DT_EconItemAttribute );
 #endif
 
-class CTFItemAttribute // An attribute. Returned by CTFItemDefinition::IterateAttributes
+class CEconItemAttribute
 {
 public:
 	DECLARE_EMBEDDED_NETWORKVAR();
-	DECLARE_CLASS_NOBASE( CTFItemAttribute );
+	DECLARE_CLASS_NOBASE( CEconItemAttribute );
 
-	CTFItemAttribute()
+	CEconItemAttribute()
 	{
 		Init( -1, 0.0f );
 	}
-	CTFItemAttribute( int iIndex, float flValue )
+	CEconItemAttribute( int iIndex, float flValue )
 	{
 		Init( iIndex, flValue );
 	}
-	CTFItemAttribute( int iIndex, float flValue, const char* pszAttributeClass )
+	CEconItemAttribute( int iIndex, float flValue, const char* pszAttributeClass )
 	{
 		Init( iIndex, flValue, pszAttributeClass );
 	}
-	CTFItemAttribute( int iIndex, const char* pszValue, const char* pszAttributeClass )
+	CEconItemAttribute( int iIndex, const char* pszValue, const char* pszAttributeClass )
 	{
 		Init( iIndex, pszValue, pszAttributeClass );
 	}
 
 	void Init( int iIndex, float flValue, const char* pszAttributeClass = NULL );
 	void Init( int iIndex, const char* pszValue, const char* pszAttributeClass = NULL );
-	TFAttributeDefinition* GetStaticData( void );
+	EconAttributeDefinition* GetStaticData( void );
 
 public:
 	CNetworkVar( int, m_iAttributeDefinitionIndex );
@@ -145,10 +136,31 @@ public:
 	string_t m_strAttributeClass;
 };
 
-class TFItemVisuals
+struct EconItemStyle
+{
+	EconItemStyle()
+	{
+		CLEAR_STR( name );
+		CLEAR_STR( model_player );
+		CLEAR_STR( image_inventory );
+		skin_red = 0;
+		skin_blu = 0;
+		selectable = false;
+	}
+
+	int skin_red;
+	int skin_blu;
+	bool selectable;
+	char name[128];
+	char model_player[128];
+	char image_inventory[128];
+	CUtlDict< const char*, unsigned short > model_player_per_class;
+};
+
+class EconItemVisuals
 {
 public:
-	TFItemVisuals()
+	EconItemVisuals()
 	{
 		SetDefLessFunc( animation_replacement );
 		memset( aWeaponSounds, 0, sizeof( aWeaponSounds ) );
@@ -163,11 +175,10 @@ public:
 	//CUtlDict< EconItemStyle*, unsigned short > styles;
 };
 
-// Contains what makes an item an item (name, quality, etc.)
-class CTFItemDefinition
+class CEconItemDefinition
 {
 public:
-	CTFItemDefinition()
+	CEconItemDefinition()
 	{
 		CLEAR_STR( name );
 		used_by_classes = 0;
@@ -201,41 +212,42 @@ public:
 		CLEAR_STR( drop_sound );
 	}
 
-	TFItemVisuals* GetVisuals( int iTeamNum = TEAM_UNASSIGNED );
+	EconItemVisuals* GetVisuals( int iTeamNum = TEAM_UNASSIGNED );
 	int GetLoadoutSlot( int iClass = TF_CLASS_UNDEFINED );
-	CTFItemAttribute* IterateAttributes( string_t strClass );
+	CEconItemAttribute* IterateAttributes( string_t strClass );
 
 public:
-	char name[128]; // Internal name
+	char name[128];
 	CUtlDict< bool, unsigned short > capabilities;
 	CUtlDict< bool, unsigned short > tags;
-	int used_by_classes; // Which classes can use this weapon?
-	int item_slot_per_class[TF_CLASS_COUNT_ALL]; // Different classes have different slots for this weapon (e.g. Soldier has shotgun as secondary, Engi as primary)
+	int used_by_classes;
+	int item_slot_per_class[TF_CLASS_COUNT_ALL];
 	bool show_in_armory;
-	char item_class[128]; // Item's classname (e.g. tf_weapon_medigun)
-	char item_type_name[128]; // The type of item (e.g. Level 5 *Bat*)
-	char item_name[128]; // Name shown in armory
-	char item_description[128]; // Description (unused)
-	int  item_slot; // Item slot (primary, secondary, melee, PDA)
-	int  anim_slot; // Anim slot this item uses (primary,secondary,melee) used for the playermodel to know how to animate
-	char item_quality[128]; // Quality ("Normal", "Unique", "Strange" etc.)
-	bool baseitem; // Is this a base (stock?) item?
-	bool propername; // if true, add "The" before item name e.g. "The Kritzkrieg"
-	char item_logname[128]; // What name the killfeed should show in logfiles (mainly used by stat plugins like HLstatsX)
-	char item_iconname[128]; // Killfeed icon name
-	int	 min_ilevel; // Minimum level this item can have
-	int	 max_ilevel; // Maximum level this item can have
-	char image_inventory[128]; // Inventory icon
-	int	 image_inventory_size_w; // Width
-	int	 image_inventory_size_h; // Height
-	char model_player[128]; // Viewmodel (v_/c_model)
-	char model_world[128]; // Worldmodel (w_model)
-	char model_player_per_class[TF_CLASS_COUNT_ALL][128]; // Different classes have different viewmodels for this weapon (probably isnt used often cause of c_models)
-	int attach_to_hands; // Does this weapon use a c_model?
-	bool act_as_wearable; // Unused
-	CUtlVector<CTFItemAttribute> attributes; // Vector containing what attributes this item uses (see CTFItemAttribute for more details)
-	TFItemVisuals visual[TF_TEAM_COUNT];
-	char mouse_pressed_sound[128]; // Unused(?) What sound it makes when clicked on in the armory
-	char drop_sound[128]; // Unused(?)
+	char item_class[128];
+	char item_type_name[128];
+	char item_name[128];
+	char item_description[128];
+	int  item_slot;
+	int  anim_slot;
+	char item_quality[128];
+	bool baseitem;
+	bool propername;
+	char item_logname[128];
+	char item_iconname[128];
+	int	 min_ilevel;
+	int	 max_ilevel;
+	char image_inventory[128];
+	int	 image_inventory_size_w;
+	int	 image_inventory_size_h;
+	char model_player[128];
+	char model_world[128];
+	char model_player_per_class[TF_CLASS_COUNT_ALL][128];
+	int attach_to_hands;
+	bool act_as_wearable;
+	CUtlVector<CEconItemAttribute> attributes;
+	EconItemVisuals visual[TF_TEAM_COUNT];
+	char mouse_pressed_sound[128];
+	char drop_sound[128];
 };
-#endif
+
+#endif // ECON_ITEM_SCHEMA_H

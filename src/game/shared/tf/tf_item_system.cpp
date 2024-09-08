@@ -5,28 +5,28 @@
 //================================================================
 #include "cbase.h"
 #include "tf_item_system.h"
+#include "tf_item_schema_parser.h"
 #include "script_parser.h"
 #include "activitylist.h"
-#include "tf_item_schema_parser.h"
-#include "gamestringpool.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
+
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-static CTFItemSchema g_TFItemSchema;
-static CTFSchemaParser g_TFSchemaParser;
-
-CTFItemSchema* GetItemSchema()
+static CEconItemSchema g_EconItemSchema;
+CEconItemSchema* GetItemSchema()
 {
-	return &g_TFItemSchema;
+	return &g_EconItemSchema;
 }
+
+CEconSchemaParser g_EconSchemaParser;
 
 //-----------------------------------------------------------------------------
 // Purpose: constructor
 //-----------------------------------------------------------------------------
-CTFItemSchema::CTFItemSchema()
+CEconItemSchema::CEconItemSchema()
 {
 	SetDefLessFunc( m_Items );
 	SetDefLessFunc( m_Attributes );
@@ -34,14 +34,14 @@ CTFItemSchema::CTFItemSchema()
 	m_bInited = false;
 }
 
-CTFItemSchema::~CTFItemSchema()
+CEconItemSchema::~CEconItemSchema()
 {
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Initializer
 //-----------------------------------------------------------------------------
-bool CTFItemSchema::Init( void )
+bool CEconItemSchema::Init( void )
 {
 	if ( !m_bInited )
 	{
@@ -50,7 +50,7 @@ bool CTFItemSchema::Init( void )
 		ActivityList_RegisterSharedActivities();
 
 		float flStartTime = engine->Time();
-		g_TFSchemaParser.InitParser( "scripts/items/items_game.txt", true, false );
+		g_EconSchemaParser.InitParser( "scripts/items/items_game.txt", true, false );
 		float flEndTime = engine->Time();
 		Msg( "[%s] Processing item schema took %.02fms. Parsed %d items and %d attributes.\n",
 			CBaseEntity::IsServer() ? "SERVER" : "CLIENT",
@@ -67,14 +67,14 @@ bool CTFItemSchema::Init( void )
 //-----------------------------------------------------------------------------
 // Purpose: Runs on level start, precaches models and sounds from schema.
 //-----------------------------------------------------------------------------
-void CTFItemSchema::Precache( void )
+void CEconItemSchema::Precache( void )
 {
 	string_t strPrecacheAttribute = AllocPooledString( "custom_projectile_model" );
 
 	// Precache everything from schema.
 	FOR_EACH_MAP( m_Items, i )
 	{
-		CTFItemDefinition* pItem = m_Items[i];
+		CEconItemDefinition* pItem = m_Items[i];
 
 		// Precache models.
 		if ( pItem->model_world[0] != '\0' )
@@ -96,7 +96,7 @@ void CTFItemSchema::Precache( void )
 			if ( i == TEAM_SPECTATOR )
 				continue;
 
-			TFItemVisuals* pVisuals = &pItem->visual[i];
+			EconItemVisuals* pVisuals = &pItem->visual[i];
 
 			// Precache sounds.
 			for ( int i = 0; i < NUM_SHOOT_SOUND_TYPES; i++ )
@@ -109,7 +109,7 @@ void CTFItemSchema::Precache( void )
 		// Cache all attrbute names.
 		for ( int i = 0; i < pItem->attributes.Count(); i++ )
 		{
-			CTFItemAttribute* pAttribute = &pItem->attributes[i];
+			CEconItemAttribute* pAttribute = &pItem->attributes[i];
 			pAttribute->m_strAttributeClass = AllocPooledString( pAttribute->attribute_class );
 
 			// Special case for custom_projectile_model attribute.
@@ -124,12 +124,12 @@ void CTFItemSchema::Precache( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-CTFItemDefinition* CTFItemSchema::GetItemDefinition( int id )
+CEconItemDefinition* CEconItemSchema::GetItemDefinition( int id )
 {
 	if ( id < 0 )
 		return NULL;
 
-	CTFItemDefinition* itemdef = NULL;
+	CEconItemDefinition* itemdef = NULL;
 	FIND_ELEMENT( m_Items, id, itemdef );
 	return itemdef;
 }
@@ -137,12 +137,12 @@ CTFItemDefinition* CTFItemSchema::GetItemDefinition( int id )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-TFAttributeDefinition* CTFItemSchema::GetAttributeDefinition( int id )
+EconAttributeDefinition* CEconItemSchema::GetAttributeDefinition( int id )
 {
 	if ( id < 0 )
 		return NULL;
 
-	TFAttributeDefinition* attribdef = NULL;
+	EconAttributeDefinition* attribdef = NULL;
 	FIND_ELEMENT( m_Attributes, id, attribdef );
 	return attribdef;
 }
@@ -150,7 +150,7 @@ TFAttributeDefinition* CTFItemSchema::GetAttributeDefinition( int id )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-TFAttributeDefinition* CTFItemSchema::GetAttributeDefinitionByName( const char* name )
+EconAttributeDefinition* CEconItemSchema::GetAttributeDefinitionByName( const char* name )
 {
 	//unsigned int index = m_Attributes.Find(name);
 	//if (index < m_Attributes.Count())
@@ -171,7 +171,7 @@ TFAttributeDefinition* CTFItemSchema::GetAttributeDefinitionByName( const char* 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-TFAttributeDefinition* CTFItemSchema::GetAttributeDefinitionByClass( const char* classname )
+EconAttributeDefinition* CEconItemSchema::GetAttributeDefinitionByClass( const char* classname )
 {
 	//unsigned int index = m_Attributes.Find(name);
 	//if (index < m_Attributes.Count())
@@ -192,7 +192,7 @@ TFAttributeDefinition* CTFItemSchema::GetAttributeDefinitionByClass( const char*
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CTFItemSchema::GetAttributeIndex( const char* name )
+int CEconItemSchema::GetAttributeIndex( const char* name )
 {
 	if ( !name )
 		return -1;

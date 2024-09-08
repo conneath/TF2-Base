@@ -1,8 +1,6 @@
 #include "cbase.h"
 #include "tf_attribute_manager.h"
 #include "tf_item_schema.h"
-#include "ihasattributes.h"
-#include "gamestringpool.h"
 
 #ifdef CLIENT_DLL
 #include "prediction.h"
@@ -18,7 +16,7 @@
 // CAttributeManager
 //=============================================================================
 
-BEGIN_NETWORK_TABLE_NOBASE( CTFAttributeManager, DT_TFAttributeManager )
+BEGIN_NETWORK_TABLE_NOBASE( CAttributeManager, DT_AttributeManager )
 #ifdef CLIENT_DLL
 RecvPropEHandle( RECVINFO( m_hOuter ) ),
 RecvPropInt( RECVINFO( m_iReapplyProvisionParity ) ),
@@ -30,7 +28,7 @@ END_NETWORK_TABLE()
 
 
 template <>
-string_t CTFAttributeManager::AttribHookValue<string_t>( string_t strValue, const char* pszClass, const CBaseEntity* pEntity )
+string_t CAttributeManager::AttribHookValue<string_t>( string_t strValue, const char* pszClass, const CBaseEntity* pEntity )
 {
 	if ( !pEntity )
 		return strValue;
@@ -46,7 +44,7 @@ string_t CTFAttributeManager::AttribHookValue<string_t>( string_t strValue, cons
 	return strValue;
 }
 
-CTFAttributeManager::CTFAttributeManager()
+CAttributeManager::CAttributeManager()
 {
 	m_bParsingMyself = false;
 	m_iReapplyProvisionParity = 0;
@@ -56,7 +54,7 @@ CTFAttributeManager::CTFAttributeManager()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CTFAttributeManager::OnPreDataChanged( DataUpdateType_t updateType )
+void CAttributeManager::OnPreDataChanged( DataUpdateType_t updateType )
 {
 	m_iOldReapplyProvisionParity = m_iReapplyProvisionParity;
 }
@@ -64,7 +62,7 @@ void CTFAttributeManager::OnPreDataChanged( DataUpdateType_t updateType )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CTFAttributeManager::OnDataChanged( DataUpdateType_t updateType )
+void CAttributeManager::OnDataChanged( DataUpdateType_t updateType )
 {
 	// If parity ever falls out of sync we can catch up here.
 	if ( m_iReapplyProvisionParity != m_iOldReapplyProvisionParity )
@@ -83,7 +81,7 @@ void CTFAttributeManager::OnDataChanged( DataUpdateType_t updateType )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CTFAttributeManager::AddProvider( CBaseEntity* pEntity )
+void CAttributeManager::AddProvider( CBaseEntity* pEntity )
 {
 	m_AttributeProviders.AddToTail( pEntity );
 }
@@ -91,7 +89,7 @@ void CTFAttributeManager::AddProvider( CBaseEntity* pEntity )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CTFAttributeManager::RemoveProvider( CBaseEntity* pEntity )
+void CAttributeManager::RemoveProvider( CBaseEntity* pEntity )
 {
 	m_AttributeProviders.FindAndRemove( pEntity );
 }
@@ -99,7 +97,7 @@ void CTFAttributeManager::RemoveProvider( CBaseEntity* pEntity )
 //-----------------------------------------------------------------------------
 // Purpose: Add this entity to target's providers list.
 //-----------------------------------------------------------------------------
-void CTFAttributeManager::ProviteTo( CBaseEntity* pEntity )
+void CAttributeManager::ProviteTo( CBaseEntity* pEntity )
 {
 	if ( !pEntity || !m_hOuter.Get() )
 		return;
@@ -120,7 +118,7 @@ void CTFAttributeManager::ProviteTo( CBaseEntity* pEntity )
 //-----------------------------------------------------------------------------
 // Purpose: Remove this entity from target's providers list.
 //-----------------------------------------------------------------------------
-void CTFAttributeManager::StopProvidingTo( CBaseEntity* pEntity )
+void CAttributeManager::StopProvidingTo( CBaseEntity* pEntity )
 {
 	if ( !pEntity || !m_hOuter.Get() )
 		return;
@@ -141,7 +139,7 @@ void CTFAttributeManager::StopProvidingTo( CBaseEntity* pEntity )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CTFAttributeManager::InitializeAttributes( CBaseEntity* pEntity )
+void CAttributeManager::InitializeAttributes( CBaseEntity* pEntity )
 {
 	Assert( pEntity->GetHasAttributesInterfacePtr() != NULL );
 
@@ -152,7 +150,7 @@ void CTFAttributeManager::InitializeAttributes( CBaseEntity* pEntity )
 //-----------------------------------------------------------------------------
 // Purpose: Search for an attribute on our providers.
 //-----------------------------------------------------------------------------
-float CTFAttributeManager::ApplyAttributeFloat( float flValue, const CBaseEntity* pEntity, string_t strAttributeClass )
+float CAttributeManager::ApplyAttributeFloat( float flValue, const CBaseEntity* pEntity, string_t strAttributeClass )
 {
 	if ( m_bParsingMyself || m_hOuter.Get() == NULL )
 	{
@@ -197,7 +195,7 @@ float CTFAttributeManager::ApplyAttributeFloat( float flValue, const CBaseEntity
 //-----------------------------------------------------------------------------
 // Purpose: Search for an attribute on our providers.
 //-----------------------------------------------------------------------------
-string_t CTFAttributeManager::ApplyAttributeString( string_t strValue, const CBaseEntity* pEntity, string_t strAttributeClass )
+string_t CAttributeManager::ApplyAttributeString( string_t strValue, const CBaseEntity* pEntity, string_t strAttributeClass )
 {
 	if ( m_bParsingMyself || m_hOuter.Get() == NULL )
 	{
@@ -244,7 +242,7 @@ string_t CTFAttributeManager::ApplyAttributeString( string_t strValue, const CBa
 // CAttributeContainer
 //=============================================================================
 
-BEGIN_NETWORK_TABLE_NOBASE( CTFAttributeContainer, DT_TFAttributeContainer )
+BEGIN_NETWORK_TABLE_NOBASE( CAttributeContainer, DT_AttributeContainer )
 #ifdef CLIENT_DLL
 RecvPropEHandle( RECVINFO( m_hOuter ) ),
 RecvPropInt( RECVINFO( m_iReapplyProvisionParity ) ),
@@ -255,12 +253,12 @@ SendPropInt( SENDINFO( m_iReapplyProvisionParity ), ATTRIB_REAPPLY_PARITY_BITS, 
 END_NETWORK_TABLE()
 
 #ifdef CLIENT_DLL
-BEGIN_PREDICTION_DATA_NO_BASE( CTFAttributeContainer )
+BEGIN_PREDICTION_DATA_NO_BASE( CAttributeContainer )
 DEFINE_PRED_FIELD( m_iReapplyProvisionParity, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 END_PREDICTION_DATA()
 #endif
 
-CTFAttributeContainer::CTFAttributeContainer()
+CAttributeContainer::CAttributeContainer()
 {
 
 }
@@ -268,7 +266,7 @@ CTFAttributeContainer::CTFAttributeContainer()
 //-----------------------------------------------------------------------------
 // Purpose: Search for an attribute and apply its value.
 //-----------------------------------------------------------------------------
-float CTFAttributeContainer::ApplyAttributeFloat( float flValue, const CBaseEntity* pEntity, string_t strAttributeClass )
+float CAttributeContainer::ApplyAttributeFloat( float flValue, const CBaseEntity* pEntity, string_t strAttributeClass )
 {
 	if ( m_bParsingMyself || m_hOuter.Get() == NULL )
 		return flValue;
@@ -279,11 +277,11 @@ float CTFAttributeContainer::ApplyAttributeFloat( float flValue, const CBaseEnti
 	CEconEntity* pEconEnt = assert_cast<CEconEntity*>(m_hOuter.Get());
 	CEconItemView* pItem = pEconEnt->GetItem();
 
-	CTFItemAttribute* pAttribute = pItem->IterateAttributes( strAttributeClass );
+	CEconItemAttribute* pAttribute = pItem->IterateAttributes( strAttributeClass );
 
 	if ( pAttribute )
 	{
-		TFAttributeDefinition* pStatic = pAttribute->GetStaticData();
+		EconAttributeDefinition* pStatic = pAttribute->GetStaticData();
 
 		switch ( pStatic->description_format )
 		{
@@ -315,7 +313,7 @@ float CTFAttributeContainer::ApplyAttributeFloat( float flValue, const CBaseEnti
 //-----------------------------------------------------------------------------
 // Purpose: Search for an attribute and apply its value.
 //-----------------------------------------------------------------------------
-string_t CTFAttributeContainer::ApplyAttributeString( string_t strValue, const CBaseEntity* pEntity, string_t strAttributeClass )
+string_t CAttributeContainer::ApplyAttributeString( string_t strValue, const CBaseEntity* pEntity, string_t strAttributeClass )
 {
 	if ( m_bParsingMyself || m_hOuter.Get() == NULL )
 		return strValue;
@@ -326,7 +324,7 @@ string_t CTFAttributeContainer::ApplyAttributeString( string_t strValue, const C
 	CEconEntity* pEconEnt = assert_cast<CEconEntity*>(m_hOuter.Get());
 	CEconItemView* pItem = pEconEnt->GetItem();
 
-	CTFItemAttribute* pAttribute = pItem->IterateAttributes( strAttributeClass );
+	CEconItemAttribute* pAttribute = pItem->IterateAttributes( strAttributeClass );
 
 	if ( pAttribute )
 	{

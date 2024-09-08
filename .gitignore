@@ -64,6 +64,7 @@ game/tf_mod/stats.txt
 game/tf_mod/voice_ban.dt
 game/tf_mod/GameState.txt
 game/tf_mod/ServerConfig.vdf
+game/tf_mod/tf_inventory.txt
 **/sound.cache
 **/modelsounds.cache
 game/tf_mod/cfg/config.cfg

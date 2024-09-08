@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: yes, i've been trying to avoid econ naming by renaming all of the tf2c econ system. but i'll have to concede for this one...
+// Purpose: 
 //
 //===========================================================================//
 
@@ -25,9 +25,7 @@ struct wearableanimplayback_t
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: BaseCombatWeapon is derived from this in live tf2, see BASECOMBATWEAPON_DERIVED_FROM
-// TODO: find a way to get rid of that stupid hack!!!!!! perhaps derive this class from
-// CBaseCombatWeapon or something, then derive CTFWeaponBase from it? is this used anywhere else?
+// Purpose: BaseCombatWeapon is derived from this in live tf2.
 //-----------------------------------------------------------------------------
 class CEconEntity : public CBaseAnimating, public IHasAttributes
 {
@@ -60,8 +58,8 @@ public:
 
 	virtual void GiveTo( CBaseEntity* pEntity );
 
-	virtual CTFAttributeManager* GetAttributeManager( void ) { return &m_AttributeManager; }
-	virtual CTFAttributeContainer* GetAttributeContainer( void ) { return &m_AttributeManager; }
+	virtual CAttributeManager* GetAttributeManager( void ) { return &m_AttributeManager; }
+	virtual CAttributeContainer* GetAttributeContainer( void ) { return &m_AttributeManager; }
 	virtual CBaseEntity* GetAttributeOwner( void ) { return NULL; }
 	virtual void ReapplyProvision( void );
 
@@ -74,7 +72,7 @@ protected:
 	CEconItemView m_Item;
 
 private:
-	CNetworkVarEmbedded( CTFAttributeContainer, m_AttributeManager );
+	CNetworkVarEmbedded( CAttributeContainer, m_AttributeManager );
 };
 
 #endif

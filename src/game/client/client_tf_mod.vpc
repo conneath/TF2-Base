@@ -189,7 +189,7 @@ $Project "Client (TF)"
 			$Folder "Econ"
 			{
 				$File	"$SRCDIR\game\shared\script_parser.cpp"
-				$File	"$SRCDIR\game\shared\script_parser.h
+				$File	"$SRCDIR\game\shared\script_parser.h"
 				$File	"$SRCDIR\game\shared\tf\tf_attribute_manager.h"
 				$File	"$SRCDIR\game\shared\tf\tf_attribute_manager.cpp"
 				$File	"$SRCDIR\game\shared\tf\ihasattributes.h"
@@ -203,6 +203,8 @@ $Project "Client (TF)"
 				$File	"$SRCDIR\game\shared\tf\tf_item_schema_parser.cpp"
 				$File	"$SRCDIR\game\shared\tf\tf_item_view.h"
 				$File	"$SRCDIR\game\shared\tf\tf_item_view.cpp"
+				$File	"$SRCDIR\game\shared\tf\tf_inventory.h"
+				$File	"$SRCDIR\game\shared\tf\tf_inventory.cpp"
 			}
 			$Folder	"Weapon"
 			{

@@ -140,7 +140,7 @@ namespace vgui2
 // Purpose: Base weapon class, shared on client and server
 //-----------------------------------------------------------------------------
 
-#if defined USES_ECON_ITEMS || defined TF_MOD // conn: i'd prefer to get rid of this stupid hack eventually!
+#if defined USES_ECON_ITEMS || defined TF_MOD || defined TF_MOD_CLIENT // conn: i'd prefer to get rid of this stupid hack eventually!
 #define BASECOMBATWEAPON_DERIVED_FROM		CEconEntity
 #else 
 #define BASECOMBATWEAPON_DERIVED_FROM		CBaseAnimating

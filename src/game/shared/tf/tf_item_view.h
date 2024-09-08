@@ -33,7 +33,7 @@ public:
 
 	void Init( int iItemID );
 
-	CTFItemDefinition* GetStaticData( void ) const;
+	CEconItemDefinition* GetStaticData( void ) const;
 
 	const char* GetWorldDisplayModel( int iClass = 0 ) const;
 	const char* GetPlayerDisplayModel( int iClass = 0 ) const;
@@ -46,9 +46,9 @@ public:
 	bool HasCapability( const char* name );
 	bool HasTag( const char* name );
 
-	bool AddAttribute( CTFItemAttribute* pAttribute );
+	bool AddAttribute( CEconItemAttribute* pAttribute );
 	void SkipBaseAttributes( bool bSkip );
-	CTFItemAttribute* IterateAttributes( string_t strClass );
+	CEconItemAttribute* IterateAttributes( string_t strClass );
 
 	void SetItemDefIndex( int iItemID );
 	int GetItemDefIndex( void ) const;
@@ -71,7 +71,7 @@ private:
 	//CUtlDict< EconItemAttribute, unsigned short > m_AttributeList;
 	CNetworkVar( bool, m_bOnlyIterateItemViewAttributes );
 
-	CUtlVector<CTFItemAttribute> m_AttributeList;
+	CUtlVector<CEconItemAttribute> m_AttributeList;
 };
 
 #endif // TF_ECON_ITEM_VIEW_H

@@ -205,6 +205,26 @@ enum
 	TF_AMMO_COUNT
 };
 
+extern const char* g_AnimSlots[];
+extern const char* g_LoadoutSlots[];
+
+//-----------------------------------------------------------------------------
+// Loadout slots
+//-----------------------------------------------------------------------------
+enum
+{
+	TF_LOADOUT_SLOT_PRIMARY = 0,
+	TF_LOADOUT_SLOT_SECONDARY,
+	TF_LOADOUT_SLOT_MELEE,
+	TF_LOADOUT_SLOT_PDA1, // Engi's Construction PDA, Spy's Sapper
+	TF_LOADOUT_SLOT_PDA2, // Engi's Destruction PDA
+	TF_LOADOUT_SLOT_BUILDING, // Engi's Toolbox/Builder
+	//TF_LOADOUT_SLOT_HAT,
+	//TF_LOADOUT_SLOT_MISC,
+	//TF_LOADOUT_SLOT_ACTION,
+	TF_LOADOUT_SLOT_COUNT
+};
+
 //-----------------------------------------------------------------------------
 // Grenade Launcher mode (for pipebombs).
 //-----------------------------------------------------------------------------
@@ -225,6 +245,7 @@ enum
 	TF_WPN_TYPE_GRENADE,
 	TF_WPN_TYPE_BUILDING,
 	TF_WPN_TYPE_PDA,
+	TF_WPN_TYPE_COUNT
 };
 
 extern const char *g_aAmmoNames[];

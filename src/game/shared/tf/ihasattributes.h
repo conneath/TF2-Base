@@ -4,10 +4,8 @@
 #pragma once
 #endif
 
-#include "cbase.h"
-
-class CTFAttributeManager;
-class CTFAttributeContainer;
+class CAttributeManager;
+class CAttributeContainer;
 
 //-----------------------------------------------------------------------------
 // Purpose: Allows to determine if entity has attribute related members
@@ -15,8 +13,8 @@ class CTFAttributeContainer;
 class IHasAttributes
 {
 public:
-	virtual CTFAttributeManager* GetAttributeManager( void ) = 0;
-	virtual CTFAttributeContainer* GetAttributeContainer( void ) = 0;
+	virtual CAttributeManager* GetAttributeManager( void ) = 0;
+	virtual CAttributeContainer* GetAttributeContainer( void ) = 0;
 	virtual CBaseEntity* GetAttributeOwner( void ) = 0;
 	virtual void ReapplyProvision( void ) = 0;
 };
