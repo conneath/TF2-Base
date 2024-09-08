@@ -356,7 +356,7 @@
 	
 	"full_loadout"
 	{
-		"ControlName"		"CFullLoadoutPanel"
+		"ControlName"		"CClassLoadoutPanel"
 		"fieldName"			"full_loadout"
 		"xpos"				"0"
 		"ypos"				"0"

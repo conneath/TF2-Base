@@ -18,6 +18,7 @@
 #include <vgui/VGUI.h>
 #include "vgui_controls/CheckButton.h"
 #include "basemodel_panel.h"
+#include "item_model_panel.h"
 
 #define NUM_ITEM_PANELS_IN_LOADOUT		CLASS_LOADOUT_POSITION_COUNT
 
@@ -82,6 +83,10 @@ protected:
 	CBaseModelPanel* m_pPlayerModelPanel;
 	vgui::Label* m_pCaratLabel;
 	vgui::Label* m_pClassLabel;
+
+	CItemModelPanel* m_pPrimaryWeaponPanel;
+	CItemModelPanel* m_pSecondaryWeaponPanel;
+	CItemModelPanel* m_pMeleeWeaponPanel;
 	//WIP
 };
 

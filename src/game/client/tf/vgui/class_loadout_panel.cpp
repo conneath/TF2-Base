@@ -9,6 +9,8 @@
 #include "class_loadout_panel.h"
 #include "tf_playerclass_shared.h"
 #include "charinfo_loadout_subpanel.h"
+#include "item_model_panel.h"
+#include "tf_inventory.h"
 
 CClassLoadoutPanel* g_pClassLoadoutPanel = NULL;
 //-----------------------------------------------------------------------------
@@ -21,6 +23,10 @@ CClassLoadoutPanel::CClassLoadoutPanel( vgui::Panel* parent )
 	m_iCurrentTeamIndex = TF_TEAM_RED;
 	m_iCurrentSlotIndex = -1;
 	m_pPlayerModelPanel = NULL;
+	m_pPrimaryWeaponPanel = NULL;
+	m_pSecondaryWeaponPanel = NULL;
+	m_pMeleeWeaponPanel = NULL;
+
 	/*
 	m_pSelectionPanel = NULL;
 	m_pTauntHintLabel = NULL;
@@ -73,6 +79,12 @@ void CClassLoadoutPanel::ApplySchemeSettings( vgui::IScheme* pScheme )
 	FindChildByName( "ChangeButton0" )->SetVisible( false );
 	FindChildByName( "ChangeButton1" )->SetVisible( false );
 	FindChildByName( "ChangeButton2" )->SetVisible( false );
+
+	// hardcoding ftw
+	m_pPrimaryWeaponPanel = dynamic_cast<CItemModelPanel*>(FindChildByName( "modelpanel0" ));
+	m_pSecondaryWeaponPanel = dynamic_cast<CItemModelPanel*>(FindChildByName( "modelpanel1" ));
+	m_pMeleeWeaponPanel = dynamic_cast<CItemModelPanel*>(FindChildByName( "modelpanel2" ));
+
 	// tell users no items exist yet for now
 	dynamic_cast<vgui::Label*>(FindChildByName( "NoneAvailableReason" ))->SetText( "#NoItemsExistLong" );
 
@@ -209,6 +221,21 @@ void CClassLoadoutPanel::UpdateModelPanels( void )
 		m_pPlayerModelPanel->SetMDL(pData->GetModelName());
 		//m_pPlayerModelPanel->SetSkin(0);
 	}
+	// set our weapon panels to the items for our class from CTFInventory
+	if ( m_pPrimaryWeaponPanel )
+	{
+		m_pPrimaryWeaponPanel->SetEconItem(GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY, 0 ));
+	}
+	if ( m_pSecondaryWeaponPanel )
+	{
+		m_pSecondaryWeaponPanel->SetEconItem( GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_SECONDARY, 0 ) );
+	}
+	if ( m_pMeleeWeaponPanel ) // no PDA/Invis slots for now, sorry spy and engi
+	{
+		m_pMeleeWeaponPanel->SetEconItem( GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_MELEE, 0 ) );
+	}
+
+
 	/*
 	// For now, fill them out with the local player's currently wielded items
 	for ( int i = 0; i < m_pItemModelPanels.Count(); i++ )
