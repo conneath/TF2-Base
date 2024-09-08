@@ -46,7 +46,7 @@ void CItemModelPanel::SetEconItem( CEconItemView* pItem )
 {
 	if ( !pItem )
 		return;
+
 	CEconItemDefinition* pItemDef = pItem->GetStaticData();
-	
-		SetDialogVariable( "itemname", g_pVGuiLocalize->Find(pItemDef->item_name) );
+	SetDialogVariable( "itemname", g_pVGuiLocalize->Find(pItemDef->item_name) );
 }

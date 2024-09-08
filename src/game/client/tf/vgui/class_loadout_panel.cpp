@@ -222,6 +222,9 @@ void CClassLoadoutPanel::UpdateModelPanels( void )
 		//m_pPlayerModelPanel->SetSkin(0);
 	}
 	// set our weapon panels to the items for our class from CTFInventory
+	// TODO: right now this will only get the first item for the class' slot
+	// instead of the user preset (which we cant set anyway rn, no item selection panel)
+	// see CTFInventory::Get/SetWeaponPreset
 	if ( m_pPrimaryWeaponPanel )
 	{
 		m_pPrimaryWeaponPanel->SetEconItem(GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY, 0 ));
