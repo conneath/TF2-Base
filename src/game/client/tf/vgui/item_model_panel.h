@@ -28,6 +28,7 @@ class CEmbeddedItemModelPanel : public CBaseModelPanel
 public:
 	CEmbeddedItemModelPanel( vgui::Panel* pParent, const char* pName );
 	//virtual ~CEmbeddedItemModelPanel();
+	void	SetEconItem( CEconItemView* pItem );
 };
 
 //-----------------------------------------------------------------------------
@@ -45,6 +46,7 @@ public:
 	//virtual void	PerformLayout( void ) OVERRIDE;
 
 	void	SetEconItem( CEconItemView* pItem );
-
+protected:
+	CEmbeddedItemModelPanel* m_pEmbItemModelPanel;
 };
 #endif

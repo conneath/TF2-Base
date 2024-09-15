@@ -38,6 +38,34 @@
 			"mouse_pressed_sound"	"ui/item_heavy_gun_pickup.wav"
 			"drop_sound"	"ui/item_heavy_gun_drop.wav"
 		}
+		// Secondary
+		"weapon_pistol"
+		{
+			"tags"
+			{
+				"can_deal_damage"						"1"
+				"can_deal_mvm_penetration_damage"		"1"
+				"can_deal_long_distance_damage"			"1"
+			}
+			"item_class"				"tf_weapon_pistol"
+			"item_type_name"			"#TF_Weapon_Pistol"
+			"item_name"					"#TF_Weapon_Pistol"
+			"item_slot"					"secondary"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/w_models/w_pistol"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				"models/weapons/c_models/c_pistol/c_pistol.mdl"
+			"attach_to_hands"			"1"
+			"static_attrs"
+			{
+				"min_viewmodel_offset"				"10 0 -10"
+			}
+			"mouse_pressed_sound"		"#ui/item_light_gun_pickup.wav"
+			"drop_sound"				"#ui/item_light_gun_drop.wav"
+		}
 		"weapon_bat"
 		{
 			"capabilities"
@@ -408,6 +436,355 @@
 			}
 			"mouse_pressed_sound"		"#ui/item_heavy_gun_pickup.wav"
 			"drop_sound"				"#ui/item_heavy_gun_drop.wav"
+		}
+		// Melee
+		"weapon_fists"
+		{
+			"tags"
+			{
+				"can_deal_damage"		"1"
+			}
+			"item_class"				"tf_weapon_fists"
+			"item_type_name"			"#TF_Weapon_Fists"
+			"item_name"					"#TF_Weapon_Fists"
+			"item_slot"					"melee"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/v_models/v_fist_heavy"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				""
+			"attach_to_hands"			"1"
+			"used_by_classes"
+			{
+				"heavy"					"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"		"10 0 -7"
+			}
+			"visuals"
+			{
+				"styles"
+				{
+					"0"
+					{
+						"skin_red"		"2"
+						"skin_blu"		"3"
+						"v_skin_red"	"2"
+						"v_skin_blu"	"3"
+						"selectable"	"0"
+					}
+				}
+			}
+			"mouse_pressed_sound"		"#ui/item_fists_pickup.wav"
+			"drop_sound"				"#ui/item_fists_drop.wav"
+		}
+		// Engineer (Shotgun & Pistol already defined above)
+		// Primary
+		// Secondary
+		// Melee
+		"weapon_wrench"
+		{
+			"tags"
+			{
+				"can_deal_damage"						"1"
+				"can_deal_critical_damage"				"1"
+				"can_destroy_sappers"					"1"
+			}
+			"item_class"				"tf_weapon_wrench"
+			"item_type_name"			"#TF_Weapon_Wrench"
+			"item_name"					"#TF_Weapon_Wrench"
+			"item_description"			"#TF_Weapon_Wrench_Desc"
+			"item_slot"					"melee"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/w_models/w_wrench"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				"models/weapons/c_models/c_wrench/c_wrench.mdl"
+			"attach_to_hands"			"1"
+			"used_by_classes"
+			{
+				"engineer"				"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"					"10 -2 -9"
+			}
+			"mouse_pressed_sound"		"#ui/item_metal_weapon_pickup.wav"
+			"drop_sound"				"#ui/item_metal_weapon_drop.wav"
+		}
+		// PDA
+		"weapon_pda"
+		{
+			"item_class"				"tf_weapon_pda_engineer_build"
+			"item_name"					"#TF_Weapon_PDA_Engineer_Teleporter"
+			"item_type_name"			"#TF_Weapon_PDA_Engineer_Builder"
+			"item_slot"					"pda"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/w_models/w_builder"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				"models/weapons/c_models/c_builder/c_builder.mdl"
+			"attach_to_hands"			"1"
+			"used_by_classes"
+			{
+				"engineer"				"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"					"10 0 -10"				
+			}
+			"mouse_pressed_sound"		"#ui/item_metal_weapon_pickup.wav"
+			"drop_sound"				"#ui/item_metal_weapon_drop.wav"
+		}
+		// PDA2
+		"weapon_pda_destroy" // You can't equip another item like this
+		{
+			"item_class"				"tf_weapon_pda_engineer_destroy"
+			"item_name"					"#TF_Weapon_PDA_Engineer_Destroyer"
+			"item_type_name"			"#TF_Weapon_PDA_Engineer"
+			"item_slot"					"pda2"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/w_models/w_pda_engineer"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				"models/weapons/c_models/c_pda_engineer/c_pda_engineer.mdl"
+			"attach_to_hands"			"1"
+			"used_by_classes"
+			{
+				"engineer"				"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"					"10 0 -10"				
+			}
+			"mouse_pressed_sound"		"#ui/item_metal_weapon_pickup.wav"
+			"drop_sound"				"#ui/item_metal_weapon_drop.wav"
+		}
+		// Building
+		"weapon_builder" // You can't equip another item like this
+		{
+			"item_class"				"tf_weapon_builder"
+			"item_type_name"			"#TF_Weapon_PDA_Engineer"
+			"item_name"					"#TF_Weapon_PDA_Engineer"
+			"item_slot"					"building"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/w_models/w_toolbox"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				"models/weapons/c_models/c_toolbox/c_toolbox.mdl"
+			"attach_to_hands"			"1"
+			"used_by_classes"
+			{
+				"engineer"				"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"					"10 0 -8"				
+			}
+			"mouse_pressed_sound"		"#ui/item_metal_weapon_pickup.wav"
+			"drop_sound"				"#ui/item_metal_weapon_drop.wav"
+		}
+		// Sniper
+		// Primary
+		"weapon_sniperrifle"
+		{
+			"tags"
+			{
+				"can_deal_damage"						"1"
+				"can_headshot"							"1"
+				"can_deal_mvm_penetration_damage"		"1"
+				"can_deal_long_distance_damage"			"1"
+			}
+			"item_class"				"tf_weapon_sniperrifle"
+			"item_type_name"			"#TF_Weapon_SniperRifle"
+			"item_name"					"#TF_Weapon_SniperRifle"
+			"item_slot"					"primary"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/w_models/w_sniperrifle"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				"models/weapons/c_models/c_sniperrifle/c_sniperrifle.mdl"
+			"attach_to_hands"			"1"
+			"used_by_classes"
+			{
+				"sniper"				"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"					"10 0 -10"
+			}
+			"mouse_pressed_sound"		"#ui/item_heavy_gun_pickup.wav"
+			"drop_sound"				"#ui/item_heavy_gun_drop.wav"
+		}
+		// Secondary
+		"weapon_smg"
+		{
+			"tags"
+			{
+				"can_deal_damage"						"1"
+				"can_deal_mvm_penetration_damage"		"1"
+				"can_deal_long_distance_damage"			"1"
+			}
+			"item_class"				"tf_weapon_smg"
+			"item_type_name"			"#TF_Weapon_SMG"
+			"item_name"					"#TF_Weapon_SMG"
+			"item_slot"					"secondary"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/w_models/w_smg"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				"models/weapons/c_models/c_smg/c_smg.mdl"
+			"attach_to_hands"			"1"
+			"used_by_classes"
+			{
+				"sniper"				"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"					"10 0 -7"
+			}
+			"mouse_pressed_sound"		"#ui/item_light_gun_pickup.wav"
+			"drop_sound"				"#ui/item_light_gun_drop.wav"
+		}
+		// Melee
+		"weapon_club"
+		{
+			"tags"
+			{
+				"can_deal_damage"		"1"
+			}
+			"item_class"				"tf_weapon_club"
+			"item_type_name"			"#TF_Weapon_Club"
+			"item_name"					"#TF_Weapon_Club"
+			"item_slot"					"melee"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/w_models/w_machete"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				"models/weapons/c_models/c_machete/c_machete.mdl"
+			"attach_to_hands"			"1"
+			"used_by_classes"
+			{
+				"sniper"				"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"		"10 0 -6"
+			}
+			"mouse_pressed_sound"		"#ui/item_knife_small_pickup.wav"
+			"drop_sound"				"#ui/item_metal_weapon_drop.wav"
+		}
+		// Medic
+		// Primary
+		"weapon_syringegun"
+		{
+			"tags"
+			{
+				"can_deal_damage"						"1"
+				"can_deal_posthumous_damage"			"1"
+				"can_deal_long_distance_damage"			"1"
+			}
+			"item_class"				"tf_weapon_syringegun_medic"
+			"item_type_name"			"#TF_Weapon_SyringeGun"
+			"item_name"					"#TF_Weapon_SyringeGun"
+			"item_slot"					"primary"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/w_models/w_syringegun"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				"models/weapons/c_models/c_syringegun/c_syringegun.mdl"
+			"attach_to_hands"			"1"
+			"used_by_classes"
+			{
+				"medic"					"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"		"10 0 -12"
+				
+			}
+			"mouse_pressed_sound"		"#ui/item_light_gun_pickup.wav"
+			"drop_sound"				"#ui/item_light_gun_drop.wav"
+		}
+		// Secondary
+		"weapon_medigun"
+		{
+			"tags"
+			{
+				"can_heal_allies"		"1"
+			}
+			"item_class"				"tf_weapon_medigun"
+			"item_type_name"			"#TF_Weapon_Medigun"
+			"item_name"					"#TF_Weapon_Medigun"
+			"item_slot"					"secondary"
+			"equip_region"				"medigun_backpack"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/w_models/w_medigun"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				"models/weapons/c_models/c_medigun/c_medigun.mdl"
+			"attach_to_hands"			"1"
+			"used_by_classes"
+			{
+				"medic"					"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"					"10 0 -9"
+			}
+			"mouse_pressed_sound"		"#ui/item_heavy_gun_pickup.wav"
+			"drop_sound"				"#ui/item_heavy_gun_drop.wav"
+		}
+		// Melee
+		"weapon_bonesaw"
+		{
+			"tags"
+			{
+				"can_deal_damage"		"1"
+			}
+			"item_class"				"tf_weapon_bonesaw"
+			"item_type_name"			"#TF_Weapon_Bonesaw"
+			"item_name"					"#TF_Weapon_Bonesaw"
+			"item_slot"					"melee"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/w_models/w_bonesaw"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				"models/weapons/c_models/c_bonesaw/c_bonesaw.mdl"
+			"attach_to_hands"			"1"
+			"used_by_classes"
+			{
+				"medic"	"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"		"10 0 -12"
+			}
+			"mouse_pressed_sound"		"#ui/item_metal_weapon_pickup.wav"
+			"drop_sound"				"#ui/item_metal_weapon_drop.wav"
 		}
 	}
 	"items"

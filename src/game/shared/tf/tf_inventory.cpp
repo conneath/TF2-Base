@@ -1,7 +1,7 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: Simple Inventory
-// by MrModez
+// Purpose: Item schema interface and inventory storage (client)
+// original tf2c code by MrModez
 // $NoKeywords: $
 //=============================================================================//
 

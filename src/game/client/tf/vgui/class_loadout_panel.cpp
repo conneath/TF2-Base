@@ -46,6 +46,8 @@ CClassLoadoutPanel::CClassLoadoutPanel( vgui::Panel* parent )
 	g_pClassLoadoutPanel = this;
 
 	//m_pItemOptionPanel = new CLoadoutItemOptionsPanel( this, "ItemOptionsPanel" );
+	m_pItemSelectionPanel = new CItemSelectionPanel( this, "ItemSelectionPanel" );
+	m_pItemSelectionPanel->SetVisible( false );
 }
 
 CClassLoadoutPanel::~CClassLoadoutPanel()
@@ -76,10 +78,11 @@ void CClassLoadoutPanel::ApplySchemeSettings( vgui::IScheme* pScheme )
 	FindChildByName( "InventoryCount1" )->SetVisible( false );
 	FindChildByName( "InventoryCount2" )->SetVisible( false );
 
-	FindChildByName( "ChangeButton0" )->SetVisible( false );
+	m_pChangeButtonPrimary = FindChildByName( "ChangeButton0" );
+	m_pChangeButtonPrimary->SetVisible( true );
 	FindChildByName( "ChangeButton1" )->SetVisible( false );
 	FindChildByName( "ChangeButton2" )->SetVisible( false );
-
+	m_pItemSelectionPanel->SetVisible( false );
 	// hardcoding ftw
 	m_pPrimaryWeaponPanel = dynamic_cast<CItemModelPanel*>(FindChildByName( "modelpanel0" ));
 	m_pSecondaryWeaponPanel = dynamic_cast<CItemModelPanel*>(FindChildByName( "modelpanel1" ));
@@ -125,6 +128,14 @@ void CClassLoadoutPanel::OnCommand( const char* command )
 		//ShowPanel( false, false );
 		if ( dynamic_cast<CCharInfoLoadoutSubPanel*>( GetParent() ) )
 			dynamic_cast<CCharInfoLoadoutSubPanel*>( GetParent() )->OnLoadoutClosed(); // conn - todo: make this use a PostMessage instead
+	}
+	if ( FStrEq( command, "change0" ) )
+	{
+		if ( m_pItemSelectionPanel )
+		{
+			m_pItemSelectionPanel->SetVisible( true );
+			m_pItemSelectionPanel->SetClassAndSlot( m_iCurrentClassIndex, m_iCurrentSlotIndex );
+		}
 	}
 }
 //-----------------------------------------------------------------------------
@@ -221,23 +232,50 @@ void CClassLoadoutPanel::UpdateModelPanels( void )
 		m_pPlayerModelPanel->SetMDL(pData->GetModelName());
 		//m_pPlayerModelPanel->SetSkin(0);
 	}
+
 	// set our weapon panels to the items for our class from CTFInventory
 	// TODO: right now this will only get the first item for the class' slot
 	// instead of the user preset (which we cant set anyway rn, no item selection panel)
 	// see CTFInventory::Get/SetWeaponPreset
+
+	/////////////////
+	// PRIMARY SLOT
+	/////////////////
 	if ( m_pPrimaryWeaponPanel )
 	{
+		m_pPrimaryWeaponPanel->InvalidateLayout(false, true); // ffs...
 		m_pPrimaryWeaponPanel->SetEconItem(GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY, 0 ));
 	}
-	if ( m_pSecondaryWeaponPanel )
+	if ( GetTFInventory()->NumWeapons( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY ) > 1 ) // more than 1 weapon available in this class' slot? make the change button visible
 	{
-		m_pSecondaryWeaponPanel->SetEconItem( GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_SECONDARY, 0 ) );
-	}
-	if ( m_pMeleeWeaponPanel ) // no PDA/Invis slots for now, sorry spy and engi
-	{
-		m_pMeleeWeaponPanel->SetEconItem( GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_MELEE, 0 ) );
+		m_pChangeButtonPrimary->SetVisible( true );
 	}
 
+	/////////////////
+	// SECONDARY SLOT
+	/////////////////
+	if ( m_pSecondaryWeaponPanel )
+	{
+		m_pSecondaryWeaponPanel->InvalidateLayout( false, true );
+		m_pSecondaryWeaponPanel->SetEconItem( GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_SECONDARY, 0 ) );
+	}
+	if ( GetTFInventory()->NumWeapons( m_iCurrentClassIndex, TF_LOADOUT_SLOT_SECONDARY ) > 1 )
+	{
+		m_pChangeButtonPrimary->SetVisible( true );
+	}
+
+	////////////////
+	// MELEE SLOT
+	////////////////
+	if ( m_pMeleeWeaponPanel ) // no PDA/Invis slots for now, sorry spy and engi
+	{
+		m_pMeleeWeaponPanel->InvalidateLayout( false, true );
+		m_pMeleeWeaponPanel->SetEconItem( GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_MELEE, 0 ) );
+	}
+	if ( GetTFInventory()->NumWeapons( m_iCurrentClassIndex, TF_LOADOUT_SLOT_MELEE ) > 1 )
+	{
+		m_pChangeButtonPrimary->SetVisible( true );
+	}
 
 	/*
 	// For now, fill them out with the local player's currently wielded items
