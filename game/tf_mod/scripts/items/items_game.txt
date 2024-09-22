@@ -741,8 +741,6 @@
 			"min_ilevel"				"1"
 			"max_ilevel"				"1"
 			"image_inventory"			"backpack/weapons/w_models/w_medigun"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
 			"model_player"				"models/weapons/c_models/c_medigun/c_medigun.mdl"
 			"attach_to_hands"			"1"
 			"used_by_classes"
@@ -771,8 +769,6 @@
 			"min_ilevel"				"1"
 			"max_ilevel"				"1"
 			"image_inventory"			"backpack/weapons/w_models/w_bonesaw"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
 			"model_player"				"models/weapons/c_models/c_bonesaw/c_bonesaw.mdl"
 			"attach_to_hands"			"1"
 			"used_by_classes"
@@ -785,6 +781,157 @@
 			}
 			"mouse_pressed_sound"		"#ui/item_metal_weapon_pickup.wav"
 			"drop_sound"				"#ui/item_metal_weapon_drop.wav"
+		}
+		// Spy
+		// Primary
+		"weapon_revolver"
+		{
+			"tags"
+			{
+				"can_deal_damage"						"1"
+				"can_deal_mvm_penetration_damage"		"1"
+				"can_deal_long_distance_damage"			"1"
+			}
+			"item_class"				"tf_weapon_revolver"
+			"item_type_name"			"#TF_Weapon_Revolver"
+			"item_name"					"#TF_Weapon_Revolver"
+			"item_slot"					"primary"
+			"anim_slot"					"secondary"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/w_models/w_revolver"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				"models/weapons/c_models/c_revolver/c_revolver.mdl"
+			"attach_to_hands"			"1"
+			"used_by_classes"
+			{
+				"spy"					"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"					"10 0 -6"
+			}
+			"mouse_pressed_sound"		"#ui/item_light_gun_pickup.wav"
+			"drop_sound"				"#ui/item_light_gun_drop.wav"
+		}
+		// Building
+		"weapon_sapper"
+		{
+			"item_class"				"tf_weapon_sapper"
+			"item_name"					"#TF_Weapon_Spy_Sapper"
+			"item_type_name"			"#TF_Weapon_Spy_Sapper"
+			"item_description"			"#TF_Weapon_Spy_Sapper_Desc"
+			"item_slot"					"building"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/w_models/w_sapper"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				"models/weapons/c_models/c_sapper/c_sapper.mdl"
+			"attach_to_hands"			"1"
+			"used_by_classes"
+			{
+				"spy"					"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"					"5 -2 -4"
+			}
+			"mouse_pressed_sound"		"#ui/item_metal_weapon_pickup.wav"
+			"drop_sound"				"#ui/item_metal_weapon_drop.wav"
+		}
+		// Melee
+		"weapon_knife"
+		{
+			"tags"
+			{
+				"can_deal_damage"		"1"
+				"can_deal_taunt_damage"	"1"
+			}
+			"item_class"				"tf_weapon_knife"
+			"item_type_name"			"#TF_Weapon_Knife"
+			"item_name"					"#TF_Weapon_Knife"
+			"item_description"			"#TF_Weapon_Knife_Desc"
+			"item_slot"					"melee"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/w_models/w_knife"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				"models/weapons/c_models/c_knife/c_knife.mdl"
+			"attach_to_hands"			"1"
+			"used_by_classes"
+			{
+				"spy"					"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"					"5 0 -4"
+			}
+			"mouse_pressed_sound"		"#ui/item_knife_small_pickup.wav"
+			"drop_sound"				"#ui/item_knife_small_drop.wav"
+		}
+		// PDA
+		"weapon_pda_spy" // You can't equip another item like this
+		{
+			"item_class"				"tf_weapon_pda_spy"
+			"item_name"					"#TF_Weapon_Disguise_Kit"
+			"item_type_name"			"#TF_Weapon_Disguise_Kit_Type"
+			"item_slot"					"pda"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/w_models/w_cigarette_case"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_world"				"models/weapons/w_models/w_cigarette_case.mdl"
+			"model_player"				"models/weapons/v_models/v_pda_spy.mdl"
+			"attach_to_hands"			"2"
+			"used_by_classes"
+			{
+				"spy"					"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"		"10 0 -6"
+			}
+		}
+		// PDA2
+		"weapon_invis"
+		{
+			"item_class"				"tf_weapon_invis"
+			"item_name"					"#TF_Weapon_Watch"
+			"item_type_name"			"#TF_Weapon_Watch"
+			"item_description"			"#TF_Weapon_Watch_Desc"
+			"item_slot"					"pda2"
+			"anim_slot"					"FORCE_NOT_USED"
+			"item_quality"				"normal"
+			"min_ilevel"				"1"
+			"max_ilevel"				"1"
+			"image_inventory"			"backpack/weapons/c_models/c_spy_watch/parts/c_spy_watch"
+			"image_inventory_size_w"	"128"
+			"image_inventory_size_h"	"82"
+			"model_player"				"models/weapons/v_models/v_watch_spy.mdl"
+			"attach_to_hands"			"0"
+			"used_by_classes"
+			{
+				"spy"					"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"					"8 0 -6"
+			}
+			"visuals"
+			{
+				"sound_special1"		"Player.Spy_Cloak"
+				"sound_special2"		"Player.Spy_UnCloak"
+			}
+			"mouse_pressed_sound"		"#ui/item_watch_pickup.wav"
+			"drop_sound"				"#ui/item_watch_drop.wav"
 		}
 	}
 	"items"
@@ -837,7 +984,7 @@
 			"item_description"			"#TF_Weapon_Knife_Desc"
 			"model_world"				"models/weapons/w_models/w_knife.mdl"
 			"model_player"				"models/weapons/v_models/v_knife_spy.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 			"attributes"
 			{
 				"special taunt"
@@ -1000,7 +1147,6 @@
 			"name"						"TF_WEAPON_SMG"
 			"prefab"					"weapon_smg"
 			"baseitem"					"1"
-			"item_description"			"#TF_Weapon_SMG_Desc"
 			"model_world"				"models/weapons/w_models/w_smg.mdl"
 			"model_player"				"models/weapons/v_models/v_smg_sniper.mdl"
 			"attach_to_hands"			"2"
@@ -1167,6 +1313,24 @@
 			"model_world"				"models/weapons/w_models/w_sapper.mdl"
 			"model_player"				"models/weapons/v_models/v_sapper_spy.mdl"
 			"attach_to_hands"			"2"
+		}
+		// Gold Rush update unique items
+		"32" // The Blutsauger
+		{
+			"name"						"TF_WEAPON_BLUTSAUGER"
+			"item_name"					"#TF_Unique_Achievement_Syringegun1"
+			"item_quality"				"unique"
+			"show_in_armory"			"1"
+			"prefab"					"weapon_syringegun"
+		}
+		"33" // The Ubersaw
+		{
+			"name"						"TF_WEAPON_UBERSAW"
+			"item_name"					"#TF_Unique_Achievement_Bonesaw1"
+			"item_quality"				"unique"
+			"show_in_armory"			"1"
+			"prefab"					"weapon_bonesaw"
+
 		}
 	}
 }

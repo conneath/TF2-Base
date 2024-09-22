@@ -13,6 +13,7 @@
 
 #include "vgui_controls/EditablePanel.h"
 #include "vgui_controls/ScrollableEditablePanel.h"
+#include "tf_controls.h"
 //#include "character_info_panel.h"
 
 class CItemModelPanel;
@@ -30,6 +31,8 @@ public:
 protected:
 	int						m_iCurrentClassIndex;
 	int						m_iCurrentSlotIndex;
+	CUtlVector<CItemModelPanel*> m_vecItemPanels;
+	CUtlVector<CTFButton*>	m_vecChangeButtons;
 };
 
 #endif

@@ -115,6 +115,12 @@ public:
 
 	CTFWeaponBase		*GetActiveTFWeapon( void ) const;
 
+	CEconItemView* GetLoadoutItem( int iClass, int iSlot );
+	void				HandleCommand_WeaponPreset( int iSlotNum, int iPresetNum );
+	void				HandleCommand_WeaponPreset( int iClass, int iSlotNum, int iPresetNum );
+
+	CBaseEntity* GiveNamedItem( const char* pszName, int iSubType = 0, CEconItemView* pItem = NULL );
+
 	void				SaveMe( void );
 
 	void				FireBullet( const FireBulletsInfo_t &info, bool bDoEffects, int nDamageType, int nCustomDamageType = TF_DMG_CUSTOM_NONE );
@@ -383,6 +389,8 @@ public:
 	virtual bool Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmodelindex = 0 );
 	virtual void Weapon_Drop( CBaseCombatWeapon *pWeapon, const Vector *pvecTarget , const Vector *pVelocity );
 
+	bool				ItemsMatch( CEconItemView* pItem1, CEconItemView* pItem2, CTFWeaponBase* pWeapon );
+	void				ValidateWeapons( bool bRegenerate );
 	void				ManageRegularWeapons( TFPlayerClassData_t *pData );
 	void				ManageBuilderWeapons( TFPlayerClassData_t *pData );
 
@@ -410,6 +418,7 @@ public:
 
 	CTFWeaponBase		*Weapon_OwnsThisID( int iWeaponID );
 	CTFWeaponBase		*Weapon_GetWeaponByType( int iType );
+	CEconEntity* GetEntityForLoadoutSlot( int iSlot );
 
 	bool				IsCapturingPoint( void );
 
@@ -518,6 +527,7 @@ private:
 	CNetworkQAngle( m_angEyeAngles );					// Copied from EyeAngles() so we can send it to the client.
 
 	CTFPlayerClass		m_PlayerClass;
+	int					m_WeaponPreset[TF_CLASS_COUNT_ALL][TF_LOADOUT_SLOT_COUNT]; // client's weapon presets, see C_TFPlayer::LoadInventory
 	CTFPlayerAnimState	*m_PlayerAnimState;
 	int					m_iLastWeaponFireUsercmd;				// Firing a weapon.  Last usercmd we shot a bullet on.
 	int					m_iLastSkin;

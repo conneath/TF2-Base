@@ -165,6 +165,47 @@ const char *g_aAmmoNames[] =
 	"TF_AMMO_GRENADES2"
 };
 
+struct pszWpnEntTranslationListEntry
+{
+	const char* weapon_name;
+	const char* padding;
+	const char* weapon_scout;
+	const char* weapon_sniper;
+	const char* weapon_soldier;
+	const char* weapon_demoman;
+	const char* weapon_medic;
+	const char* weapon_heavyweapons;
+	const char* weapon_pyro;
+	const char* weapon_spy;
+	const char* weapon_engineer;
+};
+static pszWpnEntTranslationListEntry pszWpnEntTranslationList[] =
+{
+	"tf_weapon_shotgun",			// Base weapon to translate
+	NULL,
+	"tf_weapon_shotgun_primary",	// Scout
+	"tf_weapon_shotgun_primary",	// Sniper
+	"tf_weapon_shotgun_soldier",	// Soldier
+	"tf_weapon_shotgun_primary",	// Demoman
+	"tf_weapon_shotgun_primary",	// Medic
+	"tf_weapon_shotgun_hwg",		// Heavy
+	"tf_weapon_shotgun_pyro",		// Pyro
+	"tf_weapon_shotgun_primary",	// Spy
+	"tf_weapon_shotgun_primary",	// Engineer
+
+	"tf_weapon_pistol",				// Base weapon to translate
+	NULL,
+	"tf_weapon_pistol_scout",		// Scout
+	"tf_weapon_pistol",				// Sniper
+	"tf_weapon_pistol",				// Soldier
+	"tf_weapon_pistol",				// Demoman
+	"tf_weapon_pistol",				// Medic
+	"tf_weapon_pistol",				// Heavy
+	"tf_weapon_pistol",				// Pyro
+	"tf_weapon_pistol",				// Spy
+	"tf_weapon_pistol",				// Engineer
+};
+
 //-----------------------------------------------------------------------------
 // Weapons.
 //-----------------------------------------------------------------------------
@@ -411,6 +452,24 @@ const char *WeaponIdToClassname( int iWeapon )
 	V_strlower( szClassname );
 
 	return szClassname;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+const char* TranslateWeaponEntForClass( const char* pszName, int iClass )
+{
+	if ( pszName )
+	{
+		for ( int i = 0; i < ARRAYSIZE( pszWpnEntTranslationList ); i++ )
+		{
+			if ( V_stricmp( pszName, pszWpnEntTranslationList[i].weapon_name ) == 0 )
+			{
+				return ((const char**)&(pszWpnEntTranslationList[i]))[1 + iClass];
+			}
+		}
+	}
+	return pszName;
 }
 
 #ifdef GAME_DLL

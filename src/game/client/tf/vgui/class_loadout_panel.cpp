@@ -80,8 +80,8 @@ void CClassLoadoutPanel::ApplySchemeSettings( vgui::IScheme* pScheme )
 
 	m_pChangeButtonPrimary = FindChildByName( "ChangeButton0" );
 	m_pChangeButtonPrimary->SetVisible( true );
-	FindChildByName( "ChangeButton1" )->SetVisible( false );
-	FindChildByName( "ChangeButton2" )->SetVisible( false );
+	FindChildByName( "ChangeButton1" )->SetVisible( true );
+	FindChildByName( "ChangeButton2" )->SetVisible( true );
 	m_pItemSelectionPanel->SetVisible( false );
 	// hardcoding ftw
 	m_pPrimaryWeaponPanel = dynamic_cast<CItemModelPanel*>(FindChildByName( "modelpanel0" ));
@@ -89,33 +89,8 @@ void CClassLoadoutPanel::ApplySchemeSettings( vgui::IScheme* pScheme )
 	m_pMeleeWeaponPanel = dynamic_cast<CItemModelPanel*>(FindChildByName( "modelpanel2" ));
 
 	// tell users no items exist yet for now
-	dynamic_cast<vgui::Label*>(FindChildByName( "NoneAvailableReason" ))->SetText( "#NoItemsExistLong" );
-
-	//m_pTopLinePanel = FindChildByName( "TopLine" ); where the fuck is this used lol
-	/*
-	if ( m_pPassiveAttribsLabel )
-	{
-		m_pPassiveAttribsLabel->SetMouseInputEnabled( false );
-	}
-	*/
-	//m_pMouseOverTooltip->SetPositioningStrategy( IPTTP_BOTTOM_SIDE );
-	/*
-	m_aDefaultColors[LOADED][FG][DEFAULT] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Econ.Button.PresetDefaultColorFg", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[LOADED][FG][ARMED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Econ.Button.PresetArmedColorFg", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[LOADED][FG][DEPRESSED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Econ.Button.PresetDepressedColorFg", Color( 255, 255, 255, 255 ) );
-
-	m_aDefaultColors[LOADED][BG][DEFAULT] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Econ.Button.PresetDefaultColorBg", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[LOADED][BG][ARMED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Econ.Button.PresetArmedColorBg", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[LOADED][BG][DEPRESSED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Econ.Button.PresetDepressedColorBg", Color( 255, 255, 255, 255 ) );
-
-	m_aDefaultColors[NOTLOADED][FG][DEFAULT] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Button.TextColor", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[NOTLOADED][FG][ARMED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Button.ArmedTextColor", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[NOTLOADED][FG][DEPRESSED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Button.DepressedTextColor", Color( 255, 255, 255, 255 ) );
-
-	m_aDefaultColors[NOTLOADED][BG][DEFAULT] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Button.BgColor", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[NOTLOADED][BG][ARMED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Button.ArmedBgColor", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[NOTLOADED][BG][DEPRESSED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Button.DepressedBgColor", Color( 255, 255, 255, 255 ) );
-	*/
+	//dynamic_cast<vgui::Label*>(FindChildByName( "NoneAvailableReason" ))->SetText( "#NoItemsExistLong" );
+	FindChildByName( "NoneAvailableReason" )->SetVisible( false );
 }
 
 //-----------------------------------------------------------------------------
@@ -134,7 +109,23 @@ void CClassLoadoutPanel::OnCommand( const char* command )
 		if ( m_pItemSelectionPanel )
 		{
 			m_pItemSelectionPanel->SetVisible( true );
-			m_pItemSelectionPanel->SetClassAndSlot( m_iCurrentClassIndex, m_iCurrentSlotIndex );
+			m_pItemSelectionPanel->SetClassAndSlot( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY );
+		}
+	}
+	if ( FStrEq( command, "change1" ) )
+	{
+		if ( m_pItemSelectionPanel )
+		{
+			m_pItemSelectionPanel->SetVisible( true );
+			m_pItemSelectionPanel->SetClassAndSlot( m_iCurrentClassIndex, TF_LOADOUT_SLOT_SECONDARY );
+		}
+	}
+	if ( FStrEq( command, "change2" ) )
+	{
+		if ( m_pItemSelectionPanel )
+		{
+			m_pItemSelectionPanel->SetVisible( true );
+			m_pItemSelectionPanel->SetClassAndSlot( m_iCurrentClassIndex, TF_LOADOUT_SLOT_MELEE );
 		}
 	}
 }
@@ -244,7 +235,7 @@ void CClassLoadoutPanel::UpdateModelPanels( void )
 	if ( m_pPrimaryWeaponPanel )
 	{
 		m_pPrimaryWeaponPanel->InvalidateLayout(false, true); // ffs...
-		m_pPrimaryWeaponPanel->SetEconItem(GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY, 0 ));
+		m_pPrimaryWeaponPanel->SetEconItem( GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY, GetTFInventory()->GetWeaponPreset( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY ) ) );
 	}
 	if ( GetTFInventory()->NumWeapons( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY ) > 1 ) // more than 1 weapon available in this class' slot? make the change button visible
 	{

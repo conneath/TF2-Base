@@ -408,6 +408,24 @@ bool CTFWeaponBase::Deploy( void )
 	return bDeploy;
 }
 
+#ifdef GAME_DLL
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTFWeaponBase::UnEquip( CBaseCombatCharacter* pOwner )
+{
+	if ( pOwner )
+	{
+		if ( pOwner->GetActiveWeapon() == this )
+			Holster();
+
+		pOwner->Weapon_Detach( this );
+	}
+
+	UTIL_Remove( this );
+}
+#endif
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Output : 

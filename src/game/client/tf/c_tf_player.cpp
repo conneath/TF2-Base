@@ -53,6 +53,7 @@
 #include "in_main.h"
 #include "c_team.h"
 #include "collisionutils.h"
+#include "tf_inventory.h"
 // for spy material proxy
 #include "proxyentity.h"
 #include "materialsystem/imaterial.h"
@@ -2959,6 +2960,8 @@ void C_TFPlayer::ClientPlayerRespawn( void )
 
 		// Release the duck toggle key
 		KeyUp( &in_ducktoggle, NULL ); 
+
+		LoadInventory();
 	}
 
 	UpdateVisibility();
@@ -3196,6 +3199,24 @@ void C_TFPlayer::Simulate( void )
 	// TF doesn't do step sounds based on velocity, instead using anim events
 	// So we deliberately skip over the base player simulate, which calls them.
 	BaseClass::BaseClass::Simulate();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Tell the server what our weapon presets are for each slot in each class
+// There are probably better ways to do this tbh but hey it worked for tf2c
+//-----------------------------------------------------------------------------
+void C_TFPlayer::LoadInventory( void )
+{
+	for ( int iClass = 0; iClass < TF_CLASS_COUNT_ALL; iClass++ )
+	{
+		for ( int iSlot = 0; iSlot < TF_LOADOUT_SLOT_COUNT; iSlot++ )
+		{
+			int iPreset = GetTFInventory()->GetWeaponPreset( iClass, iSlot );
+			char szCmd[64];
+			Q_snprintf( szCmd, sizeof( szCmd ), "weaponpresetclass %d %d %d;", iClass, iSlot, iPreset );
+			engine->ExecuteClientCmd( szCmd );
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------

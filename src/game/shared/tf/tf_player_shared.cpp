@@ -2884,3 +2884,34 @@ CTFWeaponBase *CTFPlayer::Weapon_GetWeaponByType( int iType )
 
 }
 
+CEconEntity* CTFPlayer::GetEntityForLoadoutSlot( int iSlot )
+{
+	//if ( iSlot >= TF_LOADOUT_SLOT_HAT )
+	//{
+		// Weapons don't get equipped in cosmetic slots.
+	//	return GetWearableForLoadoutSlot( iSlot );
+	//}
+
+	int iClass = m_PlayerClass.GetClassIndex();
+
+	for ( int i = 0; i < WeaponCount(); i++ )
+	{
+		CBaseCombatWeapon* pWeapon = GetWeapon( i );
+		if ( !pWeapon )
+			continue;
+
+		CEconItemDefinition* pItemDef = pWeapon->GetItem()->GetStaticData();
+
+		if ( pItemDef && pItemDef->GetLoadoutSlot( iClass ) == iSlot )
+		{
+			return pWeapon;
+		}
+	}
+
+	// Wearable?
+	//CEconWearable* pWearable = GetWearableForLoadoutSlot( iSlot );
+	//if ( pWearable )
+	//	return pWearable;
+
+	return NULL;
+}
