@@ -1191,6 +1191,7 @@ void C_TFPlayer::OnPreDataChanged( DataUpdateType_t updateType )
 	m_bDisguised = m_Shared.InCond( TF_COND_DISGUISED );
 	m_iOldDisguiseTeam = m_Shared.GetDisguiseTeam();
 	m_iOldDisguiseClass = m_Shared.GetDisguiseClass();
+	m_hOldActiveWeapon.Set( GetActiveTFWeapon() );
 
 	m_Shared.OnPreDataChanged();
 }
@@ -1218,6 +1219,24 @@ void C_TFPlayer::OnDataChanged( DataUpdateType_t updateType )
 		{
 			InitInvulnerableMaterial();
 			m_bUpdatePartyHat = true;
+		}
+	}
+
+	// Update viewmodel when we switch classes because for some reason we don't already do this?
+	// INVESTIGATE: why is this code in TF2C but not in live? why does live not need to do something like this
+	CTFWeaponBase* pActiveWpn = GetActiveTFWeapon();
+	if ( pActiveWpn )
+	{
+		if ( m_hOldActiveWeapon.Get() == NULL ||
+			pActiveWpn != m_hOldActiveWeapon.Get() ||
+			m_iOldPlayerClass != m_PlayerClass.GetClassIndex() )
+		{
+			pActiveWpn->SetViewModel();
+
+			//if ( ShouldDrawThisPlayer() )
+			//{
+				//m_Shared.UpdateCritBoostEffect();
+			//}
 		}
 	}
 
@@ -3207,7 +3226,7 @@ void C_TFPlayer::Simulate( void )
 //-----------------------------------------------------------------------------
 void C_TFPlayer::LoadInventory( void )
 {
-	for ( int iClass = 0; iClass < TF_CLASS_COUNT_ALL; iClass++ )
+	for ( int iClass = 0; iClass <= TF_CLASS_ENGINEER; iClass++ )
 	{
 		for ( int iSlot = 0; iSlot < TF_LOADOUT_SLOT_COUNT; iSlot++ )
 		{

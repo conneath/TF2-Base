@@ -8,6 +8,13 @@
 #include "tf_econ_entity.h"
 #include "eventlist.h"
 
+#ifdef CLIENT_DLL
+#include "model_types.h"
+
+#include "tf_weaponbase.h"
+#include "tf_viewmodel.h"
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -41,6 +48,40 @@ CEconEntity::~CEconEntity()
 #ifdef CLIENT_DLL
 
 //-----------------------------------------------------------------------------
+// Purpose: Valve hack from live tf2 for drawing weapon attachments (e.g. the Kritzkrieg)
+//-----------------------------------------------------------------------------
+void DrawEconEntityAttachedModels( CBaseAnimating* pEnt, CEconEntity* pAttachedModelSource, const ClientModelRenderInfo_t* pInfo, int iMatchDisplayFlags )
+{
+	if ( !pEnt || !pAttachedModelSource || !pInfo )
+		return;
+
+	// Draw our attached models
+	for ( int i = 0; i < pAttachedModelSource->m_vecAttachedModels.Size(); i++ )
+	{
+		const AttachedModelData_t& attachedModel = pAttachedModelSource->m_vecAttachedModels[i];
+
+		if ( attachedModel.m_pModel && (attachedModel.m_iModelDisplayFlags & iMatchDisplayFlags) )
+		{
+			ClientModelRenderInfo_t infoAttached = *pInfo;
+
+			infoAttached.pRenderable = pEnt;
+			infoAttached.instance = MODEL_INSTANCE_INVALID;
+			infoAttached.entity_index = pEnt->index;
+			infoAttached.pModel = attachedModel.m_pModel;
+			infoAttached.pModelToWorld = &infoAttached.modelToWorld;
+
+			// Turns the origin + angles into a matrix
+			AngleMatrix( infoAttached.angles, infoAttached.origin, infoAttached.modelToWorld );
+
+			DrawModelState_t state;
+			matrix3x4_t* pBoneToWorld;
+			bool bMarkAsDrawn = modelrender->DrawModelSetup( infoAttached, &state, NULL, &pBoneToWorld );
+			pEnt->DoInternalDrawModel( &infoAttached, (bMarkAsDrawn && (infoAttached.flags & STUDIO_RENDER)) ? &state : NULL, pBoneToWorld );
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
 void CEconEntity::OnPreDataChanged( DataUpdateType_t updateType )
@@ -58,6 +99,8 @@ void CEconEntity::OnDataChanged( DataUpdateType_t updateType )
 	BaseClass::OnDataChanged( updateType );
 
 	m_AttributeManager.OnDataChanged( updateType );
+
+	UpdateAttachmentModels();
 }
 
 //-----------------------------------------------------------------------------
@@ -83,6 +126,40 @@ bool CEconEntity::OnFireEvent( C_BaseViewModel* pViewModel, const Vector& origin
 		return true;
 	}
 	return false;
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CEconEntity::UpdateAttachmentModels( void )
+{
+	CEconItemView* pItem = GetItem();
+	CEconItemDefinition* pItemDef = pItem->GetStaticData();
+
+	// Update the state of additional model attachments
+	m_vecAttachedModels.Purge();
+	if ( pItemDef /* && AttachmentModelsShouldBeVisible()*/ )
+	{
+		//int iTeamNumber = GetTeamNumber();
+		{
+			//int iAttachedModels = pItemDef->GetVisuals()->attached_models.Count();
+			//for ( int i = 0; i < iAttachedModels; i++ )
+			{
+				//attachedmodel_t* pModel = &pItemDef->GetVisuals(TF_TEAM_RED)->attached_models[i];
+				//const char* pszModelName = pItemDef->GetVisuals()->attached_models[i];
+				const char* pszModelName = pItemDef->model_attachment;
+				int iModelIndex = modelinfo->GetModelIndex( pszModelName );
+				if ( iModelIndex >= 0 )
+				{
+					AttachedModelData_t attachedModelData;
+					attachedModelData.m_pModel = modelinfo->GetModel( iModelIndex );
+					attachedModelData.m_iModelDisplayFlags = /*pModel->m_iModelDisplayFlags*/ 0x03;
+					m_vecAttachedModels.AddToTail( attachedModelData );
+				}
+			}
+		}
+	}
 }
 
 #endif

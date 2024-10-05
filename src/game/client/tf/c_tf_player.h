@@ -351,6 +351,8 @@ public:
 	bool			m_bDisguised;
 	int				m_iPreviousMetal;
 
+	EHANDLE			m_hOldActiveWeapon; // Used to detect weapon changes
+
 	int GetNumActivePipebombs( void );
 
 	int				m_iSpyMaskBodygroup;

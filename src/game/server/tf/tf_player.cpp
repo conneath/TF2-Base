@@ -799,6 +799,12 @@ void CTFPlayer::PrecachePlayerModels( void )
 			{
 				PrecacheModel( pszHWMModel );
 			}
+
+			const char* pszHandModel = GetPlayerClassData( i )->m_szModelHandsName;
+			if ( pszHandModel && pszHandModel[0] )
+			{
+				PrecacheModel( pszHandModel );
+			}
 		}
 	}
 	
@@ -2736,7 +2742,25 @@ int CTFPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 			return 0;
 		}
 	}
+	CBaseEntity* pAttacker = info.GetAttacker();
+	//CBaseEntity* pInflictor = info.GetInflictor();
+	CTFWeaponBase* pWeapon = NULL;
 
+	if ( inputInfo.GetWeapon() )
+	{
+		pWeapon = dynamic_cast<CTFWeaponBase*>(inputInfo.GetWeapon());
+	}
+	else if ( pAttacker && pAttacker->IsPlayer() )
+	{
+		// Assume that player used his currently active weapon.
+		pWeapon = ToTFPlayer( pAttacker )->GetActiveTFWeapon();
+	}
+
+	// Handle on-hit effects.
+	if ( pWeapon && pAttacker != this )
+	{
+		pWeapon->ApplyOnHitAttributes( this, info );
+	}
 	// If we're not damaging ourselves, apply randomness
 	if ( info.GetAttacker() != this && !(bitsDamage & (DMG_DROWN | DMG_FALL)) ) 
 	{

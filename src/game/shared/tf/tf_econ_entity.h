@@ -24,6 +24,13 @@ struct wearableanimplayback_t
 	int iStub;
 };
 
+// Additional attachments.
+struct AttachedModelData_t
+{
+	const model_t* m_pModel;
+	int m_iModelDisplayFlags;
+};
+
 //-----------------------------------------------------------------------------
 // Purpose: BaseCombatWeapon is derived from this in live tf2.
 //-----------------------------------------------------------------------------
@@ -65,8 +72,13 @@ public:
 
 	void UpdatePlayerModelToClass( void );
 
+	void UpdateAttachmentModels( void );
+
 	virtual void UpdateOnRemove( void );
 
+#ifdef CLIENT_DLL
+	CUtlVector<AttachedModelData_t> m_vecAttachedModels;
+#endif
 protected:
 	EHANDLE m_hOldOwner;
 	CEconItemView m_Item;

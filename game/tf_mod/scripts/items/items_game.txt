@@ -25,18 +25,13 @@
 			"baseitem"	"1"
 			"min_ilevel"	"1"
 			"max_ilevel"	"1"
-			"image_inventory"	"backpack/weapons/w_models/w_scattergun"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
-			"attach_to_hands"	"2"
+			"attach_to_hands"	"0"
 			"model_world"	"models/weapons/w_models/w_scattergun.mdl"
 			"model_player"	"models/weapons/v_models/v_scattergun_scout.mdl"
 			"used_by_classes"
 			{
 				"scout"	"1"
 			}
-			"mouse_pressed_sound"	"ui/item_heavy_gun_pickup.wav"
-			"drop_sound"	"ui/item_heavy_gun_drop.wav"
 		}
 		// Secondary
 		"weapon_pistol"
@@ -54,17 +49,12 @@
 			"item_quality"				"normal"
 			"min_ilevel"				"1"
 			"max_ilevel"				"1"
-			"image_inventory"			"backpack/weapons/w_models/w_pistol"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
 			"model_player"				"models/weapons/c_models/c_pistol/c_pistol.mdl"
-			"attach_to_hands"			"1"
+			"attach_to_hands"			"0"
 			"static_attrs"
 			{
 				"min_viewmodel_offset"				"10 0 -10"
 			}
-			"mouse_pressed_sound"		"#ui/item_light_gun_pickup.wav"
-			"drop_sound"				"#ui/item_light_gun_drop.wav"
 		}
 		"weapon_bat"
 		{
@@ -87,18 +77,13 @@
 			"baseitem"	"1"
 			"min_ilevel"	"1"
 			"max_ilevel"	"1"
-			"image_inventory"	"backpack/weapons/w_models/w_bat"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
-			"attach_to_hands"	"2"
+			"attach_to_hands"	"0"
 			"model_world"	"models/weapons/w_models/w_bat.mdl"
 			"model_player"	"models/weapons/v_models/v_bat_scout.mdl"
 			"used_by_classes"
 			{
 				"scout"	"1"
 			}
-			"mouse_pressed_sound"	"ui/item_metal_weapon_pickup.wav"
-			"drop_sound"	"ui/item_metal_weapon_drop.wav"
 		}
 		// Soldier
 		// Primary
@@ -120,11 +105,8 @@
 			"item_quality"				"normal"
 			"min_ilevel"				"1"
 			"max_ilevel"				"1"
-			"image_inventory"			"backpack/weapons/w_models/w_rocketlauncher"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
-			"model_player"				"models/weapons/c_models/c_rocketlauncher/c_rocketlauncher.mdl"
-			"attach_to_hands"			"1"
+			"model_player"				"models/weapons/v_models/v_rocketlauncher_soldier.mdl"
+			"attach_to_hands"			"0"
 			"used_by_classes"
 			{
 				"soldier"				"1"
@@ -133,8 +115,6 @@
 			{
 				"min_viewmodel_offset"					"10 -3 -10"
 			}
-			"mouse_pressed_sound"		"#ui/item_heavy_gun_pickup.wav"
-			"drop_sound"				"#ui/item_heavy_gun_drop.wav"
 		}
 		// Secondary
 		"weapon_shotgun"
@@ -151,13 +131,6 @@
 			"item_quality"				"normal"
 			"min_ilevel"				"1"
 			"max_ilevel"				"1"
-			"image_inventory"			"backpack/weapons/w_models/w_shotgun"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
-			"model_player"				"models/weapons/c_models/c_shotgun/c_shotgun.mdl"
-			"attach_to_hands"			"1"
-			"mouse_pressed_sound"		"#ui/item_heavy_gun_pickup.wav"
-			"drop_sound"				"#ui/item_heavy_gun_drop.wav"
 			"static_attrs"
 			{
 				"min_viewmodel_offset"		"10 0 -9"
@@ -183,11 +156,6 @@
 			"item_quality"				"normal"
 			"min_ilevel"				"1"
 			"max_ilevel"				"1"
-			"image_inventory"			"backpack/weapons/w_models/w_shotgun"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
-			"model_player"				"models/weapons/c_models/c_shotgun/c_shotgun.mdl"
-			"attach_to_hands"			"1"
 			"used_by_classes"
 			{
 				"engineer"				"primary"
@@ -199,8 +167,6 @@
 			{
 				"min_viewmodel_offset"					"5 -2 -10"
 			}
-			"mouse_pressed_sound"		"#ui/item_heavy_gun_pickup.wav"
-			"drop_sound"				"#ui/item_heavy_gun_drop.wav"
 		}
 		// Melee
 		"weapon_shovel"
@@ -216,11 +182,8 @@
 			"item_quality"				"normal"
 			"min_ilevel"				"1"
 			"max_ilevel"				"1"
-			"image_inventory"			"backpack/weapons/w_models/w_shovel"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
-			"model_player"				"models/weapons/c_models/c_shovel/c_shovel.mdl"
-			"attach_to_hands"			"1"
+			"model_player"				"models/weapons/v_models/v_shovel_soldier.mdl"
+			"attach_to_hands"			"0"
 			"used_by_classes"
 			{
 				"soldier"				"1"
@@ -229,8 +192,6 @@
 			{
 				"min_viewmodel_offset"					"10 -6 -12"
 			}
-			"mouse_pressed_sound"		"#ui/item_shovel_pickup.wav"
-			"drop_sound"				"#ui/item_shovel_drop.wav"
 		}
 		// Pyro (Shotgun already defined above)
 		// Primary
@@ -253,11 +214,8 @@
 			"item_quality"				"normal"
 			"min_ilevel"				"1"
 			"max_ilevel"				"1"
-			"image_inventory"			"backpack/weapons/w_models/w_flamethrower"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
-			"model_player"				"models/weapons/c_models/c_flamethrower/c_flamethrower.mdl"
-			"attach_to_hands"			"1"
+			"model_player"				"models/weapons/v_models/v_flamethrower_pyro.mdl"
+			"attach_to_hands"			"0"
 			"used_by_classes"
 			{
 				"pyro"					"1"
@@ -266,8 +224,6 @@
 			{
 				"min_viewmodel_offset"					"10 0 -10"
 			}
-			"mouse_pressed_sound"		"#ui/item_flamethrower_pickup.wav"
-			"drop_sound"				"#ui/item_heavy_gun_drop.wav"
 		}
 		// Melee
 		"weapon_fireaxe"
@@ -283,11 +239,6 @@
 			"item_quality"				"normal"
 			"min_ilevel"				"1"
 			"max_ilevel"				"1"
-			"image_inventory"			"backpack/weapons/w_models/w_fireaxe"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
-			"model_player"				"models/weapons/c_models/c_fireaxe_pyro/c_fireaxe_pyro.mdl"
-			"attach_to_hands"			"1"
 			"used_by_classes"
 			{
 				"pyro"					"1"
@@ -296,8 +247,6 @@
 			{
 				"min_viewmodel_offset"					"10 0 -9"
 			}
-			"mouse_pressed_sound"		"#ui/item_metal_weapon_pickup.wav"
-			"drop_sound"				"#ui/item_metal_weapon_drop.wav"
 		}
 		
 		// Demoman
@@ -320,11 +269,6 @@
 			"item_quality"				"normal"
 			"min_ilevel"				"1"
 			"max_ilevel"				"1"
-			"image_inventory"			"backpack/weapons/w_models/w_grenadelauncher"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
-			"model_player"				"models/weapons/c_models/c_grenadelauncher/c_grenadelauncher.mdl"
-			"attach_to_hands"			"1"
 			"used_by_classes"
 			{
 				"demoman"				"1"
@@ -333,8 +277,6 @@
 			{
 				"min_viewmodel_offset"					"10 0 -10"
 			}
-			"mouse_pressed_sound"		"#ui/item_heavy_gun_pickup.wav"
-			"drop_sound"				"#ui/item_heavy_gun_drop.wav"
 		}
 		// Secondary
 		"weapon_stickybomb_launcher"
@@ -356,11 +298,6 @@
 			"item_quality"				"normal"
 			"min_ilevel"				"1"
 			"max_ilevel"				"1"
-			"image_inventory"			"backpack/weapons/w_models/w_stickybomb_launcher"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
-			"model_player"				"models/weapons/c_models/c_stickybomb_launcher/c_stickybomb_launcher.mdl"
-			"attach_to_hands"			"1"
 			"used_by_classes"
 			{
 				"demoman"				"1"
@@ -369,8 +306,6 @@
 			{
 				"min_viewmodel_offset"					"10 0 -10"
 			}
-			"mouse_pressed_sound"		"#ui/item_heavy_gun_pickup.wav"
-			"drop_sound"				"#ui/item_heavy_gun_drop.wav"
 		}
 		// Melee
 		"weapon_bottle"
@@ -386,11 +321,6 @@
 			"item_quality"				"normal"
 			"min_ilevel"				"1"
 			"max_ilevel"				"1"
-			"image_inventory"			"backpack/weapons/w_models/w_bottle"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
-			"model_player"				"models/weapons/c_models/c_bottle/c_bottle.mdl"
-			"attach_to_hands"			"1"
 			"used_by_classes"
 			{
 				"demoman"				"1"
@@ -399,8 +329,6 @@
 			{
 				"min_viewmodel_offset"					"10 0 -14"
 			}
-			"mouse_pressed_sound"		"#ui/item_bottle_pickup.wav"
-			"drop_sound"				"#ui/item_bottle_drop.wav"
 		}
 		
 		// Heavy (Shotgun already defined above)
@@ -421,11 +349,6 @@
 			"item_quality"				"normal"
 			"min_ilevel"				"1"
 			"max_ilevel"				"1"
-			"image_inventory"			"backpack/weapons/w_models/w_minigun"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
-			"model_player"				"models/weapons/c_models/c_minigun/c_minigun.mdl"
-			"attach_to_hands"			"1"
 			"used_by_classes"
 			{
 				"heavy"					"1"
@@ -434,8 +357,6 @@
 			{
 				"min_viewmodel_offset"					"10 0 -9"
 			}
-			"mouse_pressed_sound"		"#ui/item_heavy_gun_pickup.wav"
-			"drop_sound"				"#ui/item_heavy_gun_drop.wav"
 		}
 		// Melee
 		"weapon_fists"
@@ -451,11 +372,8 @@
 			"item_quality"				"normal"
 			"min_ilevel"				"1"
 			"max_ilevel"				"1"
-			"image_inventory"			"backpack/weapons/v_models/v_fist_heavy"
-			"image_inventory_size_w"	"128"
-			"image_inventory_size_h"	"82"
 			"model_player"				""
-			"attach_to_hands"			"1"
+			"attach_to_hands"			"0"
 			"used_by_classes"
 			{
 				"heavy"					"1"
@@ -478,8 +396,6 @@
 					}
 				}
 			}
-			"mouse_pressed_sound"		"#ui/item_fists_pickup.wav"
-			"drop_sound"				"#ui/item_fists_drop.wav"
 		}
 		// Engineer (Shotgun & Pistol already defined above)
 		// Primary
@@ -504,8 +420,6 @@
 			"image_inventory"			"backpack/weapons/w_models/w_wrench"
 			"image_inventory_size_w"	"128"
 			"image_inventory_size_h"	"82"
-			"model_player"				"models/weapons/c_models/c_wrench/c_wrench.mdl"
-			"attach_to_hands"			"1"
 			"used_by_classes"
 			{
 				"engineer"				"1"
@@ -830,8 +744,8 @@
 			"image_inventory"			"backpack/weapons/w_models/w_sapper"
 			"image_inventory_size_w"	"128"
 			"image_inventory_size_h"	"82"
-			"model_player"				"models/weapons/c_models/c_sapper/c_sapper.mdl"
-			"attach_to_hands"			"1"
+			"model_player"				"models/weapons/v_models/v_sapper_spy.mdl"
+			"attach_to_hands"			"0"
 			"used_by_classes"
 			{
 				"spy"					"1"
@@ -862,8 +776,8 @@
 			"image_inventory"			"backpack/weapons/w_models/w_knife"
 			"image_inventory_size_w"	"128"
 			"image_inventory_size_h"	"82"
-			"model_player"				"models/weapons/c_models/c_knife/c_knife.mdl"
-			"attach_to_hands"			"1"
+			"model_player"				"models/weapons/v_models/v_knife_spy.mdl"
+			"attach_to_hands"			"0"
 			"used_by_classes"
 			{
 				"spy"					"1"
@@ -890,7 +804,7 @@
 			"image_inventory_size_h"	"82"
 			"model_world"				"models/weapons/w_models/w_cigarette_case.mdl"
 			"model_player"				"models/weapons/v_models/v_pda_spy.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 			"used_by_classes"
 			{
 				"spy"					"1"
@@ -944,7 +858,7 @@
 			"item_description"			"#TF_Weapon_Bat_Desc"
 			"model_world"				"models/weapons/w_models/w_bat.mdl"
 			"model_player"				"models/weapons/v_models/v_bat_scout.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"1"
 		{
@@ -954,7 +868,7 @@
 			"item_description"			"#TF_Weapon_Bottle_Desc"
 			"model_world"				"models/weapons/w_models/w_bottle.mdl"
 			"model_player"				"models/weapons/v_models/v_bottle_demoman.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"2"
 		{
@@ -964,7 +878,7 @@
 			"item_description"			"#TF_Weapon_FireAxe_Desc"
 			"model_world"				"models/weapons/w_models/w_fireaxe.mdl"
 			"model_player"				"models/weapons/v_models/v_fireaxe_pyro.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"3"
 		{
@@ -974,7 +888,7 @@
 			"item_description"			"#TF_Weapon_Club_Desc"
 			"model_world"				"models/weapons/w_models/w_machete.mdl"
 			"model_player"				"models/weapons/v_models/v_machete_sniper.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"4"
 		{
@@ -1001,7 +915,7 @@
 			"baseitem"					"1"
 			"item_description"			"#TF_Weapon_Fists_Desc"
 			"model_player"				"models/weapons/v_models/v_fist_heavy.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 			"attributes"
 			{
 				"special taunt"
@@ -1019,7 +933,7 @@
 			"item_description"			"#TF_Weapon_Shovel_Desc"
 			"model_world"				"models/weapons/w_models/w_shovel.mdl"
 			"model_player"				"models/weapons/v_models/v_shovel_soldier.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"7"
 		{
@@ -1029,7 +943,7 @@
 			"item_description"			"#TF_Weapon_Wrench_Desc"
 			"model_world"				"models/weapons/w_models/w_wrench.mdl"
 			"model_player"				"models/weapons/v_models/v_wrench_engineer.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"8"
 		{
@@ -1038,8 +952,8 @@
 			"baseitem"					"1"
 			"item_description"			"#TF_Weapon_Bonesaw_Desc"
 			"model_world"				"models/weapons/w_models/w_bonesaw.mdl"
-			"model_player"				"models/weapons/v_models/v_bonesaw_medic.mdl"
-			"attach_to_hands"			"2"
+			"model_player"				"models/weapons/c_models/c_bonesaw/c_bonesaw.mdl"
+			"attach_to_hands"			"1"
 		}
 		"9"
 		{
@@ -1050,7 +964,7 @@
 			"item_slot"					"primary"
 			"model_world"				"models/weapons/w_models/w_shotgun.mdl"
 			"model_player"				"models/weapons/v_models/v_shotgun_engineer.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 			"used_by_classes"
 			{
 				"engineer"				"1"
@@ -1066,7 +980,7 @@
 			"item_slot"					"secondary"
 			"model_world"				"models/weapons/w_models/w_shotgun.mdl"
 			"model_player"				"models/weapons/v_models/v_shotgun_soldier.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 			"used_by_classes"
 			{
 				"soldier"				"1"
@@ -1082,7 +996,7 @@
 			"item_slot"					"secondary"
 			"model_world"				"models/weapons/w_models/w_shotgun.mdl"
 			"model_player"				"models/weapons/v_models/v_shotgun_heavy.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 			"used_by_classes"
 			{
 				"heavy"					"1"
@@ -1098,7 +1012,7 @@
 			"item_slot"					"secondary"
 			"model_world"				"models/weapons/w_models/w_shotgun.mdl"
 			"model_player"				"models/weapons/v_models/v_shotgun_pyro.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 			"used_by_classes"
 			{
 				"pyro"					"1"
@@ -1120,7 +1034,7 @@
 			"item_description"			"#TF_Weapon_Scattergun_Desc"
 			"model_world"				"models/weapons/w_models/w_scattergun.mdl"
 			"model_player"				"models/weapons/v_models/v_scattergun_scout.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"14"
 		{
@@ -1130,7 +1044,7 @@
 			"item_description"			"#TF_Weapon_SniperRifle_Desc"
 			"model_world"				"models/weapons/w_models/w_sniperrifle.mdl"
 			"model_player"				"models/weapons/v_models/v_sniperrifle_sniper.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"15"
 		{
@@ -1140,7 +1054,7 @@
 			"item_description"			"#TF_Weapon_Minigun_Desc"
 			"model_world"				"models/weapons/w_models/w_minigun.mdl"
 			"model_player"				"models/weapons/v_models/v_minigun_heavy.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"16"
 		{
@@ -1149,7 +1063,7 @@
 			"baseitem"					"1"
 			"model_world"				"models/weapons/w_models/w_smg.mdl"
 			"model_player"				"models/weapons/v_models/v_smg_sniper.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 			"attributes"
 			{
 				"no damage falloff over distance"
@@ -1166,8 +1080,8 @@
 			"baseitem"					"1"
 			"item_description"			"#TF_Weapon_SyringeGun_Desc"
 			"model_world"				"models/weapons/w_models/w_syringegun.mdl"
-			"model_player"				"models/weapons/v_models/v_syringegun_medic.mdl"
-			"attach_to_hands"			"2"
+			"model_player"				"models/weapons/c_models/c_syringegun/c_syringegun.mdl"
+			"attach_to_hands"			"1"
 		}
 		"18"
 		{
@@ -1177,7 +1091,7 @@
 			"item_description"			"#TF_Weapon_RocketLauncher_Desc"
 			"model_world"				"models/weapons/w_models/w_rocketlauncher.mdl"
 			"model_player"				"models/weapons/v_models/v_rocketlauncher_soldier.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"19"
 		{
@@ -1187,7 +1101,7 @@
 			"item_description"			"#TF_Weapon_GrenadeLauncher_Desc"
 			"model_world"				"models/weapons/w_models/w_grenadelauncher.mdl"
 			"model_player"				"models/weapons/v_models/v_grenadelauncher_demo.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"20"
 		{
@@ -1197,7 +1111,7 @@
 			"item_description"			"#TF_Weapon_PipebombLauncher_Desc"
 			"model_world"				"models/weapons/w_models/w_stickybomb_launcher.mdl"
 			"model_player"				"models/weapons/v_models/v_stickybomb_launcher_demo.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"21"
 		{
@@ -1207,17 +1121,16 @@
 			"item_description"			"#TF_Weapon_FlameThrower_Desc"
 			"model_world"				"models/weapons/w_models/w_flamethrower.mdl"
 			"model_player"				"models/weapons/v_models/v_flamethrower_pyro.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"22"
 		{
 			"name"						"TF_WEAPON_PISTOL"
 			"prefab"					"weapon_pistol"
 			"baseitem"					"1"
-			"item_description"			"#TF_Weapon_Pistol_Desc"
 			"model_world"				"models/weapons/w_models/w_pistol.mdl"
 			"model_player"				"models/weapons/v_models/v_pistol_engineer.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 			"used_by_classes"
 			{
 				"engineer"				"1"
@@ -1234,10 +1147,9 @@
 			"item_slot"	"secondary"
 			"item_quality"	"normal"
 			"baseitem"					"1"
-			"item_description"			"#TF_Weapon_Pistol_Scout_Desc"
 			"model_world"				"models/weapons/w_models/w_pistol.mdl"
 			"model_player"				"models/weapons/v_models/v_pistol_scout.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 			"used_by_classes"
 			{
 				"scout"					"1"
@@ -1248,20 +1160,18 @@
 			"name"						"TF_WEAPON_REVOLVER"
 			"prefab"					"weapon_revolver"
 			"baseitem"					"1"
-			"item_description"			"#TF_Weapon_Revolver_Desc"
 			"model_world"				"models/weapons/w_models/w_revolver.mdl"
 			"model_player"				"models/weapons/v_models/v_revolver_spy.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"25"
 		{
 			"name"						"TF_WEAPON_PDA_ENGINEER_BUILD"
 			"prefab"					"weapon_pda"
 			"baseitem"					"1"
-			"item_description"			"#TF_Weapon_PDA_Engineer_Builder_Desc"
 			"model_world"				"models/weapons/w_models/w_builder.mdl"
 			"model_player"				"models/weapons/v_models/v_builder_engineer.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"26"
 		{
@@ -1270,7 +1180,7 @@
 			"baseitem"					"1"
 			"model_world"				"models/weapons/w_models/w_pda_engineer.mdl"
 			"model_player"				"models/weapons/v_models/v_pda_engineer.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"27"
 		{
@@ -1285,7 +1195,7 @@
 			"baseitem"					"1"
 			"model_world"				"models/weapons/w_models/w_toolbox.mdl"
 			"model_player"				"models/weapons/v_models/v_wrench_engineer.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		"29"
 		{
@@ -1294,8 +1204,8 @@
 			"baseitem"					"1"
 			"item_description"			"#TF_Weapon_Medigun_Desc"
 			"model_world"				"models/weapons/w_models/w_medigun.mdl"
-			"model_player"				"models/weapons/v_models/v_medigun_medic.mdl"
-			"attach_to_hands"			"2"
+			"model_player"				"models/weapons/c_models/c_medigun/c_medigun.mdl"
+			"attach_to_hands"			"1"
 		}
 		"30"
 		{
@@ -1312,25 +1222,150 @@
 			"item_description"			"#TF_Weapon_Spy_Sapper_Desc"
 			"model_world"				"models/weapons/w_models/w_sapper.mdl"
 			"model_player"				"models/weapons/v_models/v_sapper_spy.mdl"
-			"attach_to_hands"			"2"
+			"attach_to_hands"			"0"
 		}
 		// Gold Rush update unique items
-		"32" // The Blutsauger
+		"32" // The Kritzkrieg
+		{
+			"name"						"TF_WEAPON_MEDIGUN_CRITS"
+			"item_name"					"#TF_Unique_Achievement_Medigun1"
+			"show_in_armory"			"1"
+			"model_player"				"models/weapons/c_models/c_medigun/c_medigun.mdl"
+			"model_attachment"			"models/weapons/c_models/c_overhealer/c_overhealer.mdl"
+			"attach_to_hands"			"1"
+			"prefab"				"weapon_medigun"
+			"attributes"
+			{
+				"medigun charge is crit boost"
+				{
+					"attribute_class"	"mod_charge_type"
+					"value"				"1"
+				}
+				"ubercharge rate bonus"
+				{
+					"attribute_class"	"mod_uberchargerate"
+					"value"				"1.1"
+				}
+			}
+			"visuals_red"
+			{
+				"custom_particlesystem"
+				{
+					"system"	"medicgun_beam_attrib_overheal_red"
+				}
+			}
+		}
+		"33" // The Blutsauger
 		{
 			"name"						"TF_WEAPON_BLUTSAUGER"
 			"item_name"					"#TF_Unique_Achievement_Syringegun1"
 			"item_quality"				"unique"
 			"show_in_armory"			"1"
+			"model_player"				"models/weapons/c_models/c_leechgun/c_leechgun.mdl"
+			"attach_to_hands"			"1"
 			"prefab"					"weapon_syringegun"
+			"attributes"
+			{
+				"heal on hit"
+				{
+					"attribute_class"	"mod_onhit_addhealth"
+					"value"				"3"
+				}
+				"crit mod disabled"
+				{
+					"attribute_class"	"mod_crit_chance"
+					"value"				"0"
+				}
+			}
 		}
-		"33" // The Ubersaw
+		"34" // The Ubersaw
 		{
 			"name"						"TF_WEAPON_UBERSAW"
 			"item_name"					"#TF_Unique_Achievement_Bonesaw1"
 			"item_quality"				"unique"
 			"show_in_armory"			"1"
+			"model_player"				"models/weapons/c_models/c_ubersaw/c_ubersaw.mdl"
+			"attach_to_hands"			"1"
 			"prefab"					"weapon_bonesaw"
-
+			"attributes"
+			{
+				"add uber charge on hit"
+				{
+					"attribute_class"	"add_ubercharge"
+					"value"				"0.25"
+				}
+				"fire rate penalty"
+				{
+					"attribute_class"	"mod_firerate"
+					"value"				"1.2"
+				}
+			}
+		}
+	}
+	"attributes"
+	{
+		"0"
+		{
+			"name"	"medigun charge is crit boost"
+			"attribute_class"	"mod_charge_type"
+			"description_string"	"#Attrib_Medigun_CritBoost"
+			"description_format"	"value_is_additive"
+			"hidden"	"0"
+			"effect_type"	"neutral"
+			"stored_as_integer"	"0"
+		}
+		"1"
+		{
+			"name"	"ubercharge rate bonus"
+			"attribute_class"	"mult_medigun_uberchargerate"
+			"description_string"	"#Attrib_UberchargeRate_Positive"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"2"
+		{
+			"name"	"heal on hit"
+			"attribute_class"	"mod_onhit_addhealth"
+			"description_string"	"#Attrib_HealOnHit_Positive"
+			"description_format"	"value_is_additive"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"armory_desc"	"on_hit"
+			"stored_as_integer"	"0"
+		}
+		"3"
+		{
+			"name"	"crit mod disabled"
+			"attribute_class"	"mod_crit_chance"
+			"description_string"	"#Attrib_CritChance_Disabled"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"armory_desc"	"no_crits"
+			"stored_as_integer"	"0"
+		}
+		"4"
+		{
+			"name"	"add uber charge on hit"
+			"attribute_class"	"add_ubercharge"
+			"description_string"	"#Attrib_AddUber_OnHit_Positive"
+			"description_format"	"value_is_additive_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"armory_desc"	"on_hit"
+			"stored_as_integer"	"0"
+		}
+		"5"
+		{
+			"name"	"fire rate penalty"
+			"attribute_class"	"mod_firerate"
+			"description_string"	"#Attrib_FireRate_Negative"
+			"description_format"	"value_is_inverted_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"stored_as_integer"	"0"
 		}
 	}
 }

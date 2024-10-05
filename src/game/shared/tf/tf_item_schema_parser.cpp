@@ -316,8 +316,9 @@ bool CEconSchemaParser::ParseItemRec( KeyValues* pData, CEconItemDefinition* pIt
 
 	GET_STRING( pItem, pData, model_player );
 	GET_STRING( pItem, pData, model_world );
+	GET_STRING( pItem, pData, model_attachment );
 
-	GET_INT( pItem, pData, attach_to_hands );
+	GET_BOOL( pItem, pData, attach_to_hands );
 	GET_BOOL( pItem, pData, act_as_wearable );
 
 	GET_STRING( pItem, pData, mouse_pressed_sound );

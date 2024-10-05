@@ -175,7 +175,10 @@ void CTFWeaponBaseMelee::Swing( CTFPlayer *pPlayer )
 	DoViewModelAnimation();
 
 	// Set next attack times.
-	m_flNextPrimaryAttack = gpGlobals->curtime + m_pWeaponInfo->GetWeaponData( m_iWeaponMode ).m_flTimeFireDelay;
+	float flDelayMult = 1.0f;
+	CALL_ATTRIB_HOOK_FLOAT( flDelayMult, mod_firerate );
+
+	m_flNextPrimaryAttack = gpGlobals->curtime + m_pWeaponInfo->GetWeaponData( m_iWeaponMode ).m_flTimeFireDelay * flDelayMult;
 
 	SetWeaponIdleTime( m_flNextPrimaryAttack + m_pWeaponInfo->GetWeaponData( m_iWeaponMode ).m_flTimeIdleEmpty );
 	
@@ -372,5 +375,11 @@ bool CTFWeaponBaseMelee::CalcIsAttackCriticalHelper( void )
 
 	float flPlayerCritMult = pPlayer->GetCritMult();
 
-	return ( RandomInt( 0, WEAPON_RANDOM_RANGE-1 ) <= ( TF_DAMAGE_CRIT_CHANCE_MELEE * flPlayerCritMult ) * WEAPON_RANDOM_RANGE );
+	float flCritChance = TF_DAMAGE_CRIT_CHANCE_MELEE * flPlayerCritMult;
+	CALL_ATTRIB_HOOK_FLOAT( flCritChance, mod_crit_chance );
+
+	if ( flCritChance == 0.0f )
+		return false; // don't bother, no random crits on this weapon!
+
+	return ( RandomInt( 0, WEAPON_RANDOM_RANGE-1 ) <= flCritChance * WEAPON_RANDOM_RANGE );
 }

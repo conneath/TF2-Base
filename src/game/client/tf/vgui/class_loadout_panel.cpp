@@ -248,7 +248,7 @@ void CClassLoadoutPanel::UpdateModelPanels( void )
 	if ( m_pSecondaryWeaponPanel )
 	{
 		m_pSecondaryWeaponPanel->InvalidateLayout( false, true );
-		m_pSecondaryWeaponPanel->SetEconItem( GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_SECONDARY, 0 ) );
+		m_pSecondaryWeaponPanel->SetEconItem( GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_SECONDARY, GetTFInventory()->GetWeaponPreset( m_iCurrentClassIndex, TF_LOADOUT_SLOT_SECONDARY ) ) );
 	}
 	if ( GetTFInventory()->NumWeapons( m_iCurrentClassIndex, TF_LOADOUT_SLOT_SECONDARY ) > 1 )
 	{
@@ -261,7 +261,7 @@ void CClassLoadoutPanel::UpdateModelPanels( void )
 	if ( m_pMeleeWeaponPanel ) // no PDA/Invis slots for now, sorry spy and engi
 	{
 		m_pMeleeWeaponPanel->InvalidateLayout( false, true );
-		m_pMeleeWeaponPanel->SetEconItem( GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_MELEE, 0 ) );
+		m_pMeleeWeaponPanel->SetEconItem( GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_MELEE, GetTFInventory()->GetWeaponPreset( m_iCurrentClassIndex, TF_LOADOUT_SLOT_MELEE ) ) );
 	}
 	if ( GetTFInventory()->NumWeapons( m_iCurrentClassIndex, TF_LOADOUT_SLOT_MELEE ) > 1 )
 	{

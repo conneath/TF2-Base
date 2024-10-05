@@ -27,6 +27,15 @@ enum
 	ATTRIB_EFFECT_NEGATIVE,
 };
 
+enum
+{
+	kAttachedModelDisplayFlag_WorldModel = 0x01,
+	kAttachedModelDisplayFlag_ViewModel = 0x02,
+
+	kAttachedModelDisplayFlag_MaskAll = kAttachedModelDisplayFlag_WorldModel | kAttachedModelDisplayFlag_ViewModel,
+};
+
+
 #define CALL_ATTRIB_HOOK_INT(value, name)			\
 		value = CAttributeManager::AttribHookValue<int>(value, #name, this)
 
@@ -91,6 +100,12 @@ struct EconAttributeDefinition
 	int effect_type;
 	bool hidden;
 	bool stored_as_integer;
+};
+
+struct attachedmodel_t
+{
+	const char* m_pszModelName;
+	int m_iModelDisplayFlags;
 };
 
 // Client specific.
@@ -170,6 +185,7 @@ public:
 	CUtlDict< bool, unsigned short > player_bodygroups;
 	CUtlMap< int, int > animation_replacement;
 	CUtlDict< const char*, unsigned short > playback_activity;
+	CUtlVector< const char* > attached_models;
 	CUtlDict< const char*, unsigned short > misc_info;
 	char aWeaponSounds[NUM_SHOOT_SOUND_TYPES][MAX_WEAPON_STRING];
 	//CUtlDict< EconItemStyle*, unsigned short > styles;
@@ -206,6 +222,7 @@ public:
 		CLEAR_STR( model_player );
 		CLEAR_STR( model_world );
 		memset( model_player_per_class, 0, sizeof( model_player_per_class ) );
+		CLEAR_STR( model_attachment );
 		attach_to_hands = 0;
 		act_as_wearable = false;
 		CLEAR_STR( mouse_pressed_sound );
@@ -242,7 +259,8 @@ public:
 	char model_player[128];
 	char model_world[128];
 	char model_player_per_class[TF_CLASS_COUNT_ALL][128];
-	int attach_to_hands;
+	char model_attachment[128];
+	bool attach_to_hands;
 	bool act_as_wearable;
 	CUtlVector<CEconItemAttribute> attributes;
 	EconItemVisuals visual[TF_TEAM_COUNT];

@@ -21,6 +21,34 @@
 #define CTFViewModel C_TFViewModel
 #endif
 
+
+#ifdef CLIENT_DLL
+class C_TFViewModel; // stupid
+
+class C_ViewmodelAttachmentModel : public C_BaseViewModel
+{
+	DECLARE_CLASS( C_ViewmodelAttachmentModel, C_BaseViewModel );
+public:
+
+	virtual bool InitializeAsClientEntity( const char* pszModelName, RenderGroup_t renderGroup );
+
+	virtual int	InternalDrawModel( int flags );
+	bool OnPostInternalDrawModel( ClientModelRenderInfo_t* pInfo );
+	virtual int	DrawModel( int flags );
+	virtual int DrawOverriddenViewmodel( int flags );
+
+	void SetViewmodel( C_TFViewModel* vm );
+
+	virtual bool			IsViewModel() const { return true; }
+	virtual RenderGroup_t	GetRenderGroup( void ) { return RENDER_GROUP_VIEW_MODEL_TRANSLUCENT; }
+
+	virtual C_BaseEntity* GetItemTintColorOwner( void ) { return GetOwner(); }
+
+private:
+	CHandle< C_TFViewModel > m_viewmodel;
+};
+#endif
+
 class CTFViewModel : public CBaseViewModel
 {
 	DECLARE_CLASS( CTFViewModel, CBaseViewModel );
@@ -34,6 +62,11 @@ public:
 	virtual void CalcViewModelLag( Vector& origin, QAngle& angles, QAngle& original_angles );
 	virtual void CalcViewModelView( CBasePlayer *owner, const Vector& eyePosition, const QAngle& eyeAngles );
 	virtual void AddViewModelBob( CBasePlayer *owner, Vector& eyePosition, QAngle& eyeAngles );
+
+	virtual void SetWeaponModel( const char* pszModelname, CBaseCombatWeapon* weapon );
+
+	int GetViewModelAttach( void ) { return m_bAttachToHands; }
+	void SetViewModelAttach( bool bType ) { this->m_bAttachToHands = bType; }
 
 #if defined( CLIENT_DLL )
 	virtual bool ShouldPredict( void )
@@ -51,6 +84,20 @@ public:
 	BobState_t	&GetBobState() { return m_BobState; }
 
 	virtual int DrawModel( int flags );
+	virtual bool OnPostInternalDrawModel( ClientModelRenderInfo_t* pInfo );
+
+	CHandle< C_ViewmodelAttachmentModel > m_hViewmodelAddon;
+	//CHandle< C_ViewmodelAttachmentModel > m_hWeaponAttachment; // read from items_game "attached_model" (e.g. for Kritzkrieg)
+	void UpdateViewmodelAddon( const char* pszModelname );
+
+	void RemoveViewmodelAddon( void );
+
+	// Attachments
+	virtual int				LookupAttachment( const char* pAttachmentName );
+	virtual bool			GetAttachment( int number, matrix3x4_t& matrix );
+	virtual bool			GetAttachment( int number, Vector& origin );
+	virtual	bool			GetAttachment( int number, Vector& origin, QAngle& angles );
+	virtual bool			GetAttachmentVelocity( int number, Vector& originVel, Quaternion& angleVel );
 #endif
 
 private:
@@ -67,6 +114,8 @@ private:
 	QAngle m_vLoweredWeaponOffset;
 
 #endif
+
+	bool m_bAttachToHands;
 };
 
 #endif // TF_VIEWMODEL_H

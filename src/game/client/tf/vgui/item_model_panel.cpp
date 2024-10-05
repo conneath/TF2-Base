@@ -32,8 +32,9 @@ void CEmbeddedItemModelPanel::SetEconItem( CEconItemView* pItem )
 {
 	if ( !pItem )
 		return;
-	CEconItemDefinition* pItemDef = pItem->GetStaticData();
-	SetMDL( pItemDef->model_world );
+	//CEconItemDefinition* pItemDef = pItem->GetStaticData();
+	// FIXME: if a weapon has different worldmodels for different classes this will break, but we dont have any weapon like this rn so i cant be bothered
+	SetMDL( pItem->GetWorldDisplayModel(TF_CLASS_UNDEFINED) ); 
 }
 
 //////////////////

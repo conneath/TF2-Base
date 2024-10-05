@@ -9,6 +9,10 @@
 	"$phongfresnelranges"	"[1.5 .5 3]"
 	"$halflambert" "1"
 
+
+	"$selfillum" "1"
+	"$selfillumtint" "[1 .55 .1]"
+
 	"$basemapalphaphongmask" "1"
 	
 	"$rimlight" "1"						
