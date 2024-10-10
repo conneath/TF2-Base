@@ -71,6 +71,7 @@ public:
 #else
 
 	void			HealTargetThink( void );
+	void			AddCharge( float flPercentage );
 
 #endif
 

@@ -1547,7 +1547,7 @@ void CTFWeaponBase::ApplyOnHitAttributes( CTFPlayer* pVictim, const CTakeDamageI
 		CWeaponMedigun* pMedigun = static_cast<CWeaponMedigun*>(pOwner->Weapon_OwnsThisID( TF_WEAPON_MEDIGUN ));
 		if ( pMedigun )
 		{
-			// TODO: implement CWeaponMedigun::AddCharge
+			pMedigun->AddCharge( flAddCharge );
 		}
 	}
 

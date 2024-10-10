@@ -501,6 +501,14 @@ void CWeaponMedigun::HealTargetThink( void )
 
 	SetNextThink( gpGlobals->curtime + 0.2f, s_pszMedigunHealTargetThink );
 }
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void CWeaponMedigun::AddCharge( float flPercentage )
+{
+	m_flChargeLevel = MIN( m_flChargeLevel + flPercentage, 1.0 );
+}
 #endif
 
 //-----------------------------------------------------------------------------
