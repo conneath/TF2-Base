@@ -1229,6 +1229,7 @@
 		{
 			"name"						"TF_WEAPON_MEDIGUN_CRITS"
 			"item_name"					"#TF_Unique_Achievement_Medigun1"
+			"item_quality"				"unique"
 			"show_in_armory"			"1"
 			"model_player"				"models/weapons/c_models/c_medigun/c_medigun.mdl"
 			"model_attachment"			"models/weapons/c_models/c_overhealer/c_overhealer.mdl"
@@ -1246,6 +1247,11 @@
 					"attribute_class"	"mod_uberchargerate"
 					"value"				"1.1"
 				}
+			}
+			"visuals"
+			{
+				"sound_taunt"		"Taunt.MedicViolinUber"
+				"sound_melee_hit"	"Weapon_UberSaw.HitFlesh"
 			}
 			"visuals_red"
 			{
@@ -1312,12 +1318,12 @@
 			"description_format"	"value_is_additive"
 			"hidden"	"0"
 			"effect_type"	"neutral"
-			"stored_as_integer"	"0"
+			"stored_as_integer"	"1"
 		}
 		"1"
 		{
 			"name"	"ubercharge rate bonus"
-			"attribute_class"	"mult_medigun_uberchargerate"
+			"attribute_class"	"mod_uberchargerate"
 			"description_string"	"#Attrib_UberchargeRate_Positive"
 			"description_format"	"value_is_percentage"
 			"hidden"	"0"

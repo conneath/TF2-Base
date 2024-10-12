@@ -151,7 +151,7 @@ public:
 
 	void			SetHealer( C_TFPlayer *pHealer, float flChargeLevel );
 	void			GetHealer( C_TFPlayer **pHealer, float *flChargeLevel ) { *pHealer = m_hHealer; *flChargeLevel = m_flHealerChargeLevel; }
-	float			MedicGetChargeLevel( void );
+	float			MedicGetChargeLevel( CTFWeaponBase** pRetMedigun = NULL );
 	CBaseEntity		*MedicGetHealTarget( void );
 
 	void			StartBurningSound( void );
@@ -335,6 +335,9 @@ public:
 	CNewParticleEffect	*m_pBurningEffect;
 	float				m_flBurnEffectStartTime;
 	float				m_flBurnEffectEndTime;
+
+	// Temp HACK for crit boost
+	HPARTICLEFFECT m_pCritBoostEffect;
 
 	CNewParticleEffect	*m_pDisguisingEffect;
 	float m_flDisguiseEffectStartTime;

@@ -735,11 +735,14 @@ void CTFWeaponBase::CalcIsAttackCritical( void)
 //-----------------------------------------------------------------------------
 bool CTFWeaponBase::CalcIsAttackCriticalHelper()
 {
-	if ( !tf_weapon_criticals.GetBool() )
+	CTFPlayer* pPlayer = ToTFPlayer( GetPlayerOwner() );
+	if ( !pPlayer )
 		return false;
 
-	CTFPlayer *pPlayer = ToTFPlayer( GetPlayerOwner() );
-	if ( !pPlayer )
+	if ( pPlayer->m_Shared.InCond( TF_COND_CRITBOOSTED ) ) // Always crit when critboosted
+		return true;
+
+	if ( !tf_weapon_criticals.GetBool() )
 		return false;
 
 	float flPlayerCritMult = pPlayer->GetCritMult();

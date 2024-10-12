@@ -394,13 +394,14 @@ enum
 	TF_COND_ZOOMED,
 	TF_COND_DISGUISING,
 	TF_COND_DISGUISED,
-	TF_COND_STEALTHED,
-	TF_COND_INVULNERABLE,
-	TF_COND_TELEPORTED,
+	TF_COND_STEALTHED,		// Spy cloak
+	TF_COND_INVULNERABLE,	// Stock Uber
+	TF_COND_TELEPORTED,		// Used for teleporter particles
 	TF_COND_TAUNTING,
 	TF_COND_INVULNERABLE_WEARINGOFF,
 	TF_COND_STEALTHED_BLINK,
 	TF_COND_SELECTED_TO_TELEPORT,
+	TF_COND_CRITBOOSTED,	// Applied by Kritzkrieg
 
 	// The following conditions all expire faster when the player is being healed
 	// If you add a new condition that shouldn't have this behavior, add it before this section.

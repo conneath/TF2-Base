@@ -729,6 +729,23 @@
 		"wave"	"player/taunt_v07.wav"
 	}
 }
+"Taunt.MedicViolinUber"
+{
+	"channel"	"CHAN_STATIC"
+	"volume"	".35"
+	"soundlevel"  	"SNDLVL_75dB"
+
+	"rndwave"
+	{	
+		"wave"	"player/uberTaunt_v01.wav"
+		"wave"	"player/uberTaunt_v02.wav"
+		"wave"	"player/uberTaunt_v03.wav"
+		"wave"	"player/uberTaunt_v04.wav"
+		"wave"	"player/uberTaunt_v05.wav"
+		"wave"	"player/uberTaunt_v06.wav"
+		"wave"	"player/uberTaunt_v07.wav"
+	}
+}
 
 "Selection.MedicHeelClick"
 {

@@ -1002,7 +1002,8 @@ C_TFPlayer::C_TFPlayer() :
 	m_flBurnEffectEndTime = 0;
 	m_pDisguisingEffect = NULL;
 	m_pSaveMeEffect = NULL;
-	
+	m_pCritBoostEffect = NULL;
+
 	m_aGibs.Purge();
 
 	m_bCigaretteSmokeActive = false;
@@ -3099,7 +3100,7 @@ void C_TFPlayer::SetHealer( C_TFPlayer *pHealer, float flChargeLevel )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-float C_TFPlayer::MedicGetChargeLevel( void )
+float C_TFPlayer::MedicGetChargeLevel( CTFWeaponBase** pRetMedigun )
 {
 	if ( IsPlayerClass(TF_CLASS_MEDIC) )
 	{
@@ -3109,6 +3110,11 @@ float C_TFPlayer::MedicGetChargeLevel( void )
 			return 0;
 
 		CWeaponMedigun *pWeapon = dynamic_cast <CWeaponMedigun*>( pWpn );
+
+		if ( pRetMedigun )
+		{
+			*pRetMedigun = pWeapon;
+		}
 
 		if ( pWeapon )
 			return pWeapon->GetChargeLevel();
