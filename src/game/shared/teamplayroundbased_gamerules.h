@@ -205,6 +205,8 @@ public:
 
 	bool CheckNextLevelCvar( void );
 
+	virtual bool TimerMayExpire( void );
+
 public:
 	void State_Transition( gamerules_roundstate_t newState );
 

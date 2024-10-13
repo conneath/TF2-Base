@@ -22,6 +22,7 @@
 	#include "gameinterface.h"
 	#include "eventqueue.h"
 	#include "team_control_point_master.h"
+	#include "team_train_watcher.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -515,6 +516,28 @@ void CTeamplayRoundBasedRules::Think( void )
 
 	// Bypass teamplay think.
 	CGameRules::Think();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+bool CTeamplayRoundBasedRules::TimerMayExpire( void )
+{
+#ifndef CSTRIKE_DLL
+	// team_train_watchers can also prevent timer expiring ( overtime )
+	CTeamTrainWatcher* pWatcher = dynamic_cast<CTeamTrainWatcher*>(gEntList.FindEntityByClassname( NULL, "team_train_watcher" ));
+	while ( pWatcher )
+	{
+		if ( !pWatcher->TimerMayExpire() )
+		{
+			return false;
+		}
+
+		pWatcher = dynamic_cast<CTeamTrainWatcher*>(gEntList.FindEntityByClassname( pWatcher, "team_train_watcher" ));
+	}
+#endif
+
+	return BaseClass::TimerMayExpire();
 }
 
 //-----------------------------------------------------------------------------
