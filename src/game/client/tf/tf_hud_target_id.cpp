@@ -341,7 +341,7 @@ void CTargetID::UpdateID( void )
 				wchar_t wszChargeLevel[ 10 ];
 				_snwprintf( wszChargeLevel, ARRAYSIZE(wszChargeLevel) - 1, L"%.0f", pPlayer->MedicGetChargeLevel(&pMedigun) * 100 );
 				wszChargeLevel[ ARRAYSIZE(wszChargeLevel)-1 ] = '\0';
-				if ( pMedigun && pMedigun->GetItem() && !Q_strcmp( pMedigun->GetItem()->GetStaticData()->item_quality, "normal" ) )
+				if ( pMedigun && pMedigun->GetItem() && Q_strcmp( pMedigun->GetItem()->GetStaticData()->item_quality, "normal" ) )
 					g_pVGuiLocalize->ConstructString( sDataString, sizeof(sDataString), g_pVGuiLocalize->Find("#TF_playerid_mediccharge_wpn"), 2, wszChargeLevel, pMedigun->GetItem()->GetStaticData()->item_name);
 				else
 					g_pVGuiLocalize->ConstructString( sDataString, sizeof(sDataString), g_pVGuiLocalize->Find( "#TF_playerid_mediccharge" ), 1, wszChargeLevel );
