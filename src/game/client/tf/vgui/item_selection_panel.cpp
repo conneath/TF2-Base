@@ -16,6 +16,7 @@ CItemSelectionPanel::CItemSelectionPanel( vgui::Panel* parent, const char* name 
 	//SetParent( parent );
 	m_iCurrentClassIndex = NULL;
 	m_iCurrentSlotIndex = NULL;
+	m_pItemContainer = NULL;
 }
 
 void CItemSelectionPanel::OnCommand( const char* command )
@@ -31,6 +32,14 @@ void CItemSelectionPanel::OnCommand( const char* command )
 		int iItemNum = atoi(command+6);
 		Msg( "Got told to change slot %i to weapon ID %i!\n", m_iCurrentSlotIndex, iItemNum);
 		GetTFInventory()->SetWeaponPreset( m_iCurrentClassIndex, m_iCurrentSlotIndex, iItemNum );
+
+		if ( engine->IsInGame() )
+		{
+			char szCmd[64];
+			Q_snprintf( szCmd, sizeof( szCmd ), "weaponpresetclass %d %d %d;", m_iCurrentClassIndex, m_iCurrentSlotIndex, iItemNum );
+			engine->ExecuteClientCmd( szCmd );
+		}
+
 		// HACK: tell our parent (which SHOULD be the loadout panel) to update, so our preset change is actually shown
 		// I should use a vgui message instead of doing this but im tired boss
 		dynamic_cast<CClassLoadoutPanel*>(GetParent())->UpdateModelPanels();
@@ -50,11 +59,9 @@ void CItemSelectionPanel::SetClassAndSlot( int iClass, int iSlot )
 	char itempanelnamebuffer[30];
 	char buttonnamebuffer[30];
 	char buttoncommand[10];
-	int panelx = 100;
-	int panely = 100;
-	// gold rush update positioned these panels in code ONLY, and i dont feel like decompiling it
-	// so im just going to fucking eyeball it, fuck you.
-	// i cant even access the selection panel in there to check panel positions via vgui_drawtree because i don't have the achievement items, fml
+	int panelx = m_pItemContainer->GetWide() /4;
+	int panely = m_pItemContainer->GetTall() /6;
+
 	for ( int i = 0; i < iNumWeaponsForSlot; i++ )
 	{
 		// create the vgui name of this panel to set later
@@ -63,17 +70,26 @@ void CItemSelectionPanel::SetClassAndSlot( int iClass, int iSlot )
 
 		CItemModelPanel* itemPanel = new CItemModelPanel( this, itempanelnamebuffer );
 		m_vecItemPanels.AddToTail( itemPanel );
+		m_vecItemPanels[i]->SetParent( m_pItemContainer );
 		m_vecItemPanels[i]->InvalidateLayout(false, true);
-		m_vecItemPanels[i]->SetPos( panelx, panely );
-		panely += 200;
+		m_vecItemPanels[i]->SetPos( panelx, panely);
+		panely *= 4;
 		m_vecItemPanels[i]->SetWide( 800 );
 		m_vecItemPanels[i]->SetTall( 150 );
 		m_vecItemPanels[i]->SetEconItem( GetTFInventory()->GetItem( m_iCurrentClassIndex, m_iCurrentSlotIndex, i ) );
 		Msg( "Created new CItemModelPanel with weapon ID %i\n", i );
 
-		CTFButton* changeButton = new CTFButton( this, buttonnamebuffer, "Equip");
+		vgui::Button* changeButton = new vgui::Button( this, buttonnamebuffer, "Equip");
+		//changeButton->SetFont(  );
+		changeButton->SetVisible( true );
+		changeButton->SetParent( m_pItemContainer );
+		//changeButton->SetProportional( true );
+		changeButton->SetPos( panelx*3, panely/3);
+
 		m_vecChangeButtons.AddToTail( changeButton );
-		m_vecChangeButtons[i]->SetPos(600, panely-150);
+
+		//m_vecChangeButtons[i]->SetText( "Equip" );
+		//m_vecChangeButtons[i]->SetVisible( true );
 		Q_snprintf( buttoncommand, sizeof( buttoncommand ), "equip %i", i );
 		m_vecChangeButtons[i]->SetCommand( buttoncommand );
 		/*
@@ -88,4 +104,6 @@ void CItemSelectionPanel::ApplySchemeSettings( vgui::IScheme* pScheme )
 {
 	LoadControlSettings( "Resource/UI/ItemSelectionPanel.res" );
 	BaseClass::ApplySchemeSettings( pScheme );
+
+	m_pItemContainer = dynamic_cast<vgui::EditablePanel*>(FindChildByName( "itemcontainer" ));
 }

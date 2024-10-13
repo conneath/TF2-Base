@@ -160,7 +160,7 @@
 	{
 		"ControlName"	"EditablePanel"
 		"fieldName"		"itemcontainer"
-		"xpos"			"0"
+		"xpos"			"c-300"
 		"ypos"			"0"
 		"wide"			"600"
 		"tall"			"285"

@@ -31,8 +31,9 @@ public:
 protected:
 	int						m_iCurrentClassIndex;
 	int						m_iCurrentSlotIndex;
+	vgui::EditablePanel*	m_pItemContainer;
 	CUtlVector<CItemModelPanel*> m_vecItemPanels;
-	CUtlVector<CTFButton*>	m_vecChangeButtons;
+	CUtlVector<vgui::Button*>	m_vecChangeButtons;
 };
 
 #endif
