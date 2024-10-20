@@ -1895,7 +1895,7 @@ void CBaseObject::Killed( const CTakeDamageInfo &info )
 	// Find the killer & the scorer
 	CBaseEntity *pInflictor = info.GetInflictor();
 	CBaseEntity *pKiller = info.GetAttacker();
-	CBasePlayer *pScorer = TFGameRules()->GetDeathScorer( pKiller, pInflictor, this );
+	CTFPlayer* pScorer = ToTFPlayer( TFGameRules()->GetDeathScorer( pKiller, pInflictor, this ) );
 	CTFPlayer *pAssister = NULL;
 
 	// if this object has a sapper on it, and was not killed by the sapper (killed by damage other than crush, since sapper does crushing damage),
@@ -1917,9 +1917,25 @@ void CBaseObject::Killed( const CTakeDamageInfo &info )
 		IGameEvent * event = gameeventmanager->CreateEvent( "object_destroyed" );
 
 		// Work out what killed the player, and send a message to all clients about it
-		const char *killer_weapon_name = TFGameRules()->GetKillingWeaponName( info, NULL );
+		int iWeaponID;
+		const char* killer_weapon_name = TFGameRules()->GetKillingWeaponName( info, NULL, &iWeaponID );
+		const char* killer_weapon_log_name = killer_weapon_name;
 
 		CTFPlayer *pTFPlayer = GetOwner();
+
+		CTFWeaponBase* pWeapon = pScorer->Weapon_OwnsThisID( iWeaponID );
+		if ( pWeapon )
+		{
+			CEconItemDefinition* pItemDef = pWeapon->GetItem()->GetStaticData();
+			if ( pItemDef )
+			{
+				if ( pItemDef->item_iconname[0] )
+					killer_weapon_name = pItemDef->item_iconname;
+
+				if ( pItemDef->item_logname[0] )
+					killer_weapon_log_name = pItemDef->item_logname;
+			}
+		}
 
 		if ( event )
 		{
@@ -1934,6 +1950,7 @@ void CBaseObject::Killed( const CTakeDamageInfo &info )
 			
 			event->SetInt( "attacker", pScorer->GetUserID() );	// attacker
 			event->SetString( "weapon", killer_weapon_name );
+			event->SetString( "weapon_logclassname", killer_weapon_log_name );
 			event->SetInt( "priority", 6 );		// HLTV event priority, not transmitted
 			event->SetInt( "objecttype", GetType() );
 			event->SetInt( "index", entindex() );	// object entity index

@@ -839,11 +839,11 @@
 			{
 				"min_viewmodel_offset"					"8 0 -6"
 			}
-			"visuals"
-			{
-				"sound_special1"		"Player.Spy_Cloak"
-				"sound_special2"		"Player.Spy_UnCloak"
-			}
+			//"visuals"
+			//{
+			//	"sound_special1"		"Player.Spy_Cloak"
+			//	"sound_special2"		"Player.Spy_UnCloak"
+			//}
 			"mouse_pressed_sound"		"#ui/item_watch_pickup.wav"
 			"drop_sound"				"#ui/item_watch_drop.wav"
 		}
@@ -1248,11 +1248,6 @@
 					"value"				"1.1"
 				}
 			}
-			"visuals"
-			{
-				"sound_taunt"		"Taunt.MedicViolinUber"
-				"sound_melee_hit"	"Weapon_UberSaw.HitFlesh"
-			}
 			"visuals_red"
 			{
 				"custom_particlesystem"
@@ -1265,6 +1260,7 @@
 		{
 			"name"						"TF_WEAPON_BLUTSAUGER"
 			"item_name"					"#TF_Unique_Achievement_Syringegun1"
+			"item_logname"				"blutsauger"
 			"item_quality"				"unique"
 			"show_in_armory"			"1"
 			"model_player"				"models/weapons/c_models/c_leechgun/c_leechgun.mdl"
@@ -1288,6 +1284,8 @@
 		{
 			"name"						"TF_WEAPON_UBERSAW"
 			"item_name"					"#TF_Unique_Achievement_Bonesaw1"
+			"item_logname"				"ubersaw"
+			"item_iconname"				"ubersaw"
 			"item_quality"				"unique"
 			"show_in_armory"			"1"
 			"model_player"				"models/weapons/c_models/c_ubersaw/c_ubersaw.mdl"
@@ -1305,6 +1303,11 @@
 					"attribute_class"	"mod_firerate"
 					"value"				"1.2"
 				}
+			}
+			"visuals"
+			{
+				"sound_taunt"		"Taunt.MedicViolinUber"
+				"sound_melee_hit"	"Weapon_UberSaw.HitFlesh"
 			}
 		}
 	}

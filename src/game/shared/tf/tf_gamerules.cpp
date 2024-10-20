@@ -1885,11 +1885,11 @@ void CTFGameRules::CreateStandardEntities()
 //-----------------------------------------------------------------------------
 // Purpose: determine the class name of the weapon that got a kill
 //-----------------------------------------------------------------------------
-const char *CTFGameRules::GetKillingWeaponName( const CTakeDamageInfo &info, CTFPlayer *pVictim )
+const char *CTFGameRules::GetKillingWeaponName( const CTakeDamageInfo &info, CTFPlayer *pVictim, int* iWeaponID )
 {
 	CBaseEntity *pInflictor = info.GetInflictor();
 	CBaseEntity *pKiller = info.GetAttacker();
-	CBasePlayer *pScorer = TFGameRules()->GetDeathScorer( pKiller, pInflictor, pVictim );
+	CBasePlayer *pScorer = GetDeathScorer( pKiller, pInflictor, pVictim );
 
 	const char *killer_weapon_name = "world";
 
@@ -1897,6 +1897,7 @@ const char *CTFGameRules::GetKillingWeaponName( const CTakeDamageInfo &info, CTF
 	{
 		// special-case burning damage, since persistent burning damage may happen after attacker has switched weapons
 		killer_weapon_name = "tf_weapon_flamethrower";
+		*iWeaponID = TF_WEAPON_FLAMETHROWER;
 	}
 	else if ( pScorer && pInflictor && ( pInflictor == pScorer ) )
 	{
@@ -1904,11 +1905,20 @@ const char *CTFGameRules::GetKillingWeaponName( const CTakeDamageInfo &info, CTF
 		if ( pScorer->GetActiveWeapon() )
 		{
 			killer_weapon_name = pScorer->GetActiveWeapon()->GetClassname(); 
+			if ( pScorer->IsPlayer() )
+			{
+				*iWeaponID = ToTFPlayer( pScorer )->GetActiveTFWeapon()->GetWeaponID();
+			}
 		}
 	}
 	else if ( pInflictor )
 	{
 		killer_weapon_name = STRING( pInflictor->m_iClassname );
+		CTFWeaponBase* pWeapon = dynamic_cast<CTFWeaponBase*>(pInflictor);
+		if ( pWeapon )
+		{
+			*iWeaponID = pWeapon->GetWeaponID();
+		}
 	}
 
 	// strip certain prefixes from inflictor's classname
@@ -2017,11 +2027,30 @@ void CTFGameRules::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &inf
 	CTFPlayer *pTFPlayerVictim = ToTFPlayer( pVictim );
 	CBaseEntity *pInflictor = info.GetInflictor();
 	CBaseEntity *pKiller = info.GetAttacker();
-	CBasePlayer *pScorer = GetDeathScorer( pKiller, pInflictor, pVictim );
+	CTFPlayer* pScorer = ToTFPlayer( GetDeathScorer( pKiller, pInflictor, pVictim ) );
 	CTFPlayer *pAssister = ToTFPlayer( GetAssister( pVictim, pScorer, pInflictor ) );
+	int iWeaponID = TF_WEAPON_NONE;
 
 	// Work out what killed the player, and send a message to all clients about it
-	const char *killer_weapon_name = GetKillingWeaponName( info, pTFPlayerVictim );
+	const char *killer_weapon_name = GetKillingWeaponName( info, pTFPlayerVictim, &iWeaponID );
+	const char* killer_weapon_log_name = NULL;
+
+	if ( iWeaponID && pScorer )
+	{
+		CTFWeaponBase* pWeapon = pScorer->Weapon_OwnsThisID( iWeaponID );
+		if ( pWeapon )
+		{
+			CEconItemDefinition* pItemDef = pWeapon->GetItem()->GetStaticData();
+			if ( pItemDef )
+			{
+				if ( pItemDef->item_iconname[0] )
+					killer_weapon_name = pItemDef->item_iconname;
+
+				if ( pItemDef->item_logname[0] )
+					killer_weapon_log_name = pItemDef->item_logname;
+			}
+		}
+	}
 
 	if ( pScorer )	// Is the killer a client?
 	{
@@ -2036,6 +2065,7 @@ void CTFGameRules::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &inf
 		event->SetInt( "attacker", killer_ID );
 		event->SetInt( "assister", pAssister ? pAssister->GetUserID() : -1 );
 		event->SetString( "weapon", killer_weapon_name );
+		event->SetString( "weapon_logclassname", killer_weapon_log_name );
 		event->SetInt( "damagebits", info.GetDamageType() );
 		event->SetInt( "customkill", info.GetDamageCustom() );
 		event->SetInt( "priority", 7 );	// HLTV event priority, not transmitted

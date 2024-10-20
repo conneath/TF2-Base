@@ -482,7 +482,38 @@ int GetWeaponFromDamage( const CTakeDamageInfo &info )
 	int iWeapon = TF_WEAPON_NONE;
 
 	// Work out what killed the player, and send a message to all clients about it
-	const char *killer_weapon_name = TFGameRules()->GetKillingWeaponName( info, NULL );
+	//const char *killer_weapon_name = TFGameRules()->GetKillingWeaponName( info, NULL );
+	const char* killer_weapon_name = "";
+
+	// Find the killer & the scorer
+	CBaseEntity* pInflictor = info.GetInflictor();
+	CBaseEntity* pKiller = info.GetAttacker();
+	CBasePlayer* pScorer = TFGameRules()->GetDeathScorer( pKiller, pInflictor, NULL );
+
+	// find the weapon the killer used
+
+	if ( pScorer )	// Is the killer a client?
+	{
+		if ( pInflictor )
+		{
+			if ( pInflictor == pScorer )
+			{
+				// If the inflictor is the killer,  then it must be their current weapon doing the damage
+				if ( pScorer->GetActiveWeapon() )
+				{
+					killer_weapon_name = pScorer->GetActiveWeapon()->GetClassname();
+				}
+			}
+			else
+			{
+				killer_weapon_name = STRING( pInflictor->m_iClassname );  // it's just that easy
+			}
+		}
+	}
+	else if ( pInflictor )
+	{
+		killer_weapon_name = STRING( pInflictor->m_iClassname );
+	}
 
 	if ( !Q_strnicmp( killer_weapon_name, "tf_projectile", 13 ) )
 	{
