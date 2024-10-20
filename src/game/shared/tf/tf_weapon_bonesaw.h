@@ -31,7 +31,19 @@ public:
 	CTFBonesaw() {}
 	virtual int			GetWeaponID( void ) const			{ return TF_WEAPON_BONESAW; }
 
+#ifdef CLIENT_DLL // Ubersaw pose parameter stuff
+	virtual void		OnDataChanged( DataUpdateType_t updateType );
+	void				UpdateChargePoseParam( void );
+	virtual void		GetPoseParameters( CStudioHdr* pStudioHdr, float poseParameter[MAXSTUDIOPOSEPARAM] );
+	virtual void		UpdateAttachmentModels( void );
+#endif
+
 private:
+
+#ifdef CLIENT_DLL
+	int			m_iUberChargePoseParam;
+	float		m_flChargeLevel;
+#endif
 
 	CTFBonesaw( const CTFBonesaw & ) {}
 };

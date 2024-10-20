@@ -3249,7 +3249,9 @@ void C_TFPlayer::LoadInventory( void )
 //-----------------------------------------------------------------------------
 void C_TFPlayer::FireEvent( const Vector& origin, const QAngle& angles, int event, const char *options )
 {
-	if ( event == 7001 )
+	switch ( event )
+	{
+	case 5001:
 	{
 		// Force a footstep sound
 		m_flStepSoundTime = 0;
@@ -3257,21 +3259,35 @@ void C_TFPlayer::FireEvent( const Vector& origin, const QAngle& angles, int even
 		EstimateAbsVelocity( vel );
 		UpdateStepSound( GetGroundSurface(), GetAbsOrigin(), vel );
 	}
-	else if ( event == AE_WPN_HIDE )
+		break;
+	case AE_WPN_HIDE:
 	{
 		if ( GetActiveWeapon() )
 		{
 			GetActiveWeapon()->SetWeaponVisible( false );
 		}
 	}
-	else if ( event == AE_WPN_UNHIDE )
+		break;
+	case AE_WPN_UNHIDE:
 	{
 		if ( GetActiveWeapon() )
 		{
 			GetActiveWeapon()->SetWeaponVisible( true );
 		}
 	}
-	else if ( event == TF_AE_CIGARETTE_THROW )
+		break;
+	// conn: Used only by the Medic's violin taunt (it plays the TAUNT weapon sound, and the ubersaw changes that)
+	case AE_WPN_PLAYWPNSOUND:
+	{
+		if ( GetActiveWeapon() )
+		{
+			int iSnd = GetWeaponSoundFromString( options );
+			if ( iSnd != -1 )
+				GetActiveWeapon()->WeaponSound( (WeaponSound_t)iSnd );
+		}
+	}
+		break;
+	case TF_AE_CIGARETTE_THROW:
 	{
 		CEffectData data;
 		int iAttach = LookupAttachment( options );
@@ -3281,10 +3297,14 @@ void C_TFPlayer::FireEvent( const Vector& origin, const QAngle& angles, int even
 
 		data.m_hEntity = ClientEntityList().EntIndexToHandle( entindex() );
 		DispatchEffect( "TF_ThrowCigarette", data );
-		return;
 	}
-	else
+		break;
+	default:
+	{
 		BaseClass::FireEvent( origin, angles, event, options );
+	}
+		break;
+	}
 }
 
 // Shadows
