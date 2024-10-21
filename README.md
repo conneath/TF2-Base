@@ -1,6 +1,8 @@
 Team Fortress 2: Gold Rush
 =====
 
+[Discord server](https://discord.gg/a2W8pnYwmr)
+
 [Pre-Alpha Preview build download](https://conneath.net/repo/goldrush-pre-alpha-preview.7z)
 
 damn, another tf2 soucremod...
