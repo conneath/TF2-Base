@@ -142,26 +142,26 @@
 		"enabled"		"1"
 	}
 
-	"itemcontainerscroller"
-	{
-		"ControlName"	"EditablePanel"
-		"fieldName"		"itemcontainerscroller"
-		"xpos"			"c-300"
-		"ypos"			"45"
-		"wide"			"600"
-		"tall"			"285"
-		"PaintBackgroundType"	"2"
-		"fgcolor_override"	"59 54 48 255"
-		"bgcolor_override"	"200 187 161 0"
-		"autohide_buttons" "1"
-	}
+	//"itemcontainerscroller"
+	//{
+	//	"ControlName"	"EditablePanel"
+	//	"fieldName"		"itemcontainerscroller"
+	//	"xpos"			"c-300"
+	//	"ypos"			"45"
+	//	"wide"			"600"
+	//	"tall"			"285"
+	//	"PaintBackgroundType"	"2"
+	//	"fgcolor_override"	"59 54 48 255"
+	//	"bgcolor_override"	"200 187 161 0"
+	//	"autohide_buttons" "1"
+	//}
 		
 	"itemcontainer"
 	{
 		"ControlName"	"EditablePanel"
 		"fieldName"		"itemcontainer"
 		"xpos"			"c-300"
-		"ypos"			"0"
+		"ypos"			"50"
 		"wide"			"600"
 		"tall"			"285"
 		"PaintBackgroundType"	"2"

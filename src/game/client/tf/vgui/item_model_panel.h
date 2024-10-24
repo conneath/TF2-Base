@@ -17,6 +17,7 @@
 #include "basemodel_panel.h"
 #include "basemodelpanel.h"
 #include "tf_item_schema.h"
+#include "tf_controls.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: The model panel that's embedded inside the CItemModelPanel vgui panel
@@ -42,11 +43,21 @@ public:
 	//virtual ~CItemModelPanel( void );
 
 	virtual void	ApplySchemeSettings( vgui::IScheme* pScheme ) OVERRIDE;
-	//virtual void	ApplySettings( KeyValues* inResourceData ) OVERRIDE;
-	//virtual void	PerformLayout( void ) OVERRIDE;
+	virtual void	ApplySettings( KeyValues* inResourceData ) OVERRIDE;
+	virtual void	PerformLayout( void ) OVERRIDE;
 
 	void	SetEconItem( CEconItemView* pItem );
 protected:
 	CEmbeddedItemModelPanel* m_pEmbItemModelPanel;
+	CTFLabel* m_pNameLabel;
+	CTFLabel* m_pAttribLabel;
+
+	CPanelAnimationVarAliasType( int, m_nModelX, "model_xpos", "0", "proportional_xpos" );
+	CPanelAnimationVarAliasType( int, m_nModelWidth, "model_wide", "140", "proportional_int" );
+	CPanelAnimationVarAliasType( int, m_nModelTall, "model_tall", "100", "proportional_int" );
+
+	CPanelAnimationVarAliasType( int, m_nTextX, "text_xpos", "0", "proportional_xpos" );
+	CPanelAnimationVarAliasType( int, m_nTextWide, "text_wide", "140", "proportional_int" );
+	CPanelAnimationVarAliasType( bool, m_bTextCenter, "text_center", "0", "bool" );
 };
 #endif

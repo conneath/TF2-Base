@@ -11,6 +11,7 @@
 #include "charinfo_loadout_subpanel.h"
 #include "item_model_panel.h"
 #include "tf_inventory.h"
+#include "vgui/IVGui.h"
 
 CClassLoadoutPanel* g_pClassLoadoutPanel = NULL;
 //-----------------------------------------------------------------------------
@@ -46,7 +47,7 @@ CClassLoadoutPanel::CClassLoadoutPanel( vgui::Panel* parent )
 	g_pClassLoadoutPanel = this;
 
 	//m_pItemOptionPanel = new CLoadoutItemOptionsPanel( this, "ItemOptionsPanel" );
-	m_pItemSelectionPanel = new CItemSelectionPanel( this, "ItemSelectionPanel" );
+	m_pItemSelectionPanel = new CItemSelectionPanel( this );
 	m_pItemSelectionPanel->SetVisible( false );
 }
 
@@ -67,7 +68,7 @@ CClassLoadoutPanel::~CClassLoadoutPanel()
 void CClassLoadoutPanel::ApplySchemeSettings( vgui::IScheme* pScheme )
 {
 	LoadControlSettings( "Resource/UI/FullLoadoutPanel.res" );
-
+	SetProportional( true );
 	BaseClass::ApplySchemeSettings( pScheme );
 
 	m_pPlayerModelPanel = dynamic_cast<CBaseModelPanel*>(FindChildByName( "classmodelpanel" ));
@@ -91,6 +92,8 @@ void CClassLoadoutPanel::ApplySchemeSettings( vgui::IScheme* pScheme )
 	// tell users no items exist yet for now
 	//dynamic_cast<vgui::Label*>(FindChildByName( "NoneAvailableReason" ))->SetText( "#NoItemsExistLong" );
 	FindChildByName( "NoneAvailableReason" )->SetVisible( false );
+	FindChildByName( "NoneAvailableTitle" )->SetVisible( false );
+	FindChildByName( "NoneAvailableTitle2" )->SetVisible( false );
 }
 
 //-----------------------------------------------------------------------------
@@ -108,7 +111,7 @@ void CClassLoadoutPanel::OnCommand( const char* command )
 	{
 		if ( m_pItemSelectionPanel )
 		{
-			m_pItemSelectionPanel->SetVisible( true );
+			//m_pItemSelectionPanel->SetVisible( true );
 			m_pItemSelectionPanel->SetClassAndSlot( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY );
 		}
 	}
@@ -116,7 +119,7 @@ void CClassLoadoutPanel::OnCommand( const char* command )
 	{
 		if ( m_pItemSelectionPanel )
 		{
-			m_pItemSelectionPanel->SetVisible( true );
+			//m_pItemSelectionPanel->SetVisible( true );
 			m_pItemSelectionPanel->SetClassAndSlot( m_iCurrentClassIndex, TF_LOADOUT_SLOT_SECONDARY );
 		}
 	}
@@ -124,7 +127,7 @@ void CClassLoadoutPanel::OnCommand( const char* command )
 	{
 		if ( m_pItemSelectionPanel )
 		{
-			m_pItemSelectionPanel->SetVisible( true );
+			//m_pItemSelectionPanel->SetVisible( true );
 			m_pItemSelectionPanel->SetClassAndSlot( m_iCurrentClassIndex, TF_LOADOUT_SLOT_MELEE );
 		}
 	}
@@ -217,18 +220,24 @@ void CClassLoadoutPanel::SetTeam( int iTeam )
 void CClassLoadoutPanel::UpdateModelPanels( void )
 {
 	// We're showing the loadout for a specific class.
+
+	// Playermodel panel (todo: make this its own function)
 	TFPlayerClassData_t* pData = GetPlayerClassData( m_iCurrentClassIndex );
 	if ( m_pPlayerModelPanel )
 	{
 		m_pPlayerModelPanel->SetMDL(pData->GetModelName());
+		m_pPlayerModelPanel->ClearMergeMDLs();
 		//m_pPlayerModelPanel->SetSkin(0);
+
+		CEconItemView* pPlayerModelItem = GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY, GetTFInventory()->GetWeaponPreset( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY ) );
+		MDLHandle_t hMDL = mdlcache->FindMDL( pPlayerModelItem->GetWorldDisplayModel() );
+		if ( hMDL != MDLHANDLE_INVALID )
+		{
+			m_pPlayerModelPanel->SetMergeMDL( hMDL );
+		}
 	}
 
 	// set our weapon panels to the items for our class from CTFInventory
-	// TODO: right now this will only get the first item for the class' slot
-	// instead of the user preset (which we cant set anyway rn, no item selection panel)
-	// see CTFInventory::Get/SetWeaponPreset
-
 	/////////////////
 	// PRIMARY SLOT
 	/////////////////
