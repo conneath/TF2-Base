@@ -205,6 +205,26 @@ enum
 	TF_AMMO_COUNT
 };
 
+extern const char* g_AnimSlots[];
+extern const char* g_LoadoutSlots[];
+
+//-----------------------------------------------------------------------------
+// Loadout slots
+//-----------------------------------------------------------------------------
+enum
+{
+	TF_LOADOUT_SLOT_PRIMARY = 0,
+	TF_LOADOUT_SLOT_SECONDARY,
+	TF_LOADOUT_SLOT_MELEE,
+	TF_LOADOUT_SLOT_PDA1, // Engi's Construction PDA, Spy's Disguise Kit
+	TF_LOADOUT_SLOT_PDA2, // Engi's Destruction PDA
+	TF_LOADOUT_SLOT_BUILDING, // Engi's Toolbox/Builder, Spy's Sapper
+	//TF_LOADOUT_SLOT_HAT,
+	//TF_LOADOUT_SLOT_MISC,
+	//TF_LOADOUT_SLOT_ACTION,
+	TF_LOADOUT_SLOT_COUNT
+};
+
 //-----------------------------------------------------------------------------
 // Grenade Launcher mode (for pipebombs).
 //-----------------------------------------------------------------------------
@@ -225,6 +245,7 @@ enum
 	TF_WPN_TYPE_GRENADE,
 	TF_WPN_TYPE_BUILDING,
 	TF_WPN_TYPE_PDA,
+	TF_WPN_TYPE_COUNT
 };
 
 extern const char *g_aAmmoNames[];
@@ -327,6 +348,7 @@ int GetWeaponFromDamage( const CTakeDamageInfo &info );
 int GetBuildableId( const char *pszBuildableName );
 const char *WeaponIdToAlias( int iWeapon );
 const char *WeaponIdToClassname( int iWeapon );
+const char* TranslateWeaponEntForClass( const char* pszName, int iClass );
 
 enum
 {
@@ -372,13 +394,14 @@ enum
 	TF_COND_ZOOMED,
 	TF_COND_DISGUISING,
 	TF_COND_DISGUISED,
-	TF_COND_STEALTHED,
-	TF_COND_INVULNERABLE,
-	TF_COND_TELEPORTED,
+	TF_COND_STEALTHED,		// Spy cloak
+	TF_COND_INVULNERABLE,	// Stock Uber
+	TF_COND_TELEPORTED,		// Used for teleporter particles
 	TF_COND_TAUNTING,
 	TF_COND_INVULNERABLE_WEARINGOFF,
 	TF_COND_STEALTHED_BLINK,
 	TF_COND_SELECTED_TO_TELEPORT,
+	TF_COND_CRITBOOSTED,	// Applied by Kritzkrieg
 
 	// The following conditions all expire faster when the player is being healed
 	// If you add a new condition that shouldn't have this behavior, add it before this section.

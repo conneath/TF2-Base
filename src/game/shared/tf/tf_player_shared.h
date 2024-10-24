@@ -118,6 +118,8 @@ public:
 
 	// check the newly networked conditions for changes
 	void	UpdateConditions( void );
+
+	void	UpdateCritBoostEffect( void );
 #endif
 
 	bool	IsInvulnerable( void );
@@ -154,7 +156,7 @@ public:
 #ifdef GAME_DLL
 	void	Heal( CTFPlayer *pPlayer, float flAmount, bool bDispenserHeal = false );
 	void	StopHealing( CTFPlayer *pPlayer );
-	void	RecalculateInvuln( bool bInstantRemove = false );
+	void	RecalculateInvuln( bool bInstantRemove = false, bool bCritboost = false );
 	int		FindHealerIndex( CTFPlayer *pPlayer );
 	EHANDLE	GetFirstHealer();
 #endif
@@ -216,12 +218,14 @@ private:
 	void OnAddBurning( void );
 	void OnAddDisguising( void );
 	void OnAddDisguised( void );
+	void OnAddCritBoost( void );
 
 	void OnRemoveZoomed( void );
 	void OnRemoveBurning( void );
 	void OnRemoveStealthed( void );
 	void OnRemoveDisguised( void );
 	void OnRemoveDisguising( void );
+	void OnRemoveCritBoost( void );
 	void OnRemoveInvulnerable( void );
 	void OnRemoveTeleported( void );
 
@@ -234,8 +238,8 @@ private:
 	int	  GetNumKillsInTime( float flTime );
 
 	// Invulnerable.
-	bool  IsProvidingInvuln( CTFPlayer *pPlayer );
-	void  SetInvulnerable( bool bState, bool bInstant = false );
+	bool  IsProvidingInvuln( CTFPlayer *pPlayer, bool &bShouldbeCritboost );
+	void  SetInvulnerable( bool bState, bool bInstant = false, bool bCritboost = false );
 #endif
 
 private:

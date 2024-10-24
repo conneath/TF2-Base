@@ -125,6 +125,34 @@ const char *g_aGameTypeNames[] =
 };
 
 //-----------------------------------------------------------------------------
+// Weapon Types
+//-----------------------------------------------------------------------------
+const char* g_AnimSlots[] =
+{
+	"primary",
+	"secondary",
+	"melee",
+	"grenade",
+	"building",
+	"pda",
+	"item1",
+	"item2",
+	"MELEE_ALLCLASS",
+	"secondary2",
+	"primary2"
+};
+
+const char* g_LoadoutSlots[] =
+{
+	"primary",
+	"secondary",
+	"melee",
+	"pda",
+	"pda2",
+	"building"
+};
+
+//-----------------------------------------------------------------------------
 // Ammo.
 //-----------------------------------------------------------------------------
 const char *g_aAmmoNames[] =
@@ -135,6 +163,47 @@ const char *g_aAmmoNames[] =
 	"TF_AMMO_METAL",
 	"TF_AMMO_GRENADES1",
 	"TF_AMMO_GRENADES2"
+};
+
+struct pszWpnEntTranslationListEntry
+{
+	const char* weapon_name;
+	const char* padding;
+	const char* weapon_scout;
+	const char* weapon_sniper;
+	const char* weapon_soldier;
+	const char* weapon_demoman;
+	const char* weapon_medic;
+	const char* weapon_heavyweapons;
+	const char* weapon_pyro;
+	const char* weapon_spy;
+	const char* weapon_engineer;
+};
+static pszWpnEntTranslationListEntry pszWpnEntTranslationList[] =
+{
+	"tf_weapon_shotgun",			// Base weapon to translate
+	NULL,
+	"tf_weapon_shotgun_primary",	// Scout
+	"tf_weapon_shotgun_primary",	// Sniper
+	"tf_weapon_shotgun_soldier",	// Soldier
+	"tf_weapon_shotgun_primary",	// Demoman
+	"tf_weapon_shotgun_primary",	// Medic
+	"tf_weapon_shotgun_hwg",		// Heavy
+	"tf_weapon_shotgun_pyro",		// Pyro
+	"tf_weapon_shotgun_primary",	// Spy
+	"tf_weapon_shotgun_primary",	// Engineer
+
+	"tf_weapon_pistol",				// Base weapon to translate
+	NULL,
+	"tf_weapon_pistol_scout",		// Scout
+	"tf_weapon_pistol",				// Sniper
+	"tf_weapon_pistol",				// Soldier
+	"tf_weapon_pistol",				// Demoman
+	"tf_weapon_pistol",				// Medic
+	"tf_weapon_pistol",				// Heavy
+	"tf_weapon_pistol",				// Pyro
+	"tf_weapon_pistol",				// Spy
+	"tf_weapon_pistol",				// Engineer
 };
 
 //-----------------------------------------------------------------------------
@@ -385,6 +454,24 @@ const char *WeaponIdToClassname( int iWeapon )
 	return szClassname;
 }
 
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+const char* TranslateWeaponEntForClass( const char* pszName, int iClass )
+{
+	if ( pszName )
+	{
+		for ( int i = 0; i < ARRAYSIZE( pszWpnEntTranslationList ); i++ )
+		{
+			if ( V_stricmp( pszName, pszWpnEntTranslationList[i].weapon_name ) == 0 )
+			{
+				return ((const char**)&(pszWpnEntTranslationList[i]))[1 + iClass];
+			}
+		}
+	}
+	return pszName;
+}
+
 #ifdef GAME_DLL
 
 //-----------------------------------------------------------------------------
@@ -395,7 +482,38 @@ int GetWeaponFromDamage( const CTakeDamageInfo &info )
 	int iWeapon = TF_WEAPON_NONE;
 
 	// Work out what killed the player, and send a message to all clients about it
-	const char *killer_weapon_name = TFGameRules()->GetKillingWeaponName( info, NULL );
+	//const char *killer_weapon_name = TFGameRules()->GetKillingWeaponName( info, NULL );
+	const char* killer_weapon_name = "";
+
+	// Find the killer & the scorer
+	CBaseEntity* pInflictor = info.GetInflictor();
+	CBaseEntity* pKiller = info.GetAttacker();
+	CBasePlayer* pScorer = TFGameRules()->GetDeathScorer( pKiller, pInflictor, NULL );
+
+	// find the weapon the killer used
+
+	if ( pScorer )	// Is the killer a client?
+	{
+		if ( pInflictor )
+		{
+			if ( pInflictor == pScorer )
+			{
+				// If the inflictor is the killer,  then it must be their current weapon doing the damage
+				if ( pScorer->GetActiveWeapon() )
+				{
+					killer_weapon_name = pScorer->GetActiveWeapon()->GetClassname();
+				}
+			}
+			else
+			{
+				killer_weapon_name = STRING( pInflictor->m_iClassname );  // it's just that easy
+			}
+		}
+	}
+	else if ( pInflictor )
+	{
+		killer_weapon_name = STRING( pInflictor->m_iClassname );
+	}
 
 	if ( !Q_strnicmp( killer_weapon_name, "tf_projectile", 13 ) )
 	{

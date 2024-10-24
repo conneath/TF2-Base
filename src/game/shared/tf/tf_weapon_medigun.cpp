@@ -153,6 +153,8 @@ void CWeaponMedigun::WeaponReset( void )
 
 	RemoveHealingTarget( true );
 
+	//CALL_ATTRIB_HOOK_INT( m_bIsKritzkrieg, mod_charge_type ); // Is medigun charge crit boost?
+
 #if defined( CLIENT_DLL )
 	m_bPlayingSound = false;
 	m_bUpdateHealingTargets = false;
@@ -190,6 +192,9 @@ void CWeaponMedigun::Precache()
 //-----------------------------------------------------------------------------
 bool CWeaponMedigun::Deploy( void )
 {
+	// i really want to use a bool, okay?
+	m_bIsKritzkrieg = CAttributeManager::AttribHookValue<int>( m_bIsKritzkrieg, "mod_charge_type", this ) ? true : false;
+
 	if ( BaseClass::Deploy() )
 	{
 		m_bHolstered = false;
@@ -501,6 +506,14 @@ void CWeaponMedigun::HealTargetThink( void )
 
 	SetNextThink( gpGlobals->curtime + 0.2f, s_pszMedigunHealTargetThink );
 }
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void CWeaponMedigun::AddCharge( float flPercentage )
+{
+	m_flChargeLevel = MIN( m_flChargeLevel + flPercentage, 1.0 );
+}
 #endif
 
 //-----------------------------------------------------------------------------
@@ -574,6 +587,8 @@ bool CWeaponMedigun::FindAndHealTargets( void )
 					{
 						flChargeAmount /= (float)iTotalHealers;
 					}
+
+					CALL_ATTRIB_HOOK_FLOAT( flChargeAmount, mod_uberchargerate );
 
 					float flNewLevel = min( m_flChargeLevel + flChargeAmount, 1.0 );
 #ifdef GAME_DLL

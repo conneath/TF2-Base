@@ -53,6 +53,7 @@
 #include "in_main.h"
 #include "c_team.h"
 #include "collisionutils.h"
+#include "tf_inventory.h"
 // for spy material proxy
 #include "proxyentity.h"
 #include "materialsystem/imaterial.h"
@@ -1001,7 +1002,8 @@ C_TFPlayer::C_TFPlayer() :
 	m_flBurnEffectEndTime = 0;
 	m_pDisguisingEffect = NULL;
 	m_pSaveMeEffect = NULL;
-	
+	m_pCritBoostEffect = NULL;
+
 	m_aGibs.Purge();
 
 	m_bCigaretteSmokeActive = false;
@@ -1190,6 +1192,7 @@ void C_TFPlayer::OnPreDataChanged( DataUpdateType_t updateType )
 	m_bDisguised = m_Shared.InCond( TF_COND_DISGUISED );
 	m_iOldDisguiseTeam = m_Shared.GetDisguiseTeam();
 	m_iOldDisguiseClass = m_Shared.GetDisguiseClass();
+	m_hOldActiveWeapon.Set( GetActiveTFWeapon() );
 
 	m_Shared.OnPreDataChanged();
 }
@@ -1217,6 +1220,24 @@ void C_TFPlayer::OnDataChanged( DataUpdateType_t updateType )
 		{
 			InitInvulnerableMaterial();
 			m_bUpdatePartyHat = true;
+		}
+	}
+
+	// Update viewmodel when we switch classes because for some reason we don't already do this?
+	// INVESTIGATE: why is this code in TF2C but not in live? why does live not need to do something like this
+	CTFWeaponBase* pActiveWpn = GetActiveTFWeapon();
+	if ( pActiveWpn )
+	{
+		if ( m_hOldActiveWeapon.Get() == NULL ||
+			pActiveWpn != m_hOldActiveWeapon.Get() ||
+			m_iOldPlayerClass != m_PlayerClass.GetClassIndex() )
+		{
+			pActiveWpn->SetViewModel();
+
+			//if ( ShouldDrawThisPlayer() )
+			//{
+				//m_Shared.UpdateCritBoostEffect();
+			//}
 		}
 	}
 
@@ -2959,6 +2980,8 @@ void C_TFPlayer::ClientPlayerRespawn( void )
 
 		// Release the duck toggle key
 		KeyUp( &in_ducktoggle, NULL ); 
+
+		LoadInventory();
 	}
 
 	UpdateVisibility();
@@ -3077,7 +3100,7 @@ void C_TFPlayer::SetHealer( C_TFPlayer *pHealer, float flChargeLevel )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-float C_TFPlayer::MedicGetChargeLevel( void )
+float C_TFPlayer::MedicGetChargeLevel( CTFWeaponBase** pRetMedigun )
 {
 	if ( IsPlayerClass(TF_CLASS_MEDIC) )
 	{
@@ -3087,6 +3110,11 @@ float C_TFPlayer::MedicGetChargeLevel( void )
 			return 0;
 
 		CWeaponMedigun *pWeapon = dynamic_cast <CWeaponMedigun*>( pWpn );
+
+		if ( pRetMedigun )
+		{
+			*pRetMedigun = pWeapon;
+		}
 
 		if ( pWeapon )
 			return pWeapon->GetChargeLevel();
@@ -3199,11 +3227,31 @@ void C_TFPlayer::Simulate( void )
 }
 
 //-----------------------------------------------------------------------------
+// Purpose: Tell the server what our weapon presets are for each slot in each class
+// There are probably better ways to do this tbh but hey it worked for tf2c
+//-----------------------------------------------------------------------------
+void C_TFPlayer::LoadInventory( void )
+{
+	for ( int iClass = 0; iClass <= TF_CLASS_ENGINEER; iClass++ )
+	{
+		for ( int iSlot = 0; iSlot < TF_LOADOUT_SLOT_COUNT; iSlot++ )
+		{
+			int iPreset = GetTFInventory()->GetWeaponPreset( iClass, iSlot );
+			char szCmd[64];
+			Q_snprintf( szCmd, sizeof( szCmd ), "weaponpresetclass %d %d %d;", iClass, iSlot, iPreset );
+			engine->ExecuteClientCmd( szCmd );
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
 void C_TFPlayer::FireEvent( const Vector& origin, const QAngle& angles, int event, const char *options )
 {
-	if ( event == 7001 )
+	switch ( event )
+	{
+	case 5001:
 	{
 		// Force a footstep sound
 		m_flStepSoundTime = 0;
@@ -3211,21 +3259,35 @@ void C_TFPlayer::FireEvent( const Vector& origin, const QAngle& angles, int even
 		EstimateAbsVelocity( vel );
 		UpdateStepSound( GetGroundSurface(), GetAbsOrigin(), vel );
 	}
-	else if ( event == AE_WPN_HIDE )
+		break;
+	case AE_WPN_HIDE:
 	{
 		if ( GetActiveWeapon() )
 		{
 			GetActiveWeapon()->SetWeaponVisible( false );
 		}
 	}
-	else if ( event == AE_WPN_UNHIDE )
+		break;
+	case AE_WPN_UNHIDE:
 	{
 		if ( GetActiveWeapon() )
 		{
 			GetActiveWeapon()->SetWeaponVisible( true );
 		}
 	}
-	else if ( event == TF_AE_CIGARETTE_THROW )
+		break;
+	// conn: Used only by the Medic's violin taunt (it plays the TAUNT weapon sound, and the ubersaw changes that)
+	case AE_WPN_PLAYWPNSOUND:
+	{
+		if ( GetActiveWeapon() )
+		{
+			int iSnd = GetWeaponSoundFromString( options );
+			if ( iSnd != -1 )
+				GetActiveWeapon()->WeaponSound( (WeaponSound_t)iSnd );
+		}
+	}
+		break;
+	case TF_AE_CIGARETTE_THROW:
 	{
 		CEffectData data;
 		int iAttach = LookupAttachment( options );
@@ -3235,10 +3297,14 @@ void C_TFPlayer::FireEvent( const Vector& origin, const QAngle& angles, int even
 
 		data.m_hEntity = ClientEntityList().EntIndexToHandle( entindex() );
 		DispatchEffect( "TF_ThrowCigarette", data );
-		return;
 	}
-	else
+		break;
+	default:
+	{
 		BaseClass::FireEvent( origin, angles, event, options );
+	}
+		break;
+	}
 }
 
 // Shadows

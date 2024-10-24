@@ -421,7 +421,9 @@ void CTFPlayerShared::OnConditionAdded( int nCond )
 	case TF_COND_BURNING:
 		OnAddBurning();
 		break;
-
+	case TF_COND_CRITBOOSTED:
+		OnAddCritBoost();
+		break;
 	case TF_COND_DISGUISING:
 		OnAddDisguising();
 		break;
@@ -480,7 +482,9 @@ void CTFPlayerShared::OnConditionRemoved( int nCond )
 	case TF_COND_DISGUISING:
 		OnRemoveDisguising();
 		break;
-
+	case TF_COND_CRITBOOSTED:
+		OnRemoveCritBoost();
+		break;
 	case TF_COND_INVULNERABLE:
 		OnRemoveInvulnerable();
 		break;
@@ -722,7 +726,7 @@ void CTFPlayerShared::ConditionGameRulesThink( void )
 		}
 	}
 
-	if ( InCond( TF_COND_INVULNERABLE )  )
+	if ( InCond( TF_COND_INVULNERABLE ) || InCond( TF_COND_CRITBOOSTED )  )
 	{
 		bool bRemoveInvul = false;
 
@@ -744,6 +748,7 @@ void CTFPlayerShared::ConditionGameRulesThink( void )
 			m_flInvulnerableOffTime = 0;
 			RemoveCond( TF_COND_INVULNERABLE_WEARINGOFF );
 			RemoveCond( TF_COND_INVULNERABLE );
+			RemoveCond( TF_COND_CRITBOOSTED );
 		}
 	}
 
@@ -897,6 +902,116 @@ void CTFPlayerShared::OnRemoveInvulnerable( void )
 	}
 #endif
 }
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTFPlayerShared::OnAddCritBoost( void )
+{
+#ifdef CLIENT_DLL
+	UpdateCritBoostEffect();
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTFPlayerShared::OnRemoveCritBoost( void )
+{
+#ifdef CLIENT_DLL
+	UpdateCritBoostEffect();
+#endif
+}
+
+#ifdef CLIENT_DLL
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTFPlayerShared::UpdateCritBoostEffect( void )
+{
+	bool bShouldDisplayCritBoostEffect = InCond( TF_COND_CRITBOOSTED );
+
+	// Never show crit boost effects when stealthed
+	bShouldDisplayCritBoostEffect &= !IsStealthed();
+
+	// Never show crit boost effects when disguised unless we're the local player (so crits show on our viewmodel)
+	if ( !m_pOuter->IsLocalPlayer() )
+	{
+		bShouldDisplayCritBoostEffect &= !InCond( TF_COND_DISGUISED );
+	}
+	if ( !bShouldDisplayCritBoostEffect )
+	{
+		if ( m_pOuter->m_pCritBoostEffect )
+		{
+			Assert( m_pOuter->m_pCritBoostEffect->IsValid() );
+			if ( m_pOuter->m_pCritBoostEffect->GetOwner() )
+			{
+				m_pOuter->m_pCritBoostEffect->GetOwner()->ParticleProp()->StopEmissionAndDestroyImmediately( m_pOuter->m_pCritBoostEffect );
+			}
+			else
+			{
+				m_pOuter->m_pCritBoostEffect->StopEmission();
+			}
+
+			m_pOuter->m_pCritBoostEffect = NULL;
+		}
+	}
+
+	// Should we have an active crit effect?
+	if ( bShouldDisplayCritBoostEffect )
+	{
+		CBaseEntity* pWeapon = NULL;
+		// Use GetRenderedWeaponModel() instead?
+		if ( m_pOuter->IsLocalPlayer() )
+		{
+			pWeapon = m_pOuter->GetViewModel( 0 );
+		}
+		else
+		{
+			// is this player an enemy?
+			if ( m_pOuter->GetTeamNumber() != GetLocalPlayerTeam() )
+			{
+				// are they a cloaked spy? or disguised as someone who almost assuredly isn't also critboosted?
+				if ( IsStealthed() || InCond( TF_COND_STEALTHED_BLINK ) || InCond( TF_COND_DISGUISED ) )
+					return;
+			}
+
+			pWeapon = m_pOuter->GetActiveWeapon();
+		}
+
+		if ( pWeapon )
+		{
+			if ( !m_pOuter->m_pCritBoostEffect )
+			{
+				if ( InCond( TF_COND_DISGUISED ) && !m_pOuter->IsLocalPlayer() && m_pOuter->GetTeamNumber() != GetLocalPlayerTeam() )
+				{
+					const char* pEffectName = (GetDisguiseTeam() == TF_TEAM_RED) ? "critgun_weaponmodel_red" : "critgun_weaponmodel_blu";
+					m_pOuter->m_pCritBoostEffect = pWeapon->ParticleProp()->Create( pEffectName, PATTACH_ABSORIGIN_FOLLOW );
+				}
+				else
+				{
+					const char* pEffectName = (m_pOuter->GetTeamNumber() == TF_TEAM_RED) ? "critgun_weaponmodel_red" : "critgun_weaponmodel_blu";
+					m_pOuter->m_pCritBoostEffect = pWeapon->ParticleProp()->Create( pEffectName, PATTACH_ABSORIGIN_FOLLOW );
+				}
+
+				if ( m_pOuter->IsLocalPlayer() )
+				{
+					if ( m_pOuter->m_pCritBoostEffect )
+					{
+						ClientLeafSystem()->SetRenderGroup( m_pOuter->m_pCritBoostEffect->RenderHandle(), RENDER_GROUP_VIEW_MODEL_TRANSLUCENT );
+					}
+				}
+			}
+			else
+			{
+				m_pOuter->m_pCritBoostEffect->StartEmission();
+			}
+
+			Assert( m_pOuter->m_pCritBoostEffect->IsValid() );
+		}
+	}
+}
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -1527,7 +1642,7 @@ void CTFPlayerShared::StopHealing( CTFPlayer *pPlayer )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool CTFPlayerShared::IsProvidingInvuln( CTFPlayer *pPlayer )
+bool CTFPlayerShared::IsProvidingInvuln( CTFPlayer *pPlayer, bool& bShouldbeCritboost )
 {
 	if ( !pPlayer->IsPlayerClass(TF_CLASS_MEDIC) )
 		return false;
@@ -1538,7 +1653,10 @@ bool CTFPlayerShared::IsProvidingInvuln( CTFPlayer *pPlayer )
 
 	CWeaponMedigun *pMedigun = dynamic_cast<CWeaponMedigun*>(pWpn);
 	if ( pMedigun && pMedigun->IsReleasingCharge() )
+	{
+		bShouldbeCritboost = pMedigun->IsKritzkrieg();
 		return true;
+	}
 
 	return false;
 }
@@ -1546,7 +1664,7 @@ bool CTFPlayerShared::IsProvidingInvuln( CTFPlayer *pPlayer )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CTFPlayerShared::RecalculateInvuln( bool bInstantRemove )
+void CTFPlayerShared::RecalculateInvuln( bool bInstantRemove, bool bCritboost )
 {
 	bool bShouldBeInvuln = false;
 
@@ -1559,7 +1677,7 @@ void CTFPlayerShared::RecalculateInvuln( bool bInstantRemove )
 	// who's generating invuln, then we should get invuln.
 	if ( !m_pOuter->HasTheFlag() )
 	{
-		if ( IsProvidingInvuln( m_pOuter ) )
+		if ( IsProvidingInvuln( m_pOuter, bCritboost ) )
 		{
 			bShouldBeInvuln = true;
 		}
@@ -1574,7 +1692,7 @@ void CTFPlayerShared::RecalculateInvuln( bool bInstantRemove )
 				if ( !pPlayer )
 					continue;
 
-				if ( IsProvidingInvuln( pPlayer ) )
+				if ( IsProvidingInvuln( pPlayer, bCritboost ) )
 				{
 					bShouldBeInvuln = true;
 					break;
@@ -1583,15 +1701,15 @@ void CTFPlayerShared::RecalculateInvuln( bool bInstantRemove )
 		}
 	}
 
-	SetInvulnerable( bShouldBeInvuln, bInstantRemove );
+	SetInvulnerable( bShouldBeInvuln, bInstantRemove, bCritboost );
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CTFPlayerShared::SetInvulnerable( bool bState, bool bInstant )
+void CTFPlayerShared::SetInvulnerable( bool bState, bool bInstant, bool bCritboost )
 {
-	bool bCurrentState = InCond( TF_COND_INVULNERABLE );
+	bool bCurrentState = InCond( TF_COND_INVULNERABLE ) || InCond( TF_COND_CRITBOOSTED );
 	if ( bCurrentState == bState )
 	{
 		if ( bState && m_flInvulnerableOffTime )
@@ -1615,7 +1733,10 @@ void CTFPlayerShared::SetInvulnerable( bool bState, bool bInstant )
 		}
 
 		// Invulnerable turning on
-		AddCond( TF_COND_INVULNERABLE );
+		if ( !bCritboost )
+			AddCond( TF_COND_INVULNERABLE );
+		else
+			AddCond( TF_COND_CRITBOOSTED );
 
 		// remove any persistent damaging conditions
 		if ( InCond( TF_COND_BURNING ) )
@@ -1638,16 +1759,21 @@ void CTFPlayerShared::SetInvulnerable( bool bState, bool bInstant )
 		{
 			m_flInvulnerableOffTime = 0;
 			RemoveCond( TF_COND_INVULNERABLE );
+			RemoveCond( TF_COND_CRITBOOSTED );
 			RemoveCond( TF_COND_INVULNERABLE_WEARINGOFF );
 		}
 		else
 		{
+			RemoveCond( TF_COND_CRITBOOSTED );
 			// We're already in the process of turning it off
 			if ( m_flInvulnerableOffTime )
 				return;
-
-			AddCond( TF_COND_INVULNERABLE_WEARINGOFF );
-			m_flInvulnerableOffTime = gpGlobals->curtime + tf_invuln_time.GetFloat();
+			if( !bCritboost )
+				AddCond( TF_COND_INVULNERABLE_WEARINGOFF );
+			if ( bCritboost )
+				m_flInvulnerableOffTime = gpGlobals->curtime;
+			else
+				m_flInvulnerableOffTime = gpGlobals->curtime + tf_invuln_time.GetFloat();
 		}
 	}
 }
@@ -2884,3 +3010,34 @@ CTFWeaponBase *CTFPlayer::Weapon_GetWeaponByType( int iType )
 
 }
 
+CEconEntity* CTFPlayer::GetEntityForLoadoutSlot( int iSlot )
+{
+	//if ( iSlot >= TF_LOADOUT_SLOT_HAT )
+	//{
+		// Weapons don't get equipped in cosmetic slots.
+	//	return GetWearableForLoadoutSlot( iSlot );
+	//}
+
+	int iClass = m_PlayerClass.GetClassIndex();
+
+	for ( int i = 0; i < WeaponCount(); i++ )
+	{
+		CBaseCombatWeapon* pWeapon = GetWeapon( i );
+		if ( !pWeapon )
+			continue;
+
+		CEconItemDefinition* pItemDef = pWeapon->GetItem()->GetStaticData();
+
+		if ( pItemDef && pItemDef->GetLoadoutSlot( iClass ) == iSlot )
+		{
+			return pWeapon;
+		}
+	}
+
+	// Wearable?
+	//CEconWearable* pWearable = GetWearableForLoadoutSlot( iSlot );
+	//if ( pWearable )
+	//	return pWearable;
+
+	return NULL;
+}

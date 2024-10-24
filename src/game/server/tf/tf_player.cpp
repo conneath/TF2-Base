@@ -57,6 +57,7 @@
 #include "tf_obj_sentrygun.h"
 #include "tf_weapon_pipebomblauncher.h"
 #include "movevars_shared.h"
+#include "tf_inventory.h"
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -390,6 +391,8 @@ CTFPlayer::CTFPlayer()
 	m_bInitTaunt = false;
 
 	m_bSpeakingConceptAsDisguisedSpy = false;
+
+	memset( m_WeaponPreset, 0, TF_CLASS_COUNT_ALL * TF_LOADOUT_SLOT_COUNT * sizeof( int ) ); // clear weapon preset array
 }
 
 
@@ -796,6 +799,12 @@ void CTFPlayer::PrecachePlayerModels( void )
 			{
 				PrecacheModel( pszHWMModel );
 			}
+
+			const char* pszHandModel = GetPlayerClassData( i )->m_szModelHandsName;
+			if ( pszHandModel && pszHandModel[0] )
+			{
+				PrecacheModel( pszHandModel );
+			}
 		}
 	}
 	
@@ -1118,6 +1127,32 @@ void CTFPlayer::SendOffHandViewModelActivity( Activity activity )
 }
 
 //-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+bool CTFPlayer::ItemsMatch( CEconItemView* pItem1, CEconItemView* pItem2, CTFWeaponBase* pWeapon )
+{
+	if ( pItem1 && pItem2 )
+	{
+		if ( pItem1->GetItemDefIndex() != pItem2->GetItemDefIndex() )
+			return false;
+
+		// Item might have different entities for each class (i.e. shotgun).
+		if ( pWeapon )
+		{
+			int iClass = m_PlayerClass.GetClassIndex();
+			const char* pszClassname = TranslateWeaponEntForClass( pItem1->GetEntityName(), iClass );
+
+			if ( !FClassnameIs( pWeapon, pszClassname ) )
+				return false;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: Set the player up with the default weapons, ammo, etc.
 //-----------------------------------------------------------------------------
 void CTFPlayer::GiveDefaultItems()
@@ -1138,6 +1173,13 @@ void CTFPlayer::GiveDefaultItems()
 
 	// Give a builder weapon for each object the playerclass is allowed to build
 	ManageBuilderWeapons( pData );
+
+	if ( m_bRegenerating == false )
+	{
+		SetActiveWeapon( NULL );
+		Weapon_Switch( Weapon_GetSlot( 0 ) );
+		Weapon_SetLast( Weapon_GetSlot( 1 ) );
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -1200,65 +1242,83 @@ void CTFPlayer::ManageBuilderWeapons( TFPlayerClassData_t *pData )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CTFPlayer::ManageRegularWeapons( TFPlayerClassData_t *pData )
+void CTFPlayer::ValidateWeapons( bool bRegenerate )
 {
-	for ( int iWeapon = 0; iWeapon < TF_PLAYER_WEAPON_COUNT; ++iWeapon )
+	int iClass = m_PlayerClass.GetClassIndex();
+
+	for ( int i = 0; i < WeaponCount(); i++ )
 	{
-		if ( pData->m_aWeapons[iWeapon] != TF_WEAPON_NONE )
+		CTFWeaponBase* pWeapon = static_cast<CTFWeaponBase*>(GetWeapon( i ));
+		if ( !pWeapon )
+			continue;
+
+		// Skip builder as we'll handle it separately.
+		if ( pWeapon->IsWeapon( TF_WEAPON_BUILDER ) )
+			continue;
+
+		CEconItemDefinition* pItemDef = pWeapon->GetItem()->GetStaticData();
+
+		if ( pItemDef )
 		{
-			int iWeaponID = pData->m_aWeapons[iWeapon];
-			const char *pszWeaponName = WeaponIdToClassname( iWeaponID );
+			int iSlot = pItemDef->GetLoadoutSlot( iClass );
+			CEconItemView* pLoadoutItem = GetLoadoutItem( iClass, iSlot );
 
-			CTFWeaponBase *pWeapon = (CTFWeaponBase *)GetWeapon( iWeapon );
-
-			//If we already have a weapon in this slot but is not the same type then nuke it (changed classes)
-			if ( pWeapon && pWeapon->GetWeaponID() != iWeaponID )
+			if ( !ItemsMatch( pWeapon->GetItem(), pLoadoutItem, pWeapon ) )
 			{
-				Weapon_Detach( pWeapon );
-				UTIL_Remove( pWeapon );
+				// If this is not a weapon we're supposed to have in this loadout slot then nuke it.
+				// Either changed class or changed loadout.
+				pWeapon->UnEquip( this );
 			}
-
-			pWeapon = (CTFWeaponBase *)Weapon_OwnsThisID( iWeaponID );
-
-			if ( pWeapon )
+			else if ( bRegenerate )
 			{
 				pWeapon->ChangeTeam( GetTeamNumber() );
 				pWeapon->GiveDefaultAmmo();
-	
+
 				if ( m_bRegenerating == false )
 				{
 					pWeapon->WeaponReset();
 				}
 			}
-			else
-			{
-				pWeapon = (CTFWeaponBase *)GiveNamedItem( pszWeaponName );
-
-				if ( pWeapon )
-				{
-					pWeapon->DefaultTouch( this );
-				}
-			}
 		}
 		else
 		{
-			//I shouldn't have any weapons in this slot, so get rid of it
-			CTFWeaponBase *pCarriedWeapon = (CTFWeaponBase *)GetWeapon( iWeapon );
-
-			//Don't nuke builders since they will be nuked if we don't need them later.
-			if ( pCarriedWeapon && pCarriedWeapon->GetWeaponID() != TF_WEAPON_BUILDER )
-			{
-				Weapon_Detach( pCarriedWeapon );
-				UTIL_Remove( pCarriedWeapon );
-			}
+			// Nuke any weapons without item definitions, they're evil!
+			pWeapon->UnEquip( this );
 		}
 	}
+}
 
-	if ( m_bRegenerating == false )
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTFPlayer::ManageRegularWeapons( TFPlayerClassData_t *pData )
+{
+	ValidateWeapons( true );
+	//ValidateWearables();
+
+	for ( int iSlot = 0; iSlot < TF_PLAYER_WEAPON_COUNT; ++iSlot )
 	{
-		SetActiveWeapon( NULL );
-		Weapon_Switch( Weapon_GetSlot( 0 ) );
-		Weapon_SetLast( Weapon_GetSlot( 1 ) );
+		if ( GetEntityForLoadoutSlot( iSlot ) != NULL )
+		{
+			// Nothing to do here.
+			continue;
+		}
+
+		// Give us an item from the inventory.
+		CEconItemView* pItem = GetLoadoutItem( m_PlayerClass.GetClassIndex(), iSlot );
+
+		if ( pItem )
+		{
+			const char* pszClassname = pItem->GetEntityName();
+			Assert( pszClassname );
+
+			CEconEntity* pEntity = dynamic_cast<CEconEntity*>(GiveNamedItem( pszClassname, 0, pItem ));
+
+			if ( pEntity )
+			{
+				pEntity->GiveTo( this );
+			}
+		}
 	}
 }
 
@@ -1906,6 +1966,22 @@ bool CTFPlayer::ClientCommand( const CCommand &args )
 		if ( args.ArgC() >= 2 )
 		{
 			HandleCommand_JoinClass( args[1] );
+		}
+		return true;
+	}
+	else if ( FStrEq( pcmd, "weaponpreset" ) )
+	{
+		if ( args.ArgC() >= 3 )
+		{
+			HandleCommand_WeaponPreset( abs( atoi( args[1] ) ), abs( atoi( args[2] ) ) );
+		}
+		return true;
+	}
+	else if ( FStrEq( pcmd, "weaponpresetclass" ) )
+	{
+		if ( args.ArgC() >= 4 )
+		{
+			HandleCommand_WeaponPreset( abs( atoi( args[1] ) ), abs( atoi( args[2] ) ), abs( atoi( args[3] ) ) );
 		}
 		return true;
 	}
@@ -2666,7 +2742,25 @@ int CTFPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 			return 0;
 		}
 	}
+	CBaseEntity* pAttacker = info.GetAttacker();
+	//CBaseEntity* pInflictor = info.GetInflictor();
+	CTFWeaponBase* pWeapon = NULL;
 
+	if ( inputInfo.GetWeapon() )
+	{
+		pWeapon = dynamic_cast<CTFWeaponBase*>(inputInfo.GetWeapon());
+	}
+	else if ( pAttacker && pAttacker->IsPlayer() )
+	{
+		// Assume that player used his currently active weapon.
+		pWeapon = ToTFPlayer( pAttacker )->GetActiveTFWeapon();
+	}
+
+	// Handle on-hit effects.
+	if ( pWeapon && pAttacker != this )
+	{
+		pWeapon->ApplyOnHitAttributes( this, info );
+	}
 	// If we're not damaging ourselves, apply randomness
 	if ( info.GetAttacker() != this && !(bitsDamage & (DMG_DROWN | DMG_FALL)) ) 
 	{
@@ -5084,6 +5178,91 @@ void CTFPlayer::RemoveDisguise( void )
 	{
 		m_Shared.RemoveDisguise();
 	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Get preset from the vector
+//-----------------------------------------------------------------------------
+CEconItemView* CTFPlayer::GetLoadoutItem( int iClass, int iSlot )
+{
+	int iPreset = m_WeaponPreset[iClass][iSlot];
+
+	return GetTFInventory()->GetItem( iClass, iSlot, iPreset );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: WeaponPreset command handle
+//-----------------------------------------------------------------------------
+void CTFPlayer::HandleCommand_WeaponPreset( int iSlotNum, int iPresetNum )
+{
+	int iClass = m_PlayerClass.GetClassIndex();
+
+	if ( !GetTFInventory()->CheckValidSlot( iClass, iSlotNum ) )
+		return;
+
+	if ( !GetTFInventory()->CheckValidWeapon( iClass, iSlotNum, iPresetNum ) )
+		return;
+
+	m_WeaponPreset[iClass][iSlotNum] = iPresetNum;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: WeaponPreset command handle
+//-----------------------------------------------------------------------------
+void CTFPlayer::HandleCommand_WeaponPreset( int iClass, int iSlotNum, int iPresetNum )
+{
+	if ( !GetTFInventory()->CheckValidSlot( iClass, iSlotNum ) )
+		return;
+
+	if ( !GetTFInventory()->CheckValidWeapon( iClass, iSlotNum, iPresetNum ) )
+		return;
+
+	m_WeaponPreset[iClass][iSlotNum] = iPresetNum;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Create and give the named item to the player, setting the item ID. Then return it.
+//-----------------------------------------------------------------------------
+CBaseEntity* CTFPlayer::GiveNamedItem( const char* pszName, int iSubType, CEconItemView* pItem )
+{
+	const char* pszEntName = TranslateWeaponEntForClass( pszName, m_PlayerClass.GetClassIndex() );
+
+	// If I already own this type don't create one
+	if ( Weapon_OwnsThisType( pszEntName ) )
+		return NULL;
+
+	CBaseEntity* pEntity = CreateEntityByName( pszEntName );
+
+	if ( pEntity == NULL )
+	{
+		Msg( "NULL Ent in GiveNamedItem!\n" );
+		return NULL;
+	}
+
+	CEconEntity* pEcon = dynamic_cast<CEconEntity*>(pEntity);
+	if ( pEcon && pItem )
+	{
+		pEcon->SetItem( *pItem );
+	}
+
+	pEntity->SetLocalOrigin( GetLocalOrigin() );
+	pEntity->AddSpawnFlags( SF_NORESPAWN );
+
+	CBaseCombatWeapon* pWeapon = pEntity->MyCombatWeaponPointer();
+	if ( pWeapon )
+	{
+		pWeapon->SetSubType( iSubType );
+	}
+
+	DispatchSpawn( pEntity );
+	pEntity->Activate();
+
+	if ( pEntity && !pEntity->IsMarkedForDeletion() )
+	{
+		pEntity->Touch( this );
+	}
+
+	return pEntity;
 }
 
 //-----------------------------------------------------------------------------

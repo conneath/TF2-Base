@@ -9,6 +9,9 @@
 #include "class_loadout_panel.h"
 #include "tf_playerclass_shared.h"
 #include "charinfo_loadout_subpanel.h"
+#include "item_model_panel.h"
+#include "tf_inventory.h"
+#include "vgui/IVGui.h"
 
 CClassLoadoutPanel* g_pClassLoadoutPanel = NULL;
 //-----------------------------------------------------------------------------
@@ -21,6 +24,10 @@ CClassLoadoutPanel::CClassLoadoutPanel( vgui::Panel* parent )
 	m_iCurrentTeamIndex = TF_TEAM_RED;
 	m_iCurrentSlotIndex = -1;
 	m_pPlayerModelPanel = NULL;
+	m_pPrimaryWeaponPanel = NULL;
+	m_pSecondaryWeaponPanel = NULL;
+	m_pMeleeWeaponPanel = NULL;
+
 	/*
 	m_pSelectionPanel = NULL;
 	m_pTauntHintLabel = NULL;
@@ -40,6 +47,8 @@ CClassLoadoutPanel::CClassLoadoutPanel( vgui::Panel* parent )
 	g_pClassLoadoutPanel = this;
 
 	//m_pItemOptionPanel = new CLoadoutItemOptionsPanel( this, "ItemOptionsPanel" );
+	m_pItemSelectionPanel = new CItemSelectionPanel( this );
+	m_pItemSelectionPanel->SetVisible( false );
 }
 
 CClassLoadoutPanel::~CClassLoadoutPanel()
@@ -59,7 +68,7 @@ CClassLoadoutPanel::~CClassLoadoutPanel()
 void CClassLoadoutPanel::ApplySchemeSettings( vgui::IScheme* pScheme )
 {
 	LoadControlSettings( "Resource/UI/FullLoadoutPanel.res" );
-
+	SetProportional( true );
 	BaseClass::ApplySchemeSettings( pScheme );
 
 	m_pPlayerModelPanel = dynamic_cast<CBaseModelPanel*>(FindChildByName( "classmodelpanel" ));
@@ -70,37 +79,21 @@ void CClassLoadoutPanel::ApplySchemeSettings( vgui::IScheme* pScheme )
 	FindChildByName( "InventoryCount1" )->SetVisible( false );
 	FindChildByName( "InventoryCount2" )->SetVisible( false );
 
-	FindChildByName( "ChangeButton0" )->SetVisible( false );
-	FindChildByName( "ChangeButton1" )->SetVisible( false );
-	FindChildByName( "ChangeButton2" )->SetVisible( false );
+	m_pChangeButtonPrimary = FindChildByName( "ChangeButton0" );
+	m_pChangeButtonPrimary->SetVisible( true );
+	FindChildByName( "ChangeButton1" )->SetVisible( true );
+	FindChildByName( "ChangeButton2" )->SetVisible( true );
+	m_pItemSelectionPanel->SetVisible( false );
+	// hardcoding ftw
+	m_pPrimaryWeaponPanel = dynamic_cast<CItemModelPanel*>(FindChildByName( "modelpanel0" ));
+	m_pSecondaryWeaponPanel = dynamic_cast<CItemModelPanel*>(FindChildByName( "modelpanel1" ));
+	m_pMeleeWeaponPanel = dynamic_cast<CItemModelPanel*>(FindChildByName( "modelpanel2" ));
+
 	// tell users no items exist yet for now
-	dynamic_cast<vgui::Label*>(FindChildByName( "NoneAvailableReason" ))->SetText( "#NoItemsExistLong" );
-
-	//m_pTopLinePanel = FindChildByName( "TopLine" ); where the fuck is this used lol
-	/*
-	if ( m_pPassiveAttribsLabel )
-	{
-		m_pPassiveAttribsLabel->SetMouseInputEnabled( false );
-	}
-	*/
-	//m_pMouseOverTooltip->SetPositioningStrategy( IPTTP_BOTTOM_SIDE );
-	/*
-	m_aDefaultColors[LOADED][FG][DEFAULT] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Econ.Button.PresetDefaultColorFg", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[LOADED][FG][ARMED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Econ.Button.PresetArmedColorFg", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[LOADED][FG][DEPRESSED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Econ.Button.PresetDepressedColorFg", Color( 255, 255, 255, 255 ) );
-
-	m_aDefaultColors[LOADED][BG][DEFAULT] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Econ.Button.PresetDefaultColorBg", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[LOADED][BG][ARMED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Econ.Button.PresetArmedColorBg", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[LOADED][BG][DEPRESSED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Econ.Button.PresetDepressedColorBg", Color( 255, 255, 255, 255 ) );
-
-	m_aDefaultColors[NOTLOADED][FG][DEFAULT] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Button.TextColor", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[NOTLOADED][FG][ARMED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Button.ArmedTextColor", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[NOTLOADED][FG][DEPRESSED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Button.DepressedTextColor", Color( 255, 255, 255, 255 ) );
-
-	m_aDefaultColors[NOTLOADED][BG][DEFAULT] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Button.BgColor", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[NOTLOADED][BG][ARMED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Button.ArmedBgColor", Color( 255, 255, 255, 255 ) );
-	m_aDefaultColors[NOTLOADED][BG][DEPRESSED] = vgui::scheme()->GetIScheme( GetScheme() )->GetColor( "Button.DepressedBgColor", Color( 255, 255, 255, 255 ) );
-	*/
+	//dynamic_cast<vgui::Label*>(FindChildByName( "NoneAvailableReason" ))->SetText( "#NoItemsExistLong" );
+	FindChildByName( "NoneAvailableReason" )->SetVisible( false );
+	FindChildByName( "NoneAvailableTitle" )->SetVisible( false );
+	FindChildByName( "NoneAvailableTitle2" )->SetVisible( false );
 }
 
 //-----------------------------------------------------------------------------
@@ -113,6 +106,30 @@ void CClassLoadoutPanel::OnCommand( const char* command )
 		//ShowPanel( false, false );
 		if ( dynamic_cast<CCharInfoLoadoutSubPanel*>( GetParent() ) )
 			dynamic_cast<CCharInfoLoadoutSubPanel*>( GetParent() )->OnLoadoutClosed(); // conn - todo: make this use a PostMessage instead
+	}
+	if ( FStrEq( command, "change0" ) )
+	{
+		if ( m_pItemSelectionPanel )
+		{
+			//m_pItemSelectionPanel->SetVisible( true );
+			m_pItemSelectionPanel->SetClassAndSlot( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY );
+		}
+	}
+	if ( FStrEq( command, "change1" ) )
+	{
+		if ( m_pItemSelectionPanel )
+		{
+			//m_pItemSelectionPanel->SetVisible( true );
+			m_pItemSelectionPanel->SetClassAndSlot( m_iCurrentClassIndex, TF_LOADOUT_SLOT_SECONDARY );
+		}
+	}
+	if ( FStrEq( command, "change2" ) )
+	{
+		if ( m_pItemSelectionPanel )
+		{
+			//m_pItemSelectionPanel->SetVisible( true );
+			m_pItemSelectionPanel->SetClassAndSlot( m_iCurrentClassIndex, TF_LOADOUT_SLOT_MELEE );
+		}
 	}
 }
 //-----------------------------------------------------------------------------
@@ -203,12 +220,63 @@ void CClassLoadoutPanel::SetTeam( int iTeam )
 void CClassLoadoutPanel::UpdateModelPanels( void )
 {
 	// We're showing the loadout for a specific class.
+
+	// Playermodel panel (todo: make this its own function)
 	TFPlayerClassData_t* pData = GetPlayerClassData( m_iCurrentClassIndex );
 	if ( m_pPlayerModelPanel )
 	{
 		m_pPlayerModelPanel->SetMDL(pData->GetModelName());
+		m_pPlayerModelPanel->ClearMergeMDLs();
 		//m_pPlayerModelPanel->SetSkin(0);
+
+		CEconItemView* pPlayerModelItem = GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY, GetTFInventory()->GetWeaponPreset( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY ) );
+		MDLHandle_t hMDL = mdlcache->FindMDL( pPlayerModelItem->GetWorldDisplayModel() );
+		if ( hMDL != MDLHANDLE_INVALID )
+		{
+			m_pPlayerModelPanel->SetMergeMDL( hMDL );
+		}
 	}
+
+	// set our weapon panels to the items for our class from CTFInventory
+	/////////////////
+	// PRIMARY SLOT
+	/////////////////
+	if ( m_pPrimaryWeaponPanel )
+	{
+		m_pPrimaryWeaponPanel->InvalidateLayout(false, true); // ffs...
+		m_pPrimaryWeaponPanel->SetEconItem( GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY, GetTFInventory()->GetWeaponPreset( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY ) ) );
+	}
+	if ( GetTFInventory()->NumWeapons( m_iCurrentClassIndex, TF_LOADOUT_SLOT_PRIMARY ) > 1 ) // more than 1 weapon available in this class' slot? make the change button visible
+	{
+		m_pChangeButtonPrimary->SetVisible( true );
+	}
+
+	/////////////////
+	// SECONDARY SLOT
+	/////////////////
+	if ( m_pSecondaryWeaponPanel )
+	{
+		m_pSecondaryWeaponPanel->InvalidateLayout( false, true );
+		m_pSecondaryWeaponPanel->SetEconItem( GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_SECONDARY, GetTFInventory()->GetWeaponPreset( m_iCurrentClassIndex, TF_LOADOUT_SLOT_SECONDARY ) ) );
+	}
+	if ( GetTFInventory()->NumWeapons( m_iCurrentClassIndex, TF_LOADOUT_SLOT_SECONDARY ) > 1 )
+	{
+		m_pChangeButtonPrimary->SetVisible( true );
+	}
+
+	////////////////
+	// MELEE SLOT
+	////////////////
+	if ( m_pMeleeWeaponPanel ) // no PDA/Invis slots for now, sorry spy and engi
+	{
+		m_pMeleeWeaponPanel->InvalidateLayout( false, true );
+		m_pMeleeWeaponPanel->SetEconItem( GetTFInventory()->GetItem( m_iCurrentClassIndex, TF_LOADOUT_SLOT_MELEE, GetTFInventory()->GetWeaponPreset( m_iCurrentClassIndex, TF_LOADOUT_SLOT_MELEE ) ) );
+	}
+	if ( GetTFInventory()->NumWeapons( m_iCurrentClassIndex, TF_LOADOUT_SLOT_MELEE ) > 1 )
+	{
+		m_pChangeButtonPrimary->SetVisible( true );
+	}
+
 	/*
 	// For now, fill them out with the local player's currently wielded items
 	for ( int i = 0; i < m_pItemModelPanels.Count(); i++ )

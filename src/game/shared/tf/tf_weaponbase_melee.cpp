@@ -36,7 +36,7 @@ LINK_ENTITY_TO_CLASS( tf_weaponbase_melee, CTFWeaponBaseMelee );
 // Server specific.
 #if !defined( CLIENT_DLL ) 
 BEGIN_DATADESC( CTFWeaponBaseMelee )
-DEFINE_FUNCTION( Smack )
+DEFINE_THINKFUNC( Smack )
 END_DATADESC()
 #endif
 
@@ -175,7 +175,10 @@ void CTFWeaponBaseMelee::Swing( CTFPlayer *pPlayer )
 	DoViewModelAnimation();
 
 	// Set next attack times.
-	m_flNextPrimaryAttack = gpGlobals->curtime + m_pWeaponInfo->GetWeaponData( m_iWeaponMode ).m_flTimeFireDelay;
+	float flDelayMult = 1.0f;
+	CALL_ATTRIB_HOOK_FLOAT( flDelayMult, mod_firerate );
+
+	m_flNextPrimaryAttack = gpGlobals->curtime + m_pWeaponInfo->GetWeaponData( m_iWeaponMode ).m_flTimeFireDelay * flDelayMult;
 
 	SetWeaponIdleTime( m_flNextPrimaryAttack + m_pWeaponInfo->GetWeaponData( m_iWeaponMode ).m_flTimeIdleEmpty );
 	
@@ -359,6 +362,14 @@ void CTFWeaponBaseMelee::OnEntityHit( CBaseEntity *pEntity )
 //-----------------------------------------------------------------------------
 bool CTFWeaponBaseMelee::CalcIsAttackCriticalHelper( void )
 {
+	CTFPlayer* pPlayer = ToTFPlayer( GetPlayerOwner() );
+	if ( !pPlayer )
+		return false;
+
+	// Crit boosted players fire all crits
+	if ( pPlayer->m_Shared.InCond( TF_COND_CRITBOOSTED ) )
+		return true;
+
 	int nCvarValue = tf_weapon_criticals_melee.GetInt();
 	if ( nCvarValue == 0 )
 		return false;
@@ -366,11 +377,13 @@ bool CTFWeaponBaseMelee::CalcIsAttackCriticalHelper( void )
 	if ( nCvarValue == 1 && !tf_weapon_criticals.GetBool() )
 		return false;
 
-	CTFPlayer *pPlayer = ToTFPlayer( GetPlayerOwner() );
-	if ( !pPlayer )
-		return false;
-
 	float flPlayerCritMult = pPlayer->GetCritMult();
 
-	return ( RandomInt( 0, WEAPON_RANDOM_RANGE-1 ) <= ( TF_DAMAGE_CRIT_CHANCE_MELEE * flPlayerCritMult ) * WEAPON_RANDOM_RANGE );
+	float flCritChance = TF_DAMAGE_CRIT_CHANCE_MELEE * flPlayerCritMult;
+	CALL_ATTRIB_HOOK_FLOAT( flCritChance, mod_crit_chance );
+
+	if ( flCritChance == 0.0f )
+		return false; // don't bother, no random crits on this weapon!
+
+	return ( RandomInt( 0, WEAPON_RANDOM_RANGE-1 ) <= flCritChance * WEAPON_RANDOM_RANGE );
 }

@@ -17,6 +17,8 @@
 #include "materialsystem/imaterialvar.h"
 #include "prediction.h"
 
+#include "model_types.h"
+
 #endif
 
 #include "bone_setup.h"	//temp
@@ -44,6 +46,7 @@ CTFViewModel::CTFViewModel() : m_LagAnglesHistory("CPredictedViewModel::m_LagAng
 #else
 CTFViewModel::CTFViewModel()
 {
+	m_bAttachToHands = false;
 }
 #endif
 
@@ -53,9 +56,15 @@ CTFViewModel::CTFViewModel()
 //-----------------------------------------------------------------------------
 CTFViewModel::~CTFViewModel()
 {
+	SetViewModelAttach( false );
+#ifdef CLIENT_DLL
+	RemoveViewmodelAddon();
+#endif
 }
 
 #ifdef CLIENT_DLL
+void DrawEconEntityAttachedModels( CBaseAnimating* pEnt, CEconEntity* pAttachedModelSource, const ClientModelRenderInfo_t* pInfo, int iMatchDisplayFlags );
+
 // TODO:  Turning this off by setting interp 0.0 instead of 0.1 for now since we have a timing bug to resolve
 ConVar cl_wpn_sway_interp( "cl_wpn_sway_interp", "0.0", FCVAR_CLIENTDLL );
 ConVar cl_wpn_sway_scale( "cl_wpn_sway_scale", "5.0", FCVAR_CLIENTDLL );
@@ -76,6 +85,214 @@ void CTFViewModel::AddViewModelBob( CBasePlayer *owner, Vector& eyePosition, QAn
 	}
 #endif
 }
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTFViewModel::SetWeaponModel( const char* modelname, CBaseCombatWeapon* weapon )
+{
+	BaseClass::SetWeaponModel( modelname, weapon );
+
+#ifdef CLIENT_DLL
+	if ( !modelname )
+		RemoveViewmodelAddon();
+#endif
+}
+
+#ifdef CLIENT_DLL
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTFViewModel::UpdateViewmodelAddon( const char* pszModelname )
+{
+	C_ViewmodelAttachmentModel* pAddon = m_hViewmodelAddon.Get();
+
+	if ( pAddon )
+	{
+		if ( pAddon->GetModelIndex() == modelinfo->GetModelIndex( pszModelname ) )
+		{
+			pAddon->m_nSkin = GetSkin();
+
+			if ( C_BasePlayer::GetLocalPlayer() != GetOwner() ) // Spectator fix
+			{
+				pAddon->FollowEntity( this );
+				pAddon->m_nRenderFX = m_nRenderFX;
+				pAddon->UpdateVisibility();
+				pAddon->SetViewmodel( this );
+			}
+			return; // we already have the correct add-on
+		}
+		else
+		{
+			RemoveViewmodelAddon();
+		}
+	}
+
+	pAddon = new C_ViewmodelAttachmentModel();
+
+	if ( pAddon->InitializeAsClientEntity( pszModelname, RENDER_GROUP_VIEW_MODEL_TRANSLUCENT ) == false )
+	{
+		pAddon->Release();
+		return;
+	}
+
+	m_hViewmodelAddon = pAddon;
+
+	pAddon->m_nSkin = GetSkin();
+	pAddon->SetOwner( GetOwner() );
+	pAddon->FollowEntity( this );
+	pAddon->UpdateVisibility();
+
+	pAddon->SetViewmodel( this );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTFViewModel::RemoveViewmodelAddon( void )
+{
+	if ( m_hViewmodelAddon.Get() )
+	{
+		m_hViewmodelAddon->SetModel( "" );
+		m_hViewmodelAddon->Remove();
+	}
+}
+/*
+//-----------------------------------------------------------------------------
+// Purpose: dogshit hack for weapon attachments i doubt this will work
+//-----------------------------------------------------------------------------
+void CTFViewModel::UpdateWeaponAttachment( const char* pszModelname )
+{
+	C_ViewmodelAttachmentModel* pAttachment = m_hWeaponAttachment.Get();
+	C_ViewmodelAttachmentModel* pAddon = m_hViewmodelAddon.Get();
+	if ( pAttachment && pAddon )
+	{
+		if ( pAttachment->GetModelIndex() == modelinfo->GetModelIndex( pszModelname ) )
+		{
+			pAttachment->m_nSkin = GetSkin();
+
+			if ( C_BasePlayer::GetLocalPlayer() != GetOwner() ) // Spectator fix
+			{
+				pAttachment->FollowEntity( pAddon ); // Follow our weapon
+				pAttachment->m_nRenderFX = m_nRenderFX;
+				pAttachment->UpdateVisibility();
+				pAttachment->SetViewmodel( this );
+			}
+			return; // we already have the correct add-on
+		}
+		else
+		{
+			RemoveViewmodelAddon();
+		}
+	}
+	else if ( pAddon )
+	{
+		pAttachment = new C_ViewmodelAttachmentModel();
+
+		if ( pAttachment->InitializeAsClientEntity( pszModelname, RENDER_GROUP_VIEW_MODEL_TRANSLUCENT ) == false )
+		{
+			pAttachment->Release();
+			return;
+		}
+
+		m_hWeaponAttachment = pAttachment;
+
+		pAttachment->m_nSkin = GetSkin();
+		pAttachment->SetOwner( GetOwner() );
+		pAttachment->FollowEntity( pAddon ); // Follow our weapon
+		pAttachment->UpdateVisibility();
+
+		pAttachment->SetViewmodel( this );
+	}
+}
+//-----------------------------------------------------------------------------
+// Purpose: dogshit hack
+//-----------------------------------------------------------------------------
+void CTFViewModel::RemoveWeaponAttachment( void )
+{
+	if ( m_hWeaponAttachment.Get() )
+	{
+		m_hWeaponAttachment->SetModel( "" );
+		m_hWeaponAttachment->Remove();
+	}
+}
+*/
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+int	CTFViewModel::LookupAttachment( const char* pAttachmentName )
+{
+	if ( GetViewModelAttach() )
+	{
+		C_ViewmodelAttachmentModel* pEnt = m_hViewmodelAddon.Get();
+		if ( pEnt )
+			return pEnt->LookupAttachment( pAttachmentName );
+	}
+
+	return BaseClass::LookupAttachment( pAttachmentName );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+bool CTFViewModel::GetAttachment( int number, matrix3x4_t& matrix )
+{
+	if ( GetViewModelAttach() )
+	{
+		C_ViewmodelAttachmentModel* pEnt = m_hViewmodelAddon.Get();
+		if ( pEnt )
+			return pEnt->GetAttachment( number, matrix );
+	}
+
+	return BaseClass::GetAttachment( number, matrix );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+bool CTFViewModel::GetAttachment( int number, Vector& origin )
+{
+	if ( GetViewModelAttach() )
+	{
+		C_ViewmodelAttachmentModel* pEnt = m_hViewmodelAddon.Get();
+		if ( pEnt )
+			return pEnt->GetAttachment( number, origin );
+	}
+
+	return BaseClass::GetAttachment( number, origin );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+bool CTFViewModel::GetAttachment( int number, Vector& origin, QAngle& angles )
+{
+	if ( GetViewModelAttach() )
+	{
+		C_ViewmodelAttachmentModel* pEnt = m_hViewmodelAddon.Get();
+		if ( pEnt )
+			return pEnt->GetAttachment( number, origin, angles );
+	}
+
+	return BaseClass::GetAttachment( number, origin, angles );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+bool CTFViewModel::GetAttachmentVelocity( int number, Vector& originVel, Quaternion& angleVel )
+{
+	if ( GetViewModelAttach() )
+	{
+		C_ViewmodelAttachmentModel* pEnt = m_hViewmodelAddon.Get();
+		if ( pEnt )
+			return pEnt->GetAttachmentVelocity( number, originVel, angleVel );
+	}
+
+	return BaseClass::GetAttachmentVelocity( number, originVel, angleVel );
+}
+
+#endif
 
 void CTFViewModel::CalcViewModelLag( Vector& origin, QAngle& angles, QAngle& original_angles )
 {
@@ -180,6 +397,26 @@ int CTFViewModel::DrawModel( int flags )
 	}
 
 	return BaseClass::DrawModel( flags );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+bool CTFViewModel::OnPostInternalDrawModel( ClientModelRenderInfo_t* pInfo )
+{
+	if ( !BaseClass::OnPostInternalDrawModel( pInfo ) )
+		return false;
+
+	CTFWeaponBase* pWeapon = (CTFWeaponBase*)GetOwningWeapon();
+
+	if ( pWeapon && !pWeapon->WantsToOverrideViewmodelAttachments() )
+	{
+		// only need to draw the attached models if the weapon doesn't want to override the viewmodel attachments
+		// (used for Natascha's attachments, the Backburner, and the Kritzkrieg)
+		DrawEconEntityAttachedModels( this, pWeapon, pInfo, kAttachedModelDisplayFlag_ViewModel );
+	}
+
+	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -359,5 +596,124 @@ IMaterial *CViewModelInvisProxy::GetMaterial()
 
 EXPOSE_INTERFACE( CViewModelInvisProxy, IMaterialProxy, "vm_invis" IMATERIAL_PROXY_INTERFACE_VERSION );
 
+////////////////////////////////
+// C_ViewmodelAttachmentModel
+////////////////////////////////
+extern ConVar r_drawothermodels;
+
+bool C_ViewmodelAttachmentModel::InitializeAsClientEntity( const char* pszModelName, RenderGroup_t renderGroup )
+{
+	if ( BaseClass::InitializeAsClientEntity( pszModelName, renderGroup ) )
+	{
+		AddEffects( EF_BONEMERGE | EF_BONEMERGE_FASTCULL );
+		return true;
+	}
+
+	return false;
+}
+
+void C_ViewmodelAttachmentModel::SetViewmodel( C_TFViewModel* vm )
+{
+	m_viewmodel.Set( vm );
+}
+
+int C_ViewmodelAttachmentModel::InternalDrawModel( int flags )
+{
+	CMatRenderContextPtr pRenderContext( materials );
+
+	if ( m_viewmodel->ShouldFlipViewModel() )
+		pRenderContext->CullMode( MATERIAL_CULLMODE_CW );
+
+	int ret = BaseClass::InternalDrawModel( flags );
+
+	pRenderContext->CullMode( MATERIAL_CULLMODE_CCW );
+
+	return ret;
+}
+
+bool C_ViewmodelAttachmentModel::OnPostInternalDrawModel( ClientModelRenderInfo_t* pInfo )
+{
+	if ( !BaseClass::OnPostInternalDrawModel( pInfo ) )
+		return false;
+	/*
+	if ( !m_hOuter )
+		return true;
+	if ( !m_hOuter->GetAttributeContainer() )
+		return true;
+	if ( !m_hOuter->GetAttributeContainer()->GetItem() )
+		return true;
+	*/
+	CTFWeaponBase* pWeapon = (CTFWeaponBase*)m_viewmodel->GetOwningWeapon();
+	DrawEconEntityAttachedModels( this, pWeapon, pInfo, 0x02 );
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: We're overriding this because DrawModel keeps calling the FollowEntity DrawModel function
+//			which in this case is CTFViewModel::DrawModel.
+//			This is basically just a straight copy of C_BaseAnimating::DrawModel, without the FollowEntity part
+//-----------------------------------------------------------------------------
+int C_ViewmodelAttachmentModel::DrawOverriddenViewmodel( int flags )
+{
+	if ( !m_bReadyToDraw )
+		return 0;
+
+	int drawn = 0;
+
+	ValidateModelIndex();
+
+	if ( r_drawothermodels.GetInt() )
+	{
+		MDLCACHE_CRITICAL_SECTION();
+
+		int extraFlags = 0;
+		if ( r_drawothermodels.GetInt() == 2 )
+		{
+			extraFlags |= STUDIO_WIREFRAME;
+		}
+
+		if ( flags & STUDIO_SHADOWDEPTHTEXTURE )
+		{
+			extraFlags |= STUDIO_SHADOWDEPTHTEXTURE;
+		}
+
+		if ( flags & STUDIO_SSAODEPTHTEXTURE )
+		{
+			extraFlags |= STUDIO_SSAODEPTHTEXTURE;
+		}
+
+		// Necessary for lighting blending
+		CreateModelInstance();
+
+		drawn = InternalDrawModel( flags | extraFlags );
+	}
+
+	// If we're visualizing our bboxes, draw them
+	DrawBBoxVisualizations();
+
+	return drawn;
+}
+
+
+int C_ViewmodelAttachmentModel::DrawModel( int flags )
+{
+	if ( !IsVisible() )
+		return 0;
+
+	if ( m_viewmodel.Get() == NULL )
+		return 0;
+
+	C_TFPlayer* pLocalPlayer = C_TFPlayer::GetLocalTFPlayer();
+	C_TFPlayer* pPlayer = ToTFPlayer( m_viewmodel.Get()->GetOwner() );
+
+	if ( pLocalPlayer && pLocalPlayer->IsObserver()
+		&& pLocalPlayer->GetObserverTarget() != m_viewmodel.Get()->GetOwner() )
+		return false;
+
+	if ( pLocalPlayer && !pLocalPlayer->IsObserver() && (pLocalPlayer != pPlayer) )
+		return false;
+
+	return BaseClass::DrawModel( flags );
+}
 
 #endif // CLIENT_DLL

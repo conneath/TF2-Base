@@ -50,6 +50,7 @@ TFPlayerClassData_t::TFPlayerClassData_t()
 	m_szClassName[0] = '\0';
 	m_szModelName[0] = '\0';
 	m_szHWMModelName[0] = '\0';
+	m_szModelHandsName[0] = '\0';
 	m_szLocalizableName[0] = '\0';
 	m_flMaxSpeed = 0.0f;
 	m_nMaxHealth = 0;
@@ -141,6 +142,7 @@ void TFPlayerClassData_t::ParseData( KeyValues *pKeyValuesData )
 		Q_strncpy( m_szHWMModelName, pKeyValuesData->GetString( "model_hwm" ), TF_NAME_LENGTH );
 	}
 	Q_strncpy( m_szModelName, pKeyValuesData->GetString( "model" ), TF_NAME_LENGTH );
+	Q_strncpy( m_szModelHandsName, pKeyValuesData->GetString( "model_hands" ), TF_NAME_LENGTH );
 	Q_strncpy( m_szLocalizableName, pKeyValuesData->GetString( "localize_name" ), TF_NAME_LENGTH );
 
 	m_flMaxSpeed = pKeyValuesData->GetFloat( "speed_max" );

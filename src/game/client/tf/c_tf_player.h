@@ -73,6 +73,8 @@ public:
 	virtual void Simulate( void );
 	virtual void FireEvent( const Vector& origin, const QAngle& angles, int event, const char *options );
 
+	void LoadInventory( void );
+
 	void FireBullet( const FireBulletsInfo_t &info, bool bDoEffects, int nDamageType, int nCustomDamageType = TF_DMG_CUSTOM_NONE );
 
 	void ImpactWaterTrace( trace_t &trace, const Vector &vecStart );
@@ -149,7 +151,7 @@ public:
 
 	void			SetHealer( C_TFPlayer *pHealer, float flChargeLevel );
 	void			GetHealer( C_TFPlayer **pHealer, float *flChargeLevel ) { *pHealer = m_hHealer; *flChargeLevel = m_flHealerChargeLevel; }
-	float			MedicGetChargeLevel( void );
+	float			MedicGetChargeLevel( CTFWeaponBase** pRetMedigun = NULL );
 	CBaseEntity		*MedicGetHealTarget( void );
 
 	void			StartBurningSound( void );
@@ -196,6 +198,7 @@ public:
 
 	CTFWeaponBase		*Weapon_OwnsThisID( int iWeaponID );
 	CTFWeaponBase		*Weapon_GetWeaponByType( int iType );
+	C_EconEntity* GetEntityForLoadoutSlot( int iSlot );
 
 	virtual void		GetStepSoundVelocities( float *velwalk, float *velrun );
 	virtual void		SetStepSoundTime( stepsoundtimes_t iStepSoundTime, bool bWalking );
@@ -333,6 +336,9 @@ public:
 	float				m_flBurnEffectStartTime;
 	float				m_flBurnEffectEndTime;
 
+	// Temp HACK for crit boost
+	HPARTICLEFFECT m_pCritBoostEffect;
+
 	CNewParticleEffect	*m_pDisguisingEffect;
 	float m_flDisguiseEffectStartTime;
 	float m_flDisguiseEndEffectStartTime;
@@ -347,6 +353,8 @@ public:
 
 	bool			m_bDisguised;
 	int				m_iPreviousMetal;
+
+	EHANDLE			m_hOldActiveWeapon; // Used to detect weapon changes
 
 	int GetNumActivePipebombs( void );
 

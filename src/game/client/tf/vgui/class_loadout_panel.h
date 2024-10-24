@@ -18,46 +18,15 @@
 #include <vgui/VGUI.h>
 #include "vgui_controls/CheckButton.h"
 #include "basemodel_panel.h"
+#include "item_model_panel.h"
+#include "item_selection_panel.h"
 
 #define NUM_ITEM_PANELS_IN_LOADOUT		CLASS_LOADOUT_POSITION_COUNT
-
-class CLoadoutPresetPanel;
-/*
-class CLoadoutItemOptionsPanel : public vgui::EditablePanel
-{
-	DECLARE_CLASS_SIMPLE( CLoadoutItemOptionsPanel, vgui::EditablePanel );
-public:
-	CLoadoutItemOptionsPanel( Panel* parent, const char* pName );
-	virtual void ApplySchemeSettings( vgui::IScheme* pScheme );
-	virtual void PerformLayout( void );
-
-	virtual void OnCommand( const char* command );
-	virtual void OnMessage( const KeyValues* pParams, vgui::VPANEL hFromPanel );
-
-	void SetItemSlot( loadout_positions_t eItemSlot, int iClassIndex );
-	loadout_positions_t GetItemSlot() const { return m_eItemSlot; }
-	void UpdateItemOptionsUI();
-
-private:
-
-	void AddControlsParticleEffect( void ) const;
-	void AddControlsSetStyle( void ) const;
-	CEconItemView* GetItem( void ) const;
-
-	class vgui::PanelListPanel* m_pListPanel;
-	CCvarSlider* m_pHatParticleSlider;
-	CExButton* m_pSetStyleButton;
-	vgui::CheckButton* m_pHatParticleUseHeadButton;
-
-	int						m_iCurrentClassIndex;
-	loadout_positions_t		m_eItemSlot;
-};
-*/
 
 //-----------------------------------------------------------------------------
 // A loadout screen that handles modifying the loadout of a specific class
 //-----------------------------------------------------------------------------
-class CClassLoadoutPanel : /*public CBaseLoadoutPanel*/ public vgui::EditablePanel
+class CClassLoadoutPanel : public vgui::EditablePanel
 {
 	DECLARE_CLASS_SIMPLE( CClassLoadoutPanel, vgui::EditablePanel );
 public:
@@ -82,6 +51,12 @@ protected:
 	CBaseModelPanel* m_pPlayerModelPanel;
 	vgui::Label* m_pCaratLabel;
 	vgui::Label* m_pClassLabel;
+
+	CItemModelPanel* m_pPrimaryWeaponPanel;
+	CItemModelPanel* m_pSecondaryWeaponPanel;
+	CItemModelPanel* m_pMeleeWeaponPanel;
+	vgui::Panel* m_pChangeButtonPrimary;
+	CItemSelectionPanel* m_pItemSelectionPanel;
 	//WIP
 };
 

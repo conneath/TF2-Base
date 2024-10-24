@@ -10,16 +10,17 @@
 #include "ammodef.h"
 #include "tf_gamerules.h"
 #include "eventlist.h"
+#include "tf_viewmodel.h"
 
 // Server specific.
 #if !defined( CLIENT_DLL )
 #include "tf_player.h"
+#include "tf_weapon_medigun.h"
 // Client specific.
 #else
 #include "vgui/ISurface.h"
 #include "vgui_controls/Controls.h"
 #include "c_tf_player.h"
-#include "tf_viewmodel.h"
 #include "hud_crosshair.h"
 #include "c_tf_playerresource.h"
 #include "clientmode_tf.h"
@@ -139,7 +140,7 @@ LINK_ENTITY_TO_CLASS( tf_weapon_base, CTFWeaponBase );
 #if !defined( CLIENT_DLL )
 
 BEGIN_DATADESC( CTFWeaponBase )
-DEFINE_FUNCTION( FallThink )
+DEFINE_THINKFUNC( FallThink )
 END_DATADESC()
 
 // Client specific
@@ -193,6 +194,9 @@ CTFWeaponBase::CTFWeaponBase()
 // -----------------------------------------------------------------------------
 void CTFWeaponBase::Spawn()
 {
+	// Called manually, because CBaseCombatWeapon::Spawn doesn't call back.
+	GetAttributeContainer()->InitializeAttributes( this );
+
 	// Base class spawn.
 	BaseClass::Spawn();
 
@@ -319,17 +323,252 @@ bool CTFWeaponBase::IsWeapon( int iWeapon ) const
 	return GetWeaponID() == iWeapon; 
 }
 
+typedef struct
+{
+	int			baseAct;
+	int			weaponAct;
+	int			weaponRole;
+} viewmodelacttable_t;
+// Remaps viewmodel activities to specific ones for the weapon role.
+// Needed this for weapons that bonemerge themselves to the hand models to create their viewmodel.
+// The hand model needs to have all the animations, and be able to choose the right anims to play for the active weapon.
+// We use this acttable to remap the base viewmodel anims to the right one for the weapon.
+
+// HACK: the medic arms model from build 1.0.2.4 has some acts left unrenamed and i dont feel like recompiling the model
+// so you'll see some entries that do basically nothing
+// if you want to add extra arm models for the other classes, REVERT THIS CHANGE and just rename the fucked ones in the medic arms qc!
+viewmodelacttable_t s_viewmodelacttable[] =
+{
+	{ ACT_VM_DRAW,						ACT_PRIMARY_VM_DRAW,				TF_WPN_TYPE_PRIMARY		},
+	{ ACT_VM_HOLSTER,					ACT_PRIMARY_VM_HOLSTER,				TF_WPN_TYPE_PRIMARY		},
+	{ ACT_VM_IDLE,						ACT_PRIMARY_VM_IDLE,				TF_WPN_TYPE_PRIMARY		},
+	{ ACT_VM_PULLBACK,					ACT_PRIMARY_VM_PULLBACK,			TF_WPN_TYPE_PRIMARY		},
+	{ ACT_VM_PRIMARYATTACK,				ACT_PRIMARY_VM_PRIMARYATTACK,		TF_WPN_TYPE_PRIMARY		},
+	{ ACT_VM_SECONDARYATTACK,			ACT_PRIMARY_VM_SECONDARYATTACK,		TF_WPN_TYPE_PRIMARY		},
+	{ ACT_VM_RELOAD,					ACT_PRIMARY_VM_RELOAD,				TF_WPN_TYPE_PRIMARY		},
+	{ ACT_RELOAD_START,					ACT_PRIMARY_RELOAD_START,			TF_WPN_TYPE_PRIMARY		},
+	{ ACT_RELOAD_FINISH,				ACT_PRIMARY_RELOAD_FINISH,			TF_WPN_TYPE_PRIMARY		},
+	{ ACT_VM_DRYFIRE,					ACT_PRIMARY_VM_DRYFIRE,				TF_WPN_TYPE_PRIMARY		},
+	{ ACT_VM_IDLE_TO_LOWERED,			ACT_PRIMARY_VM_IDLE_TO_LOWERED,		TF_WPN_TYPE_PRIMARY		},
+	{ ACT_VM_IDLE_LOWERED,				ACT_PRIMARY_VM_IDLE_LOWERED,		TF_WPN_TYPE_PRIMARY		},
+	{ ACT_VM_LOWERED_TO_IDLE,			ACT_PRIMARY_VM_LOWERED_TO_IDLE,		TF_WPN_TYPE_PRIMARY		},
+	{ ACT_MP_ATTACK_STAND_PREFIRE,		ACT_PRIMARY_ATTACK_STAND_PREFIRE,	TF_WPN_TYPE_PRIMARY		},
+	{ ACT_MP_ATTACK_STAND_POSTFIRE,		ACT_PRIMARY_ATTACK_STAND_POSTFIRE,	TF_WPN_TYPE_PRIMARY		},
+	{ ACT_MP_ATTACK_STAND_STARTFIRE,	ACT_PRIMARY_ATTACK_STAND_STARTFIRE,	TF_WPN_TYPE_PRIMARY		},
+	{ ACT_MP_ATTACK_CROUCH_PREFIRE,		ACT_PRIMARY_ATTACK_CROUCH_PREFIRE,	TF_WPN_TYPE_PRIMARY		},
+	{ ACT_MP_ATTACK_CROUCH_POSTFIRE,	ACT_PRIMARY_ATTACK_CROUCH_POSTFIRE,	TF_WPN_TYPE_PRIMARY		},
+	{ ACT_MP_ATTACK_SWIM_PREFIRE,		ACT_PRIMARY_ATTACK_SWIM_PREFIRE,	TF_WPN_TYPE_PRIMARY		},
+	{ ACT_MP_ATTACK_SWIM_POSTFIRE,		ACT_PRIMARY_ATTACK_SWIM_POSTFIRE,	TF_WPN_TYPE_PRIMARY		},
+
+	{ ACT_VM_DRAW,						ACT_SECONDARY_VM_DRAW,				TF_WPN_TYPE_SECONDARY	},
+	{ ACT_VM_HOLSTER,					ACT_SECONDARY_VM_HOLSTER,			TF_WPN_TYPE_SECONDARY	},
+	{ ACT_VM_IDLE,						ACT_SECONDARY_VM_IDLE,				TF_WPN_TYPE_SECONDARY	},
+	{ ACT_VM_PULLBACK,					ACT_SECONDARY_VM_PULLBACK,			TF_WPN_TYPE_SECONDARY	},
+	{ ACT_VM_PRIMARYATTACK,				ACT_SECONDARY_VM_PRIMARYATTACK,		TF_WPN_TYPE_SECONDARY	},
+	{ ACT_VM_SECONDARYATTACK,			ACT_SECONDARY_VM_SECONDARYATTACK,	TF_WPN_TYPE_SECONDARY	},
+	{ ACT_VM_RELOAD,					ACT_SECONDARY_VM_RELOAD,			TF_WPN_TYPE_SECONDARY	},
+	{ ACT_RELOAD_START,					ACT_SECONDARY_RELOAD_START,			TF_WPN_TYPE_SECONDARY	},
+	{ ACT_RELOAD_FINISH,				ACT_SECONDARY_RELOAD_FINISH,		TF_WPN_TYPE_SECONDARY	},
+	{ ACT_VM_DRYFIRE,					ACT_SECONDARY_VM_DRYFIRE,			TF_WPN_TYPE_SECONDARY	},
+	{ ACT_VM_IDLE_TO_LOWERED,			ACT_SECONDARY_VM_IDLE_TO_LOWERED,	TF_WPN_TYPE_SECONDARY	},
+	{ ACT_VM_IDLE_LOWERED,				ACT_SECONDARY_VM_IDLE_LOWERED,		TF_WPN_TYPE_SECONDARY	},
+	{ ACT_VM_LOWERED_TO_IDLE,			ACT_SECONDARY_VM_LOWERED_TO_IDLE,	TF_WPN_TYPE_SECONDARY	},
+	{ ACT_MP_ATTACK_STAND_PREFIRE,		ACT_MP_ATTACK_STAND_PREFIRE,	TF_WPN_TYPE_SECONDARY		}, // Medigun start beam anim
+	{ ACT_MP_ATTACK_STAND_POSTFIRE,		ACT_MP_ATTACK_STAND_POSTFIRE,	TF_WPN_TYPE_SECONDARY		}, // Medigun stop beam anim
+	{ ACT_MP_ATTACK_STAND_STARTFIRE,	ACT_SECONDARY_ATTACK_STAND_STARTFIRE,	TF_WPN_TYPE_SECONDARY		},
+	{ ACT_MP_ATTACK_CROUCH_PREFIRE,		ACT_SECONDARY_ATTACK_CROUCH_PREFIRE,	TF_WPN_TYPE_SECONDARY		},
+	{ ACT_MP_ATTACK_CROUCH_POSTFIRE,	ACT_SECONDARY_ATTACK_CROUCH_POSTFIRE,	TF_WPN_TYPE_SECONDARY		},
+	{ ACT_MP_ATTACK_SWIM_PREFIRE,		ACT_SECONDARY_ATTACK_SWIM_PREFIRE,	TF_WPN_TYPE_SECONDARY		},
+	{ ACT_MP_ATTACK_SWIM_POSTFIRE,		ACT_SECONDARY_ATTACK_SWIM_POSTFIRE,	TF_WPN_TYPE_SECONDARY		},
+
+	{ ACT_VM_DRAW,						ACT_MELEE_VM_DRAW,					TF_WPN_TYPE_MELEE		},
+	{ ACT_VM_HOLSTER,					ACT_MELEE_VM_HOLSTER,				TF_WPN_TYPE_MELEE		},
+	{ ACT_VM_IDLE,						ACT_MELEE_VM_IDLE,					TF_WPN_TYPE_MELEE		},
+	{ ACT_VM_PULLBACK,					ACT_MELEE_VM_PULLBACK,				TF_WPN_TYPE_MELEE		},
+	{ ACT_VM_PRIMARYATTACK,				ACT_MELEE_VM_PRIMARYATTACK,			TF_WPN_TYPE_MELEE		},
+	{ ACT_VM_SECONDARYATTACK,			ACT_MELEE_VM_SECONDARYATTACK,		TF_WPN_TYPE_MELEE		},
+	{ ACT_VM_RELOAD,					ACT_MELEE_VM_RELOAD,				TF_WPN_TYPE_MELEE		},
+	{ ACT_VM_DRYFIRE,					ACT_MELEE_VM_DRYFIRE,				TF_WPN_TYPE_MELEE		},
+	{ ACT_VM_IDLE_TO_LOWERED,			ACT_MELEE_VM_IDLE_TO_LOWERED,		TF_WPN_TYPE_MELEE		},
+	{ ACT_VM_IDLE_LOWERED,				ACT_MELEE_VM_IDLE_LOWERED,			TF_WPN_TYPE_MELEE		},
+	{ ACT_VM_LOWERED_TO_IDLE,			ACT_MELEE_VM_LOWERED_TO_IDLE,		TF_WPN_TYPE_MELEE		},
+	{ ACT_VM_HITCENTER,					ACT_VM_HITCENTER,				TF_WPN_TYPE_MELEE		},	// Bonesaw swing
+	{ ACT_VM_SWINGHARD,					ACT_VM_SWINGHARD,				TF_WPN_TYPE_MELEE		}, // Bonesaw swing
+	{ ACT_MP_ATTACK_STAND_PREFIRE,		ACT_MELEE_ATTACK_STAND_PREFIRE,		TF_WPN_TYPE_MELEE		},
+	{ ACT_MP_ATTACK_STAND_POSTFIRE,		ACT_MELEE_ATTACK_STAND_POSTFIRE,	TF_WPN_TYPE_MELEE		},
+	{ ACT_MP_ATTACK_STAND_STARTFIRE,	ACT_MELEE_ATTACK_STAND_STARTFIRE,	TF_WPN_TYPE_MELEE		},
+	{ ACT_MP_ATTACK_CROUCH_PREFIRE,		ACT_MELEE_ATTACK_CROUCH_PREFIRE,	TF_WPN_TYPE_MELEE		},
+	{ ACT_MP_ATTACK_CROUCH_POSTFIRE,	ACT_MELEE_ATTACK_CROUCH_POSTFIRE,	TF_WPN_TYPE_MELEE		},
+	{ ACT_MP_ATTACK_SWIM_PREFIRE,		ACT_MELEE_ATTACK_SWIM_PREFIRE,		TF_WPN_TYPE_MELEE		},
+	{ ACT_MP_ATTACK_SWIM_POSTFIRE,		ACT_MELEE_ATTACK_SWIM_POSTFIRE,		TF_WPN_TYPE_MELEE		},
+};
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+int CTFWeaponBase::TranslateViewmodelHandActivity( int iActivity )
+{
+	CTFPlayer* pTFPlayer = ToTFPlayer( GetOwner() );
+	if ( pTFPlayer == NULL )
+	{
+		Assert( false ); // This shouldn't be possible
+		return iActivity;
+	}
+
+	CTFViewModel* vm = dynamic_cast<CTFViewModel*>(pTFPlayer->GetViewModel( m_nViewModelIndex, false ));
+	if ( vm == NULL )
+	{
+		return iActivity;
+	}
+
+	// This is only used by attach_to_hands type viewmodels.
+	if ( !vm->GetViewModelAttach() )
+		return iActivity;
+
+	int iWeaponRole = GetTFWpnData().m_iWeaponType;
+
+	if ( HasItemDefinition() )
+	{
+		int iSchemaRole = m_Item.GetAnimationSlot();
+		if ( iSchemaRole >= 0 )
+		{
+			iWeaponRole = iSchemaRole;
+		}
+
+		Activity actActivityOverride = m_Item.GetActivityOverride( GetTeamNumber(), (Activity)iActivity );
+		if ( actActivityOverride != iActivity )
+		{
+			return actActivityOverride;
+		}
+	}
+
+	for ( int i = 0; i <= 60; i++ )
+	{
+		const viewmodelacttable_t& act = s_viewmodelacttable[i];
+		if ( iActivity == act.baseAct && iWeaponRole == act.weaponRole )
+		{
+			return act.weaponAct;
+		}
+	}
+
+	return iActivity;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTFWeaponBase::SetViewModel()
+{
+	CTFPlayer* pTFPlayer = ToTFPlayer( GetOwner() );
+	if ( pTFPlayer == NULL )
+		return;
+
+	CTFViewModel* vm = dynamic_cast<CTFViewModel*>(pTFPlayer->GetViewModel( m_nViewModelIndex, false ));
+	if ( vm == NULL )
+		return;
+
+	Assert( vm->ViewModelIndex() == m_nViewModelIndex );
+
+	vm->SetViewModelAttach( false );
+
+	const char* pszModelName = GetViewModel( m_nViewModelIndex );
+
+	m_iViewModelIndex = modelinfo->GetModelIndex( pszModelName );
+
+	vm->SetWeaponModel( pszModelName, this );
+
+#ifdef CLIENT_DLL
+	UpdateViewModel(); // Attach the weapon model to our hands
+#endif
+}
+
+#ifdef CLIENT_DLL
+void CTFWeaponBase::UpdateViewModel( void )
+{
+	CTFPlayer* pTFPlayer = ToTFPlayer( GetOwner() );
+	if ( pTFPlayer == NULL )
+		return;
+
+	CTFViewModel* vm = dynamic_cast<CTFViewModel*>(pTFPlayer->GetViewModel( m_nViewModelIndex, false ));
+	if ( vm == NULL )
+		return;
+
+	bool vmAttach = vm->GetViewModelAttach();
+	const char* pszModel = NULL;
+
+	if ( vmAttach )
+	{
+		if ( HasItemDefinition() )
+		{
+			pszModel = m_Item.GetPlayerDisplayModel( pTFPlayer->GetPlayerClass()->GetClassIndex() );
+		}
+		else
+		{
+			pszModel = GetTFWpnData().szViewModel;
+		}
+	}
+
+	if ( pszModel && pszModel[0] != '\0' )
+	{
+		vm->UpdateViewmodelAddon( pszModel );
+	}
+	else
+	{
+		vm->RemoveViewmodelAddon();
+	}
+}
+#endif
+
 // -----------------------------------------------------------------------------
 // Purpose:
 // -----------------------------------------------------------------------------
 const char *CTFWeaponBase::GetViewModel( int iViewModel ) const
 {
-	if ( GetPlayerOwner() == NULL )
+	const char* pszModelname = NULL;
+	if ( GetPlayerOwner() != NULL && HasItemDefinition() )
 	{
-		return BaseClass::GetViewModel();
+		pszModelname = m_Item.GetPlayerDisplayModel( GetTFPlayerOwner()->GetPlayerClass()->GetClassIndex() );
+	}
+	else
+	{
+		pszModelname = BaseClass::GetViewModel( iViewModel );
 	}
 
-	return GetTFWpnData().szViewModel;
+	// check if attach_to_hands is in the econ item's data...
+	// if so, load the hands model instead (weapon attachment is handled in UpdateViewModel/CTFViewModel::UpdateViewmodelAddon)
+	CEconItemDefinition* pStatic = m_Item.GetStaticData();
+	if ( pStatic )
+	{
+		bool bAttach = pStatic->attach_to_hands;
+		CTFPlayer* pPlayer = ToTFPlayer( GetPlayerOwner() );
+
+		if ( !pPlayer )
+			return pszModelname;
+		// todo: implement CTFViewModel hands attach code
+		CTFViewModel* vm = dynamic_cast<CTFViewModel*>(pPlayer->GetViewModel( m_nViewModelIndex ));
+		if ( vm && bAttach )
+		{
+			vm->SetViewModelAttach( bAttach );
+			return pPlayer->GetPlayerClass()->GetHandModelName();
+		}
+	}
+
+	return pszModelname;
+	//return GetTFWpnData().szViewModel;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+const char* CTFWeaponBase::GetWorldModel( void ) const
+{
+	// Use model from item schema if we have an item ID.
+	if ( HasItemDefinition() )
+	{
+		return m_Item.GetWorldDisplayModel();
+	}
+
+	return BaseClass::GetWorldModel();
 }
 
 //-----------------------------------------------------------------------------
@@ -408,6 +647,24 @@ bool CTFWeaponBase::Deploy( void )
 	return bDeploy;
 }
 
+#ifdef GAME_DLL
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTFWeaponBase::UnEquip( CBaseCombatCharacter* pOwner )
+{
+	if ( pOwner )
+	{
+		if ( pOwner->GetActiveWeapon() == this )
+			Holster();
+
+		pOwner->Weapon_Detach( this );
+	}
+
+	UTIL_Remove( this );
+}
+#endif
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Output : 
@@ -478,11 +735,14 @@ void CTFWeaponBase::CalcIsAttackCritical( void)
 //-----------------------------------------------------------------------------
 bool CTFWeaponBase::CalcIsAttackCriticalHelper()
 {
-	if ( !tf_weapon_criticals.GetBool() )
+	CTFPlayer* pPlayer = ToTFPlayer( GetPlayerOwner() );
+	if ( !pPlayer )
 		return false;
 
-	CTFPlayer *pPlayer = ToTFPlayer( GetPlayerOwner() );
-	if ( !pPlayer )
+	if ( pPlayer->m_Shared.InCond( TF_COND_CRITBOOSTED ) ) // Always crit when critboosted
+		return true;
+
+	if ( !tf_weapon_criticals.GetBool() )
 		return false;
 
 	float flPlayerCritMult = pPlayer->GetCritMult();
@@ -500,7 +760,14 @@ bool CTFWeaponBase::CalcIsAttackCriticalHelper()
 		m_flLastCritCheckTime = gpGlobals->curtime;
 
 		// get the total crit chance (ratio of total shots fired we want to be crits)
-		float flTotalCritChance = clamp( TF_DAMAGE_CRIT_CHANCE_RAPID * flPlayerCritMult, 0.01f, 0.99f );
+		float flTotalCritChance = TF_DAMAGE_CRIT_CHANCE_RAPID * flPlayerCritMult;
+		CALL_ATTRIB_HOOK_FLOAT( flTotalCritChance, mod_crit_chance );
+
+		// If the chance is 0, just bail.
+		if ( flTotalCritChance == 0.0f )
+			return false;
+
+		flTotalCritChance = clamp( flTotalCritChance, 0.01f, 0.99f );
 		// get the fixed amount of time that we start firing crit shots for	
 		float flCritDuration = TF_DAMAGE_CRIT_DURATION_RAPID;
 		// calculate the amount of time, on average, that we want to NOT fire crit shots for in order to achive the total crit chance we want
@@ -521,7 +788,14 @@ bool CTFWeaponBase::CalcIsAttackCriticalHelper()
 	else
 	{
 		// single-shot weapon, just use random pct per shot
-		return ( RandomInt( 0.0, WEAPON_RANDOM_RANGE-1 ) < ( TF_DAMAGE_CRIT_CHANCE * flPlayerCritMult ) * WEAPON_RANDOM_RANGE );
+		float flCritChance = TF_DAMAGE_CRIT_CHANCE * flPlayerCritMult;
+		CALL_ATTRIB_HOOK_FLOAT( flCritChance, mod_crit_chance );
+
+		// If the chance is 0, just bail.
+		if ( flCritChance == 0.0f )
+			return false;
+
+		return ( RandomInt( 0.0, WEAPON_RANDOM_RANGE-1 ) < flCritChance * WEAPON_RANDOM_RANGE );
 	}
 }
 
@@ -834,6 +1108,21 @@ bool CTFWeaponBase::PlayEmptySound()
 //	EmitSound( filter, entindex(), "Default.ClipEmpty_Rifle" );
 
 	return false;
+}
+
+// -----------------------------------------------------------------------------
+// Purpose: Returns override from item schema if there is one.
+// -----------------------------------------------------------------------------
+const char* CTFWeaponBase::GetShootSound( int iIndex ) const
+{
+	if ( HasItemDefinition() )
+	{
+		const char* pszSoundName = m_Item.GetSoundOverride( iIndex, GetTeamNumber() );
+		if ( pszSoundName && pszSoundName[0] )
+			return pszSoundName;
+	}
+
+	return BaseClass::GetShootSound( iIndex );
 }
 
 // -----------------------------------------------------------------------------
@@ -1242,6 +1531,57 @@ const Vector &CTFWeaponBase::GetBulletSpread( void )
 {
 	static Vector cone = VECTOR_CONE_15DEGREES;
 	return cone;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+// ----------------------------------------------------------------------------
+void CTFWeaponBase::ApplyOnHitAttributes( CTFPlayer* pVictim, const CTakeDamageInfo& info )
+{
+	CTFPlayer* pOwner = GetTFPlayerOwner();
+	if ( !pOwner || !pOwner->IsAlive() )
+		return;
+
+	// Add charge on hits
+	float flAddCharge = 0.0f;
+	CALL_ATTRIB_HOOK_FLOAT( flAddCharge, add_ubercharge );
+	if ( flAddCharge )
+	{
+		CWeaponMedigun* pMedigun = static_cast<CWeaponMedigun*>(pOwner->Weapon_OwnsThisID( TF_WEAPON_MEDIGUN ));
+		if ( pMedigun )
+		{
+			pMedigun->AddCharge( flAddCharge );
+		}
+	}
+
+	// Heal on hits
+	// TODO: add player_healonhit event for hud account to show health gain
+	int iModHealthOnHit = 0;
+	CALL_ATTRIB_HOOK_INT( iModHealthOnHit, mod_onhit_addhealth );
+	if ( iModHealthOnHit )
+	{
+		// Scale Health mod with damage dealt, input being the maximum amount of health possible
+		float flScale = Clamp( info.GetDamage() / info.GetBaseDamage(), 0.f, 1.0f );
+		iModHealthOnHit = (int)((float)iModHealthOnHit * flScale);
+	}
+	CBaseEntity* pAttacker = info.GetAttacker();
+	if ( iModHealthOnHit )
+	{
+		if ( iModHealthOnHit > 0 )
+		{
+			int iHealed = pAttacker->TakeHealth( iModHealthOnHit, DMG_GENERIC );
+
+			// Increment attacker's healing stat
+			if ( iHealed )
+			{
+				//CTF_GameStats.Event_PlayerHealedOther( pAttacker, iHealed );
+			}
+		}
+		else
+		{
+			pAttacker->TakeDamage( CTakeDamageInfo( pAttacker, this, (iModHealthOnHit * -1), DMG_GENERIC ) );
+		}
+	}
 }
 
 #else

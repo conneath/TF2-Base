@@ -55,7 +55,7 @@ public:
 	virtual int		GetWeaponID( void ) const			{ return TF_WEAPON_MEDIGUN; }
 
 	bool			IsReleasingCharge( void ) { return (m_bChargeRelease && !m_bHolstered); }
-
+	bool			IsKritzkrieg( void ) { return m_bIsKritzkrieg; };
 	CBaseEntity		*GetHealTarget( void ) { return m_hHealingTarget.Get(); }
 
 #if defined( CLIENT_DLL )
@@ -71,6 +71,7 @@ public:
 #else
 
 	void			HealTargetThink( void );
+	void			AddCharge( float flPercentage );
 
 #endif
 
@@ -109,7 +110,9 @@ protected:
 
 	float					m_flNextTargetCheckTime;
 	bool					m_bCanChangeTarget; // used to track the PrimaryAttack key being released for AutoHeal mode
-	
+
+	bool					m_bIsKritzkrieg;
+
 #ifdef GAME_DLL
 	CDamageModifier			m_DamageModifier;		// This attaches to whoever we're healing.
 	bool					m_bHealingSelf;

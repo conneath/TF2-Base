@@ -551,6 +551,22 @@
 				"width"		"48"
 				"height"	"32"
 		}
+		"d_ubersaw"
+		{
+				"file"	"HUD/d_images"
+				"x"		"96"
+				"y"		"416"
+				"width"		"96"
+				"height"	"32"
+		}
+		"d_leechgun"
+		{
+				"file"	"HUD/d_images"
+				"x"		"116"
+				"y"		"448"
+				"width"		"48"
+				"height"	"32"
+		}
 		"d_bluedefend"
 		{
 				"file"	"HUD/d_images"		
@@ -837,6 +853,22 @@
 				"file"	"HUD/dneg_images"
 				"x"		"116"
 				"y"		"384"
+				"width"		"48"
+				"height"	"32"
+		}
+		"dneg_ubersaw"
+		{
+				"file"	"HUD/dneg_images"
+				"x"		"96"
+				"y"		"416"
+				"width"		"96"
+				"height"	"32"
+		}
+		"dneg_leechgun"
+		{
+				"file"	"HUD/dneg_images"
+				"x"		"116"
+				"y"		"448"
 				"width"		"48"
 				"height"	"32"
 		}

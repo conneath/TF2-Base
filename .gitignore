@@ -64,6 +64,7 @@ game/tf_mod/stats.txt
 game/tf_mod/voice_ban.dt
 game/tf_mod/GameState.txt
 game/tf_mod/ServerConfig.vdf
+game/tf_mod/tf_inventory.txt
 **/sound.cache
 **/modelsounds.cache
 game/tf_mod/cfg/config.cfg
@@ -74,6 +75,7 @@ game/tf_mod/download/*
 game/tf_mod/downloadlists/*
 game/tf_mod/media/viewed.res
 game/tf_mod/screenshots/*
+/game/tf_mod/materials/temp
 
 # This is located in materials/sprites and contains the HUD icons for the control points, whitelist it from the POSIX build products entry
 !obj_icons/

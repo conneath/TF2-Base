@@ -24,8 +24,8 @@
 #endif
 
 // Hacky
-#if defined ( TF_CLIENT_DLL ) || defined ( TF_DLL )
-#include "econ_entity.h"
+#if defined ( TF_CLIENT_DLL ) || defined ( TF_DLL ) || defined (TF_MOD) || defined (TF_MOD_CLIENT)
+#include "tf_econ_entity.h"
 #endif // TF_CLIENT_DLL || TF_DLL
 
 #if !defined( CLIENT_DLL )
@@ -140,7 +140,7 @@ namespace vgui2
 // Purpose: Base weapon class, shared on client and server
 //-----------------------------------------------------------------------------
 
-#if defined USES_ECON_ITEMS
+#if defined USES_ECON_ITEMS || defined TF_MOD || defined TF_MOD_CLIENT // conn: i'd prefer to get rid of this stupid hack eventually!
 #define BASECOMBATWEAPON_DERIVED_FROM		CEconEntity
 #else 
 #define BASECOMBATWEAPON_DERIVED_FROM		CBaseAnimating

@@ -241,6 +241,7 @@ const char *GetRandomBotName( void )
 		"Get behind me, Doctor!",
 		"PLZ DON'T CAP",
 		"RARE ENDANGERED CRAB SPY",
+		"Pootis Spencer",
 
 #ifdef STAGING_ONLY
 		"John Spartan",

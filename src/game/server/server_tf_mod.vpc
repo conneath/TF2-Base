@@ -180,6 +180,26 @@ $Project "Server (TF)"
 				}
 			}
 
+			$Folder "Econ"
+			{
+				$File	"$SRCDIR\game\shared\script_parser.cpp"
+				$File	"$SRCDIR\game\shared\script_parser.h"
+				$File	"$SRCDIR\game\shared\tf\tf_attribute_manager.h"
+				$File	"$SRCDIR\game\shared\tf\tf_attribute_manager.cpp"
+				$File	"$SRCDIR\game\shared\tf\ihasattributes.h"
+				$File	"$SRCDIR\game\shared\tf\tf_econ_entity.cpp"
+				$File	"$SRCDIR\game\shared\tf\tf_econ_entity.h"
+				$File	"$SRCDIR\game\shared\tf\tf_item_schema.h"
+				$File	"$SRCDIR\game\shared\tf\tf_item_schema.cpp"
+				$File	"$SRCDIR\game\shared\tf\tf_item_system.h"
+				$File	"$SRCDIR\game\shared\tf\tf_item_system.cpp"
+				$File	"$SRCDIR\game\shared\tf\tf_item_schema_parser.h"
+				$File	"$SRCDIR\game\shared\tf\tf_item_schema_parser.cpp"
+				$File	"$SRCDIR\game\shared\tf\tf_item_view.h"
+				$File	"$SRCDIR\game\shared\tf\tf_item_view.cpp"
+				$File	"$SRCDIR\game\shared\tf\tf_inventory.h"
+				$File	"$SRCDIR\game\shared\tf\tf_inventory.cpp"
+			}
 			$Folder	"Weapon"
 			{
 				$File	"$SRCDIR\game\shared\tf\tf_weapon_bat.cpp"

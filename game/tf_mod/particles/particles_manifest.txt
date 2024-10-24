@@ -31,5 +31,6 @@ particles_manifest
 		"file"		"!particles/shellejection.pcf"
 		"file"		"!particles/impact_fx.pcf"
 		"file"		"!particles/cinefx.pcf"
+		"file"		"!particles/item_fx.pcf"
 }
 

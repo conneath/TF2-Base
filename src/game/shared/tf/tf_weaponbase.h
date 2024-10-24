@@ -182,11 +182,21 @@ class CTFWeaponBase : public CBaseCombatWeapon
 	virtual int GetCustomDamageType() const { return TF_DMG_CUSTOM_NONE; }
 
 	// View model.
+	virtual int TranslateViewmodelHandActivity( int iActivity );
+	virtual void SetViewModel();
 	virtual const char *GetViewModel( int iViewModel = 0 ) const;
+#ifdef CLIENT_DLL
+	virtual void UpdateViewModel( void );
+#endif
+	// World model.
+	virtual const char* GetWorldModel( void ) const;
 
 	virtual void Drop( const Vector &vecVelocity );
 	virtual bool Holster( CBaseCombatWeapon *pSwitchingTo = NULL );
 	virtual bool Deploy( void );
+#ifdef GAME_DLL
+	virtual void UnEquip( CBaseCombatCharacter* pOwner );
+#endif
 
 	// Attacks.
 	virtual void PrimaryAttack();
@@ -205,6 +215,7 @@ class CTFWeaponBase : public CBaseCombatWeapon
 
 	// Sound.
 	bool PlayEmptySound();
+	virtual const char* GetShootSound( int iIndex ) const;
 
 	// Activities.
 	virtual void ItemBusyFrame( void );
@@ -271,6 +282,9 @@ class CTFWeaponBase : public CBaseCombatWeapon
 
 	// Ammo.
 	virtual const Vector& GetBulletSpread();
+
+	// On hit effects.
+	void ApplyOnHitAttributes( CTFPlayer* pVictim, const CTakeDamageInfo& info );
 
 // Client specific.
 #else
